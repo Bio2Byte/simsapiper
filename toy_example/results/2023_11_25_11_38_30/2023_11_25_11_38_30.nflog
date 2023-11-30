@@ -1,0 +1,1404 @@
+N E X T F L O W  ~  version 22.10.4
+Launching `simsapiper.nf` [grave_goldwasser] DSL2 - revision: 01709b2a88
+
+Usage:
+
+$ nextflow run simsapiper.nf -profile server,withsingularity --magic 
+
+================================================================================
+                                LIST OF PARAMETERS
+================================================================================
+                                GENERAL
+
+Launch dir      : /theia/scratch/brussel/106/vsc10611/nf_tcoffee/structuremsanf
+Project dir     : /theia/scratch/brussel/106/vsc10611/nf_tcoffee/structuremsanf
+Execution time  : 2023_11_25_11_38_33
+================================================================================
+                                INPUT FILES
+
+Input file folder (--data): /scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/data
+Input sequence format (--seqFormat fasta): fasta
+    !Find all possible formats at https://biopython.org/wiki/SeqIO
+Ignore sequences with % unknown characters (--seqQC 5): 5    
+Collapse sequences with % sequence identity (--dropSimilar 90): 90
+================================================================================
+                                OUTPUT FILES
+
+Output folder: /scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/results/2023_11_25_11_38_30
+Final MSA file name (--outName mymsa): finalMSA
+================================================================================
+                                SUBSETTING
+
+Creates subsets of % sequence identity (--createSubsets 30): 30 
+Set minimal % sequence identity in subsets (--minSubsetID 20): 20
+    !Reduce the number of subsets by collating with --minSubsetID "min"
+Set maximal size of subset(--maxSubsetSize 100): true
+
+User provides fasta files with subsets (--useSubsets): false
+    !Provide sequences not fitting any subset in a file containing 'orphan' in filename
+================================================================================
+                                ADD STRUCTURAL INFORMATION
+
+Retrieve protein structure models from AFDB (--retrieve): true
+Predict protein structure models with ESM Atlas (--model): true
+Maximal % of sequences not matched to a model (--strucQC 5): 5
+================================================================================
+                                ALINGMENT PARAMETERS
+
+Additional parameters for Tcoffee (--tcoffeeParams): false
+Additional parameters for MAFFT (--mafftParams "--localpair --maxiterate 1000"): false
+Map DSSP to alignment (--dssp): true
+Squeeze alignment towards anchors (--squeeze "H,E"): H,G,E
+    !Select secondary structure elements for anchor points according to DSSP annotation
+Set minimal occurence % of anchor element in MSA: (--squeezePerc 80): 80
+Order MSA by input files (--reorder "cluster3.fasta,cluster4.fasta"): true
+Convert final MSA output from fasta (--convertMSA clustal): false
+================================================================================
+
+[-        ] process > convertSeqs -
+
+[-        ] process > convertSeqs               -
+[-        ] process > cdHitCollapse             -
+[-        ] process > writeFastaFromSeqsInvalid -
+[-        ] process > getAFmodels               -
+[-        ] process > fetchEsmAtlasStructure    -
+[-        ] process > writeFastaFromMissing     -
+[-        ] process > missingQC                 -
+[-        ] process > writeFastaFromFound       -
+[-        ] process > cdHitSubsetting           -
+[-        ] process > runTcoffee                -
+[-        ] process > convertTCMsa              -
+[-        ] process > mergeMafft                -
+[-        ] process > attendance                -
+[-        ] process > runDssp                   -
+[-        ] process > mapDsspRough              -
+[-        ] process > squeeze                   -
+[-        ] process > mapDsspSqueeze            -
+[-        ] process > reorder                   -
+Sequence file found:/scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/data/seqs/tim.fasta
+
+[-        ] process > convertSeqs               [  0%] 0 of 1
+[-        ] process > cdHitCollapse             -
+[-        ] process > writeFastaFromSeqsInvalid -
+[-        ] process > getAFmodels               -
+[-        ] process > fetchEsmAtlasStructure    -
+[-        ] process > writeFastaFromMissing     -
+[-        ] process > missingQC                 -
+[-        ] process > writeFastaFromFound       -
+[-        ] process > cdHitSubsetting           -
+[-        ] process > runTcoffee                -
+[-        ] process > convertTCMsa              -
+[-        ] process > mergeMafft                -
+[-        ] process > attendance                -
+[-        ] process > runDssp                   -
+[-        ] process > mapDsspRough              -
+[-        ] process > squeeze                   -
+[-        ] process > mapDsspSqueeze            -
+[-        ] process > reorder                   -
+Sequence file found:/scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/data/seqs/tim.fasta
+
+executor >  slurm (1)
+[ff/49d4e3] process > convertSeqs (1)           [  0%] 0 of 1
+[-        ] process > cdHitCollapse             -
+[-        ] process > writeFastaFromSeqsInvalid -
+[-        ] process > getAFmodels               -
+[-        ] process > fetchEsmAtlasStructure    -
+[-        ] process > writeFastaFromMissing     -
+[-        ] process > missingQC                 -
+[-        ] process > writeFastaFromFound       -
+[-        ] process > cdHitSubsetting           -
+[-        ] process > runTcoffee                -
+[-        ] process > convertTCMsa              -
+[-        ] process > mergeMafft                -
+[-        ] process > attendance                -
+[-        ] process > runDssp                   -
+[-        ] process > mapDsspRough              -
+[-        ] process > squeeze                   -
+[-        ] process > mapDsspSqueeze            -
+[-        ] process > reorder                   -
+Sequence file found:/scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/data/seqs/tim.fasta
+
+executor >  slurm (1)
+[ff/49d4e3] process > convertSeqs (1)           [  0%] 0 of 1
+[-        ] process > cdHitCollapse             -
+[-        ] process > writeFastaFromSeqsInvalid -
+[-        ] process > getAFmodels               -
+[-        ] process > fetchEsmAtlasStructure    -
+[-        ] process > writeFastaFromMissing     -
+[-        ] process > missingQC                 -
+[-        ] process > writeFastaFromFound       -
+[-        ] process > cdHitSubsetting           -
+[-        ] process > runTcoffee                -
+[-        ] process > convertTCMsa              -
+[-        ] process > mergeMafft                -
+[-        ] process > attendance                -
+[-        ] process > runDssp                   -
+[-        ] process > mapDsspRough              -
+[-        ] process > squeeze                   -
+[-        ] process > mapDsspSqueeze            -
+[-        ] process > reorder                   -
+Sequence file found:/scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/data/seqs/tim.fasta
+
+executor >  slurm (1)
+[ff/49d4e3] process > convertSeqs (1)           [100%] 1 of 1 ✔
+[-        ] process > cdHitCollapse             [  0%] 0 of 1
+[-        ] process > writeFastaFromSeqsInvalid -
+[-        ] process > getAFmodels               -
+[-        ] process > fetchEsmAtlasStructure    -
+[-        ] process > writeFastaFromMissing     -
+[-        ] process > missingQC                 -
+[-        ] process > writeFastaFromFound       -
+[-        ] process > cdHitSubsetting           -
+[-        ] process > runTcoffee                -
+[-        ] process > convertTCMsa              -
+[-        ] process > mergeMafft                -
+[-        ] process > attendance                -
+[-        ] process > runDssp                   -
+[-        ] process > mapDsspRough              -
+[-        ] process > squeeze                   -
+[-        ] process > mapDsspSqueeze            -
+[-        ] process > reorder                   -
+Sequence file found:/scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/data/seqs/tim.fasta
+
+executor >  slurm (2)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [  0%] 0 of 1
+[-        ] process > writeFastaFromSeqsInvalid           -
+[-        ] process > getAFmodels                         -
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Sequence file found:/scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/data/seqs/tim.fasta
+
+executor >  slurm (2)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [  0%] 0 of 1
+[-        ] process > writeFastaFromSeqsInvalid           -
+[-        ] process > getAFmodels                         -
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Sequence file found:/scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/data/seqs/tim.fasta
+
+executor >  slurm (3)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[90/443b5d] process > getAFmodels (P72484)                [  0%] 0 of 11
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Sequence file found:/scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/data/seqs/tim.fasta
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+
+executor >  slurm (4)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[a5/89781c] process > getAFmodels (A1RUV7)                [  0%] 0 of 11
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+
+
+executor >  slurm (6)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[63/6516c8] process > getAFmodels (Q4JCD8)                [  0%] 0 of 11
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+
+
+executor >  slurm (7)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[b2/b9d05a] process > getAFmodels (A0R756)                [  0%] 0 of 11
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+
+executor >  slurm (9)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[ad/d8872b] process > getAFmodels (Q8Z2Y2)                [  0%] 0 of 11
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+
+executor >  slurm (11)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[d7/e44926] process > getAFmodels (Q3KM32)                [  0%] 0 of 11
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+
+executor >  slurm (12)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[41/d62654] process > getAFmodels (P9WG42)                [  0%] 0 of 11
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+
+executor >  slurm (13)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[95/393749] process > getAFmodels (Q8ZJK9)                [  0%] 0 of 11
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+
+executor >  slurm (13)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[95/393749] process > getAFmodels (Q8ZJK9)                [  0%] 0 of 11
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+
+executor >  slurm (13)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[95/393749] process > getAFmodels (Q8ZJK9)                [  0%] 0 of 11
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+
+executor >  slurm (13)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[2f/51062e] process > getAFmodels (Q97VM8)                [ 54%] 6 of 11
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+
+executor >  slurm (13)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[2c/2ed556] process > getAFmodels (A5FRB6)                [ 72%] 8 of 11
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           -
+[-        ] process > writeFastaFromFound                 -
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+
+executor >  slurm (13)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[95/393749] process > getAFmodels (Q8ZJK9)                [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[-        ] process > missingQC                           [  0%] 0 of 1
+[-        ] process > writeFastaFromFound                 [  0%] 0 of 1
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (14)
+[ff/49d4e3] process > convertSeqs (1)                     [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta) [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid           -
+[95/393749] process > getAFmodels (Q8ZJK9)                [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure              -
+[-        ] process > writeFastaFromMissing               -
+[85/32d43b] process > missingQC                           [  0%] 0 of 1
+[-        ] process > writeFastaFromFound                 [  0%] 0 of 1
+[-        ] process > cdHitSubsetting                     -
+[-        ] process > runTcoffee                          -
+[-        ] process > convertTCMsa                        -
+[-        ] process > mergeMafft                          -
+[-        ] process > attendance                          -
+[-        ] process > runDssp                             -
+[-        ] process > mapDsspRough                        -
+[-        ] process > squeeze                             -
+[-        ] process > mapDsspSqueeze                      -
+[-        ] process > reorder                             -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (15)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [  0%] 0 of 1
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [  0%] 0 of 1
+[-        ] process > cdHitSubsetting                           -
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[-        ] process > runDssp                                   -
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (15)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [  0%] 0 of 1
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [  0%] 0 of 1
+[-        ] process > cdHitSubsetting                           -
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[-        ] process > runDssp                                   -
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (15)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[-        ] process > cdHitSubsetting                           [  0%] 0 of 1
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[-        ] process > runDssp                                   [  0%] 0 of 11
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (17)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [  0%] 0 of 1
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[f3/90cf16] process > runDssp (5)                               [  0%] 0 of 11
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (18)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [  0%] 0 of 1
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[b9/71f430] process > runDssp (4)                               [  0%] 0 of 11
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (20)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [  0%] 0 of 1
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[0e/01c55d] process > runDssp (2)                               [  0%] 0 of 11
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (21)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [  0%] 0 of 1
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[ba/a81074] process > runDssp (7)                               [  0%] 0 of 11
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (23)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [  0%] 0 of 1
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[a1/16dfc1] process > runDssp (1)                               [  0%] 0 of 11
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (25)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [  0%] 0 of 1
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[8c/6c9ffc] process > runDssp (8)                               [  0%] 0 of 11
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (26)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [  0%] 0 of 1
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[da/d333ef] process > runDssp (10)                              [  0%] 0 of 11
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (27)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [  0%] 0 of 1
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [  0%] 0 of 11
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (27)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [  0%] 0 of 1
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [  0%] 0 of 11
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Number of sequences before collapsing:13
+Sequences to be aligned:11
+Provided model matched:0
+Missing models: 0
+
+executor >  slurm (27)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [  0%] 0 of 1
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[1a/411558] process > runDssp (6)                               [ 27%] 3 of 11
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Missing models: 0
+
+
+
+
+executor >  slurm (27)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [  0%] 0 of 1
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[25/37daa5] process > runDssp (11)                              [ 54%] 6 of 11
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Missing models: 0
+
+
+
+
+executor >  slurm (27)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [  0%] 0 of 1
+[-        ] process > runTcoffee                                -
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+Missing models: 0
+
+executor >  slurm (28)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[b3/9f7375] process > runTcoffee (Subset1.fasta)                [  0%] 0 of 2
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+
+executor >  slurm (29)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [  0%] 0 of 2
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+
+executor >  slurm (29)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [  0%] 0 of 2
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (29)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[b3/9f7375] process > runTcoffee (Subset1.fasta)                [ 50%] 1 of 2
+[-        ] process > convertTCMsa                              -
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (29)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[-        ] process > convertTCMsa                              [  0%] 0 of 2
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (30)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[a2/9c4448] process > convertTCMsa (1)                          [  0%] 0 of 2
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (31)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [  0%] 0 of 2
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (31)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [  0%] 0 of 2
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (31)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [  0%] 0 of 2
+[-        ] process > mergeMafft                                -
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (31)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[-        ] process > mergeMafft                                [  0%] 0 of 1
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (32)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [  0%] 0 of 1
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (32)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [  0%] 0 of 1
+[-        ] process > attendance                                -
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              -
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (32)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [100%] 1 of 1 ✔
+[-        ] process > attendance                                [  0%] 0 of 1
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[-        ] process > mapDsspRough                              [  0%] 0 of 1
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (34)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [100%] 1 of 1 ✔
+[fe/857ff6] process > attendance                                [  0%] 0 of 1
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[d1/b3604d] process > mapDsspRough                              [  0%] 0 of 1
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (34)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [100%] 1 of 1 ✔
+[fe/857ff6] process > attendance                                [  0%] 0 of 1
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[d1/b3604d] process > mapDsspRough                              [  0%] 0 of 1
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (34)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [100%] 1 of 1 ✔
+[fe/857ff6] process > attendance                                [100%] 1 of 1 ✔
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[d1/b3604d] process > mapDsspRough                              [  0%] 0 of 1
+[-        ] process > squeeze                                   -
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (35)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [100%] 1 of 1 ✔
+[fe/857ff6] process > attendance                                [100%] 1 of 1 ✔
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[d1/b3604d] process > mapDsspRough                              [100%] 1 of 1 ✔
+[ae/dee025] process > squeeze                                   [  0%] 0 of 1
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (35)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [100%] 1 of 1 ✔
+[fe/857ff6] process > attendance                                [100%] 1 of 1 ✔
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[d1/b3604d] process > mapDsspRough                              [100%] 1 of 1 ✔
+[ae/dee025] process > squeeze                                   [  0%] 0 of 1
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (35)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [100%] 1 of 1 ✔
+[fe/857ff6] process > attendance                                [100%] 1 of 1 ✔
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[d1/b3604d] process > mapDsspRough                              [100%] 1 of 1 ✔
+[ae/dee025] process > squeeze                                   [100%] 1 of 1 ✔
+[-        ] process > mapDsspSqueeze                            -
+[-        ] process > reorder                                   -
+
+executor >  slurm (36)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [100%] 1 of 1 ✔
+[fe/857ff6] process > attendance                                [100%] 1 of 1 ✔
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[d1/b3604d] process > mapDsspRough                              [100%] 1 of 1 ✔
+[ae/dee025] process > squeeze                                   [100%] 1 of 1 ✔
+[bd/7b25ad] process > mapDsspSqueeze                            [  0%] 0 of 1
+[-        ] process > reorder                                   [  0%] 0 of 1
+
+executor >  slurm (37)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [100%] 1 of 1 ✔
+[fe/857ff6] process > attendance                                [100%] 1 of 1 ✔
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[d1/b3604d] process > mapDsspRough                              [100%] 1 of 1 ✔
+[ae/dee025] process > squeeze                                   [100%] 1 of 1 ✔
+[bd/7b25ad] process > mapDsspSqueeze                            [  0%] 0 of 1
+[d5/238420] process > reorder                                   [  0%] 0 of 1
+
+executor >  slurm (37)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [100%] 1 of 1 ✔
+[fe/857ff6] process > attendance                                [100%] 1 of 1 ✔
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[d1/b3604d] process > mapDsspRough                              [100%] 1 of 1 ✔
+[ae/dee025] process > squeeze                                   [100%] 1 of 1 ✔
+[bd/7b25ad] process > mapDsspSqueeze                            [  0%] 0 of 1
+[d5/238420] process > reorder                                   [  0%] 0 of 1
+
+executor >  slurm (37)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [100%] 1 of 1 ✔
+[fe/857ff6] process > attendance                                [100%] 1 of 1 ✔
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[d1/b3604d] process > mapDsspRough                              [100%] 1 of 1 ✔
+[ae/dee025] process > squeeze                                   [100%] 1 of 1 ✔
+[bd/7b25ad] process > mapDsspSqueeze                            [100%] 1 of 1 ✔
+[d5/238420] process > reorder                                   [  0%] 0 of 1
+
+executor >  slurm (37)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [100%] 1 of 1 ✔
+[fe/857ff6] process > attendance                                [100%] 1 of 1 ✔
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[d1/b3604d] process > mapDsspRough                              [100%] 1 of 1 ✔
+[ae/dee025] process > squeeze                                   [100%] 1 of 1 ✔
+[bd/7b25ad] process > mapDsspSqueeze                            [100%] 1 of 1 ✔
+[d5/238420] process > reorder                                   [100%] 1 of 1 ✔
+Pipeline completed at               : 2023-11-25T11:41:50.478720+01:00
+Time to complete workflow execution : 3m 16s
+Execution status                    : Success
+Output folder                       : /scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/results/2023_11_25_11_38_30
+
+executor >  slurm (37)
+[ff/49d4e3] process > convertSeqs (1)                           [100%] 1 of 1 ✔
+[f3/b99627] process > cdHitCollapse (converted_tim.fasta)       [100%] 1 of 1 ✔
+[-        ] process > writeFastaFromSeqsInvalid                 -
+[95/393749] process > getAFmodels (Q8ZJK9)                      [100%] 11 of 11 ✔
+[-        ] process > fetchEsmAtlasStructure                    -
+[-        ] process > writeFastaFromMissing                     -
+[85/32d43b] process > missingQC                                 [100%] 1 of 1 ✔
+[18/d7dd76] process > writeFastaFromFound (seqs_to_align.fasta) [100%] 1 of 1 ✔
+[a2/66b29e] process > cdHitSubsetting (seqs_to_align.fasta)     [100%] 1 of 1 ✔
+[5f/e83155] process > runTcoffee (Subset0.fasta)                [100%] 2 of 2 ✔
+[61/9b76c3] process > convertTCMsa (2)                          [100%] 2 of 2 ✔
+[02/c348ac] process > mergeMafft                                [100%] 1 of 1 ✔
+[fe/857ff6] process > attendance                                [100%] 1 of 1 ✔
+[fe/5bcb9a] process > runDssp (9)                               [100%] 11 of 11 ✔
+[d1/b3604d] process > mapDsspRough                              [100%] 1 of 1 ✔
+[ae/dee025] process > squeeze                                   [100%] 1 of 1 ✔
+[bd/7b25ad] process > mapDsspSqueeze                            [100%] 1 of 1 ✔
+[d5/238420] process > reorder                                   [100%] 1 of 1 ✔
+Pipeline completed at               : 2023-11-25T11:41:50.478720+01:00
+Time to complete workflow execution : 3m 16s
+Execution status                    : Success
+Output folder                       : /scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/results/2023_11_25_11_38_30
+Completed at: 25-Nov-2023 11:41:51
+Duration    : 3m 17s
+CPU hours   : 0.1
+Succeeded   : 37
+
+
+2023-11-25 11:38:33	3m 18s        	grave_goldwasser          	OK    	01709b2a88 	1a2a4114-7e46-429f-b6a3-41b6cac9dbb8	nextflow run simsapiper.nf -profile hydra,withsingularity --data /scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/data --seqQC 5 --dropSimilar 90 --createSubsets 30 --retrieve true --model true --strucQC 5 --dssp true --squeeze H,G,E --reorder true --outFolder /scratch/brussel/106/vsc10611/nf_tcoffee/toy_example/results/2023_11_25_11_38_30                                                                                         
