@@ -82,7 +82,7 @@ def cluster_fasta(rep_df, perc):
         cluclusters={}
         members=0
         setnum=0
-        all_min_subsets=['Subset1']
+        all_min_subsets=['Subset0']
 
         for row in range(0,len(info)):
             members += info.counter.iloc[row]
@@ -128,7 +128,7 @@ def split_per_subset(all_subsets,rep_df,toobig_cluster_ids,cutoff):
        
     print ('all subsets:',all_subsets)
     for id in all_subsets:
-
+        print(id)
         subset_df = rep_df[rep_df.subset == id]
         if subset_df.empty:
             print ('Skipping because first cluster too big')

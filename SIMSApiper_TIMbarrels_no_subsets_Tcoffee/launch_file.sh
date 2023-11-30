@@ -1,14 +1,15 @@
 #!/bin/bash
-module load Nextflow/22.10.4
-house=$VSC_SCRATCH/nf_tcoffee/SIMSApiper_TIMbarrels
-data=data
+module load Nextflow/23.04.2
+house=$VSC_SCRATCH_VO/vsc10579/simsapiper
+data=SIMSApiper_TIMbarrels_no_subsets_Tcoffee
 now=`date +"%Y_%m_%d_%H_%M_%S"`
-output=${now}
-mkdir $house/results
-mkdir $house/results/$output
-nextflow run simsapiper.nf \
-    -profile hpc,withsingularity \
-    --data $house/$data \
+output_name=${data}_${now}_test
+output_folder=$house/results/$output_name
+mkdir -p $house/results
+mkdir -p $output_folder
+nextflow run ../simsapiper.nf \
+    -profile hydra,withsingularity\
+    --data $house/$data/data \
     --seqQC 5 \
     --dropSimilar 90 \
     --createSubsets false \
@@ -19,7 +20,7 @@ nextflow run simsapiper.nf \
     --squeeze "H,G,E" \
     --squeezePerc 70 \
     --reorder true \
-    --outFolder $house/results/$output \
-    |& tee  $house/results/$output/$output.nflog
-sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $house/results/$output/$output.nflog)
-nextflow log | grep $sessionName >> $house/results/$output/$output.nflog
+    --outFolder $output_folder \
+    |& tee  $output_folder/run_report_$output_name.nflog
+sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $output_folder/run_report_$output_name.nflog)
+nextflow log | grep $sessionName >> $output_folder/run_report_$output.nflog

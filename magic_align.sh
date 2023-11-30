@@ -1,6 +1,6 @@
 #!/bin/bash
 house=$(echo pwd)
-data=toy_expample
+data=toy_example
 now=`date +"%Y_%m_%d_%H_%M_%S"`
 output_name=${data}_${now}_test
 output_folder=$house/results/$output_name
