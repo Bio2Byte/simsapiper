@@ -9,9 +9,9 @@ mkdir -p $output_folder
 echo 'Starting nextflow'
 nextflow run simsapiper.nf \
     -profile server,withsingularity \
-    --data $house/$data \
+    --data $house/$data/data \
     --magic \
     --outFolder $output_folder \
     |& tee  $output_folder/run_report_$output_name.nflog
 sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $output_folder/run_report_$output_name.nflog)
-nextflow log | grep $sessionName >> $output_folder/run_report_$output.nflog
+nextflow log | grep $sessionName >> $output_folder/run_report_$output_name.nflog
