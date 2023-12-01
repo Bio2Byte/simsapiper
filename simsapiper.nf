@@ -94,6 +94,7 @@ include{
 
 workflow {
     //convert input files to fasta format
+
     allSequences.view{'Sequence file found:' + it}
     convertSeqs(params.seqFormat, allSequences)
     sequenceFastas =  convertSeqs.out.convertedSeqs
