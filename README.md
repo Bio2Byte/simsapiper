@@ -8,25 +8,37 @@ Conserved secondary structure elements are used to reduce gaps for a high-qualit
 # QuickStart
 
 ![Simplified representation of SIMSApiper workflow!](schemes/simpleScheme2.png "Simplified representation of SIMSApiper workflow")
-### Requirements
+### Install requirements
 
 - [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html)
 - [Singularity](https://apptainer.org/admin-docs/master/installation.html#installation-on-linux)/Apptainer or [Docker](https://docs.docker.com/get-docker/)
 - Sufficient amount of scratch space and RAM (50 Sequences of 400 residues with 60% sequence identity need 30GB disk space and 10GB RAM)
+- Copy of this repository
+  ```
+  git clone https://github.com/Bio2Byte/simsapiper.git
+  ```
 
-### Data preparation
+### Prepare data
 
-Directory `data` in same directory as the pipeline
+Use directory `toy_example` to test installation.
+SIMSAPiper will automatically recognise directories called `data` if none is specified.
+The directory contains:
 
 - Subdirectory `seqs` with fasta-formatted protein sequences
-- Optional: subdirectory `structures` with 3D protein structure models 
+- Optional: subdirectory `structures` with 3D protein structure models
 
-### Command line 
+### Launch pipeline using command line
 
 Enable recommended settings using **--magic**
 ```
-/path/to/software/nextflow run simsapiper.nf -profile server,withsingularity --magic
+nextflow run simsapiper.nf -profile server,withsingularity --data toy_example/data --magic
 ```
+or use 
+```
+./magic_align.sh
+```
+This file can also be double-clicked to run the toy_example dataset.
+
 By default most flags are set to False. 
 Adding a flag to the command line will set it to True and activate it. 
 Some flags can carry additional information, such as percentages or filenames.
@@ -107,17 +119,57 @@ nextflow run simsapiper.nf
 	- Install T-Coffee manually
 - Local execution (-profile standard)
     Install
-    - CD-Hit
+        - CD-Hit
 	- MAFFT
 	- Biopython
 	- BLAST (V2.14)
 	- Pandas
 	- DSSP (Mac: V2.2 Linux: V3.0)
-	- [T-Coffee](http://tcoffee-packages.s3-website.eu-central-1.amazonaws.com/#Beta/Latest/) (V13.45.61.3c310a9)  
-	- [TM-align](https://zhanggroup.org/TM-align/news.html) (V20190822) 
+	- [T-Coffee](https://s3.eu-central-1.amazonaws.com/tcoffee-packages/Archives/T-COFFEE_distribution_Version_13.45.61.3c310a9.tar.gz) (at least V13.45.61.3c310a9 or newer)  
+	- [TM-align](https://zhanggroup.org/TM-align/news.html) (at least V20190822 or newer) 
 	- [SAP](https://github.com/mathbio-nimr-mrc-ac-uk/SAP)
 
 ## Input files
+### Launch file: `Magic_align.sh`
+
+- Creates log file `*.nflog` with working directories for all subjobs, error messages, and execution hash for resuming
+- Add more flags to standardise runs, alternatively create profiles in `nextflow.config` file
+
+```bash
+#!/bin/bash
+
+#Adapt this line:
+house=full/path/to/your/data/directory
+
+#Adapt this line:
+data=data_folder_containing_seqs_and_structures
+
+now=`date +"%Y_%m_%d_%H_%M_%S"`
+
+#Adapt this line:
+output_name=${data}_${now}_description
+
+output_folder=$house/results/$output_name
+mkdir -p $house/results/
+mkdir -p $house/results/$output
+
+#Adapt here:
+/path/to/software/nextflow run /path/to/simsapiper.nf \
+	-profile select_infrastructure,select_container \
+	--data $house/$data \
+	--any_flag value_followed_by_\
+	--magic \
+	--outName magicMsa \
+	--outFolder $output_folder \
+	|& tee  $output_folder/run_report_$output_name.nflog
+sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $output_folder/run_report_$output_name.nflog)
+
+#Adapt this line:
+/path/to/software/nextflow log | grep $sessionName >> $output_folder/run_report_$output_name.nflog
+
+#remove all comment lines before launching
+```
+
 ### Config file: `Nextflow.config`
 
 - Holds all variables needed to adapt SIMSApiper to your system
@@ -131,38 +183,6 @@ Within the pipeline, NextFlow manages step dependencies, automating the dispatch
 
 other profiles available on nf core
 -->
-### Launch file: `Magic_align.sh`
-
-- Creates log file *.nflog with working directories for all subjobs, error messages, and execution hash for resuming
-- Add more flags to standardise runs, alternatively create profiles in nextflow.config file
-
-```bash
-#!/bin/bash
-house=full/path/to/your/data/directory
-data=data_folder_containing_seqs
-now=`date +"%Y_%m_%d_%H_%M_%S"`
-output=${data}_${now}_description
-mkdir $house/results/
-mkdir $house/results/$output
-/path/to/software/nextflow run simsapiper.nf \
--profile server,withsingularity \
---data $house/$data \
---seqFormat fasta \
---seqQC 5 \
---droplSimilar 90 \
---createSubsets 30 \
---retrieve \
---model \
---strucQC 5 \
---dssp \
---squeeze "H" \
---reorder \
---outName magicMsa \
---outFolder $house/results/$output \
-|& tee  $house/results/$output/$output.nflog
-sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $house/results/$output/$output.nflog)
-/path/to/software/nextflow log | grep $sessionName >> $house/results/$output/$output.nflog
-```
 
 ### Sequence Input (--seqs)
 Input: `data/seqs/` 
@@ -429,7 +449,6 @@ Output: `results/outFolder/sequence_report.text`
     - matched to a protein structure model
     - not matched to a protein structure model
     - in the final aligned file
-- Sequence conservation calculated using the average Shannon Entropy of the MSA
 
 
 ### Resource log
@@ -465,12 +484,13 @@ Output: `results/outFolder/run_id_time.nflog`
     ```
     Hit **Crtl + A** and **Crtl +  D** to put it in the background
 - Launch file does not work: 
-    - try
+    - try:
         ```bash
         chmod +x magic_align.sh
         ```
         and rerun.
     - check for spaces behind ‘\’ in the launch file, there can not be any.
+    - On MacOS, replace **|& tee** with **>>**  
 - Modeling with ESMFold has low yield: 
     - Sequences longer than 400 residues cannot be modeled: try [ColabFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/AlphaFold2_advanced.ipynb) to generate your own models
     - ESM Atlas was asked to model too many sequences at once, resume the job
