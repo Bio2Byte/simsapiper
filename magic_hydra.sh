@@ -1,6 +1,6 @@
 #!/bin/bash
 module load Nextflow/23.04.2
-house=$VSC_SCRATCH_VO/vsc10579/simsapiper
+house=$VSC_SCRATCH/simsapiper
 data=toy_example
 now=`date +"%Y_%m_%d_%H_%M_%S"`
 output_name=${data}_${now}_test
