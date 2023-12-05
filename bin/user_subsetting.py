@@ -5,7 +5,7 @@ from Bio import SeqIO
 foundModels = sys.argv[1] #individual fasta files
 sequenceFastas = sys.argv[2] #one fasta file with all structure seqs
 
-outfilename= sequenceFastas[:-6] +'_matchedModel.fasta'
+outfilename= foundModels[:-6] +'_matchedModel'
 
 
 def write_fasta_from_df(df,labelcol,seqcol,outname):
