@@ -58,6 +58,49 @@ process attendance{
     """
 }
 
+process summary {
+    publishDir "$params.outFolder", mode: "copy"
+
+    input:
+    path inputSeqFiles
+    val foundSequencesCount
+
+    val dropSimilar
+    val collapsedSequencesCount
+    path similarClstr 
+
+    val seqsInvalidCount
+    val structurelessCount
+    path finalMsa
+    
+
+    output:
+    path '*.md'
+
+    script:
+    """
+    touch simsapiper_summary.md
+
+    echo "# Input sequences files" >> simsapiper_summary.md
+    echo 'No. of sequences in inputfile(s): ' $foundSequencesCount >> simsapiper_summary.md
+    echo $inputSeqFiles >> simsapiper_summary.md
+
+    echo "# Data reduction with CD-Hit" >> simsapiper_summary.md
+    echo 'Similarity cutoff for CD-Hit: ' $dropSimilar
+    echo 'No. of sequences after collapsing: ' $collapsedSequencesCount >> simsapiper_summary.md
+    echo [$similarClstr.baseName]($similarClstr) >> simsapiper_summary.md
+
+
+
+    """
+    //check if all sequences been aligned 
+    //input = collapsed(input-clusters,sum all input files) (paths:90clstr,who represents who) + invalid (path)+ structureless (path)+ matched to model(path seqs to align)
+    //final_msa(path) = matched_to_model + structureless 
+    //squeeze impact = gap counter: pre, post squeeze
+    //seq id
+    //[link](file:///d:/absolute.md)
+}
+
 process missingQC {
     errorStrategy 'finish'
 
