@@ -10,6 +10,12 @@ squeeze = sys.argv[3]
 conserved_2structure_dssp = squeeze.split(',') # ["H","E"]
 
 anchor_point = int(sys.argv[4]) / 100
+
+if anchor_point > 0: 
+    print ('Conservation of secondary structure element per position is %', anchor_point )
+else:
+    raise ValueError('Conservation of secondary structure element per position must be larger then 0%! Try adding --squeezePerc 80 to your command line ')
+    
 #anchor_point = 0.8 #if 80% of your proteins have a conserved secondary structure dssp code in a particular column of your MSA, then the column will be considered as part of the anchor region
 
 output_file = sys.argv[5]+'.fasta' #MSA with residues (not dssp code) but that has been squeezed towards anchor points
