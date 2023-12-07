@@ -36,7 +36,6 @@ process runTcoffee {
     TMP_DIRECTORY=""
     OUTPUT_DIRECTORY=\$PWD
 
-
     # Check if all mandatory parameters are provided
     if [[ -z "\$WORKING_DIRECTORY_4_TCOFFEE" || -z "\$SEQUENCE" || -z "\$PDB_DIR" || -z "\$OUTPUT_DIRECTORY" ]]; then
     echo "Error: Missing arguments."
@@ -59,16 +58,14 @@ process runTcoffee {
     OUTPUT_PATH="\$OUTPUT_DIRECTORY"
     mkdir -p "\$OUTPUT_PATH"
 
+    export PDB_DIR=\$PDB_DIR
+
     echo "Working directory: \$WORKING_DIRECTORY_4_TCOFFEE"
     echo "Cache directory: \$CACHE_DIRECTORY"
     echo "Temp directory: \$TMP_DIRECTORY"
     echo "Output directory: \$OUTPUT_PATH"
-
     echo "Input sequence: \$SEQUENCE"
     echo "PDB directory: \$PDB_DIR"
-    export PDB_DIR=\$PDB_DIR
-
-    # Display environment variables
     echo "Environment variables:"
     echo "PATH: \$PATH"
     echo "PLUGINS_4_TCOFFEE: \$PLUGINS_4_TCOFFEE"
@@ -82,14 +79,17 @@ process runTcoffee {
     t_coffee ${params.tcoffeeParams ? tcoffeeParams : ''} -thread 0 -in="\$SEQUENCE" \
         -method TMalign_pair \
         -evaluate_mode=t_coffee_slow \
-            -mode=3dcoffee \
+        -mode=3dcoffee \
         -pdb_min_cov=1 \
         -outfile="\$OUTPUT_PATH/aligned_${seqsToAlign.baseName}.aln" > "\$LOG_FILE" 2>&1
 
     echo "T-Coffee execution completed successfully."
-    echo "Log file saved at: \$LOG_FILE"
-    echo "Output files saved at: \$OUTPUT_PATH"
-        
+
+    if grep -q "proba_pair" "\$LOG_FILE"; then
+        echo "Error: File contains proba_pair, a HMM-based alignment tool that T-Coffee automatically runs when something is wrong with the structure models. If you want to proceed anyways, remove these lines from modules/msas.nf"
+        exit 1
+        fi
+     
     """
 
 }
