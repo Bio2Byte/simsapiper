@@ -116,7 +116,7 @@ nextflow run simsapiper.nf
 	- Start Docker before launching the pipeline
 - Conda (-profile withconda)
 	- Select Linux or ARM-Apple .yml file in nextflow.config 
-	- Install T-Coffee manually
+	- Install T-Coffee, SAP and TMalign manually
 - Local execution (-profile standard)
     Install
         - CD-Hit
