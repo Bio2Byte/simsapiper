@@ -125,9 +125,9 @@ nextflow run simsapiper.nf
 	- BLAST (V2.14)
 	- Pandas
 	- DSSP (Mac: V2.2 Linux: V3.0)
-	- [T-Coffee](https://s3.eu-central-1.amazonaws.com/tcoffee-packages/Archives/T-COFFEE_distribution_Version_13.45.61.3c310a9.tar.gz) [EasyBuild](https://github.com/vscentrum/vsc-software-stack/blob/site-vub/t/T-Coffee/T-Coffee-13.45.61.3c310a9.eb ) (at least V13.45.61.3c310a9 or newer)  
-	- [TM-align](https://zhanggroup.org/TM-align/news.html) [EasyBuild](https://github.com/easybuilders/easybuild-easyconfigs/blob/develop/easybuild/easyconfigs/t/TM-align/TM-align-20190822-GCC-11.3.0.eb ) (at least V20190822 or newer) 
-	- [SAP](https://github.com/mathbio-nimr-mrc-ac-uk/SAP) [EasyBuild](https://github.com/easybuilders/easybuild-easyconfigs/blob/develop/easybuild/easyconfigs/s/SAP/SAP-1.1.3-GCC-11.3.0.eb)
+	- [T-Coffee](https://s3.eu-central-1.amazonaws.com/tcoffee-packages/Archives/T-COFFEE_distribution_Version_13.45.61.3c310a9.tar.gz) / [EasyBuild](https://github.com/vscentrum/vsc-software-stack/blob/site-vub/t/T-Coffee/T-Coffee-13.45.61.3c310a9.eb ) (V13.45.61.3c310a9)  
+	- [TM-align](https://zhanggroup.org/TM-align/news.html) / [EasyBuild](https://github.com/easybuilders/easybuild-easyconfigs/blob/develop/easybuild/easyconfigs/t/TM-align/TM-align-20190822-GCC-11.3.0.eb ) (V20190822) 
+	- [SAP](https://github.com/mathbio-nimr-mrc-ac-uk/SAP) / [EasyBuild](https://github.com/easybuilders/easybuild-easyconfigs/blob/develop/easybuild/easyconfigs/s/SAP/SAP-1.1.3-GCC-11.3.0.eb) (V1.1.3)
 
 ## Input files
 ### Launch file: `Magic_align.sh`
