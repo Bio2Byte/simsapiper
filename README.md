@@ -476,7 +476,7 @@ Output: `results/outFolder/run_id_time.nflog`
         nextflow run simsapiper.nf -resume 9ae6b81a-47ba-4a37-a746-cdb3500bee0f 
         ```
     Attention: last state will be permanently overwritten 
-- All intermediate results are unique subdirectory of the folder `work` \
+- All intermediate results are unique subdirectory of the directory `work` \
     Find directory hash for each step in `*.nflog` 
 - Run in the background: launch simsapiper in a [screen](https://gist.github.com/jctosta/af918e1618682638aa82) 
     ```bash
@@ -489,8 +489,8 @@ Output: `results/outFolder/run_id_time.nflog`
         chmod +x magic_align.sh
         ```
         and rerun.
-    - check for spaces behind **\** in the launch file, there can not be any.
-    - On MacOS, replace **|& tee** with **>>**  
+    - check for spaces behind `\` in the launch file, there can not be any.
+    - On MacOS, replace `|& tee` with `>>`  
 - Modeling with ESMFold has low yield: 
     - Sequences longer than 400 residues cannot be modeled: try [ColabFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/AlphaFold2_advanced.ipynb) to generate your own models
     - ESM Atlas was asked to model too many sequences at once, resume the job
