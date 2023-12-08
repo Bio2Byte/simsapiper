@@ -397,16 +397,16 @@ mafft --merge tableMAFFT.txt input > prefinalMSA.fasta
 - Find appropriate flags [here](https://mafft.cbrc.jp/alignment/software/algorithms/algorithms.html#GLE)
 
 
-## 6 Run DSSP (--dssp)
+## 6. Run DSSP (--dssp)
 Output: `results/outFolder/dssp/model_name.dssp`
 
-- Translate structure models into 2D secondary structure nomenclature using the [DSSP codes] (https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html)
+- Translate structure models into 2D secondary structure nomenclature using the [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html)
 
 ## 7. Improve MSA
 ### 7.1 Map DSSP to MSA
 Output: `results/outFolder/msas/dssp_merged_finalmsa_alignment.fasta`
 
-- Map [DSSP codes] (https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html) on sequences of the MSA, conserving the gaps.
+- Map [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html) on sequences of the MSA, conserving the gaps.
 
 Common Issues:
 - Mapping fails if sequence of model and sequence do not match exactly (eg. structure file contains more than one chain, large gaps, mutations) : sequence is added to mapped alignment without being converted to its DSSP codes
@@ -426,7 +426,7 @@ How?
 ### 7.3 Map DSSP to squeezed MSA
 Output: `results/outFolder/msas/dssp_squeezed_dssp_merged_finalmsa_alignment.fasta`
 
-- Map [DSSP codes] (https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html) on sequences of the squeezed MSA, conserving the gaps.
+- Map [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html) on sequences of the squeezed MSA, conserving the gaps.
 
 ## 8. Reorder MSA (--reorder)
 Output: `results/outFolder/reordered_*_merged_finalmsa_alignment.fasta`
@@ -489,7 +489,7 @@ Output: `results/outFolder/run_id_time.nflog`
         chmod +x magic_align.sh
         ```
         and rerun.
-    - check for spaces behind ‘\’ in the launch file, there can not be any.
+    - check for spaces behind **\** in the launch file, there can not be any.
     - On MacOS, replace **|& tee** with **>>**  
 - Modeling with ESMFold has low yield: 
     - Sequences longer than 400 residues cannot be modeled: try [ColabFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/AlphaFold2_advanced.ipynb) to generate your own models
