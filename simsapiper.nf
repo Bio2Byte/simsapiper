@@ -66,6 +66,7 @@ include {readSeqs as convertSeqs;
             readSeqs as convertFinalMsa;
             missingQC;
             attendance;
+            summary;
             writeFastaFromChannel as writeFastaFromMissing ;
             writeFastaFromChannel as writeFastaFromFound ;
             writeFastaFromChannel as writeFastaFromSeqsInvalid ;
@@ -103,6 +104,8 @@ workflow {
     if (params.dropSimilar){
         cdHitCollapse(sequenceFastas, params.dropSimilar)
         reducedSeqs = cdHitCollapse.out.seqs
+
+        reducedSeqsClstr = cdHitCollapse.out.clusters
     } else {
         reducedSeqs = sequenceFastas
     }
@@ -113,6 +116,8 @@ workflow {
         .map { record -> [header: record.header.replaceAll("[^a-zA-Z0-9]", "_"),
                 sequence: record.sequence.replaceAll("\n","").replaceAll("[^ARNDCQEGHILKMFPOSUTWYVarndcqeghilkmfposutwvy]", "X")] }
 
+    collapsedSequencesCount=seqsRelabeled.count().sum()
+    
     seqsQC = seqsRelabeled
         .branch{
             valid: it.sequence.count('X')*100 / it.sequence.size()  <= params.seqQC 
@@ -122,14 +127,17 @@ workflow {
     seqsFiltered.invalid.view { "INVALID >${it.header}" }
     seqsInvalidCount = seqsFiltered.invalid.count()
     writeFastaFromSeqsInvalid (seqsFiltered.invalid.map{record -> '>' + record.header + ',' + record.sequence}.collect(), "too_many_unknown_characters.fasta")
-    
+    seqsInvalidFile = writeFastaFromSeqsInvalid.out.found
+
+
     //compare sequence and structure labels
     seqIDs =seqsFiltered.valid.map{tuple(it.header , it.sequence)}
     allSequencesCount = seqIDs.count()
     allSequencesCount.view{"Sequences to be aligned:" + it}
 
     if (params.dropSimilar){
-        fullInputSeqsNum = cdHitCollapse.out.num.toInteger().sum().view{"Number of sequences before collapsing:" + it} 
+        fullInputSeqsNum = cdHitCollapse.out.num.toInteger().sum()
+        fullInputSeqsNum.view{"Number of sequences before collapsing:" + it} 
     }else{
         fullInputSeqsNum = allSequencesCount
     }
@@ -145,7 +153,8 @@ workflow {
         }.set{joined}
 
     //joined.modelFound.view{"Provided model matched:" + it[0]}
-    joined.modelFound.count().view{"Provided model matched:" + it}
+    providedModelsCount= joined.modelFound.count()
+    providedModelsCount.view{"Provided model matched:" + it}
     joined.sequenceNotFound.view {"Model without matching sequence:" +it[0]}
     nosequenceModels = joined.sequenceNotFound.map{it[1]}
 
@@ -169,6 +178,7 @@ workflow {
                 modelFound:         true //it[1] != null || it[2] !=null
             }.set{afjoined}
             //afjoined.modelFound.view{"Post AF Models matched:" + it[0]} 
+            foundModelsAF=afjoined.modelFound.count()
             //afjoined.modelNotFound.view{"Missing after AF2DB search:" + it[0]}
         
     } else {
@@ -177,7 +187,7 @@ workflow {
     }
 
     
-    //sumbit list of modelNotFound sequences from AFDB or folder search to ESM Atlas
+    //submit list of modelNotFound sequences from AFDB or folder search to ESM Atlas
     if (params.model){
     
         if (params.retrieve) { missingModels =afjoined.modelNotFound }
@@ -204,6 +214,8 @@ workflow {
                 sequenceNotFound:   it[2] == null
                 modelFound:         true //it[1] != null || it[2] !=null
             }.set{esmfjoined}
+
+            foundModelsESM=esmfjoined.modelFound.count()
             //esmfjoined.modelFound.view{"Post ESMF Models matched:" + it[0]}      
             //esmfjoined.modelNotFound.view{"Missing after ESM Atlas search:" + it[0]}
         }else{
@@ -228,7 +240,7 @@ workflow {
     foundSequencesCount = finalModelFound.count()
     
     writeFastaFromMissing(finalMissingModels.map{record -> ">"+ record[0] + ',' + record[2]}.collect(), 'structureless_seqs.fasta')
-    structureless_seqs = writeFastaFromMissing.out.found
+    structurelessFile = writeFastaFromMissing.out.found
 
     missingQC (allSequencesCount, structurelessCount, params.strucQC)
 
@@ -243,6 +255,7 @@ workflow {
     }else if (params.createSubsets){
         cdHitSubsetting(foundSeqs, params.createSubsets, params.minSubsetID, params.maxSubsetSize)
         subsets =  cdHitSubsetting.out.seq.collect().flatten()
+        subsetClstr = cdHitSubsetting.out.clusters
     }else{
         subsets = foundSeqs 
     }
@@ -259,15 +272,11 @@ workflow {
     strucMsa =runTcoffee.out.msa.flatten()
 
     convertTCMsa('clustal', strucMsa)
-    convertedMsa =  convertTCMsa.out.convertedSeqs.mix(structureless_seqs,subSeqs.orphans).collect()
+    convertedMsa =  convertTCMsa.out.convertedSeqs.mix(structurelessFile,subSeqs.orphans).collect()
 
     //create final alignment
     mergeMafft(convertedMsa, params.mafftParams, params.outName)
     finalMsa = mergeMafft.out.finalMsa
-
-
-    //check if all sequences been aligned 
-    attendance(foundSequencesCount,seqsInvalidCount,structurelessCount,finalMsa,fullInputSeqsNum)
 
 
     //map to dssp
@@ -298,6 +307,16 @@ workflow {
         reorderedFinalMsa = reorder.out.msaOrga
     }else{reorderedFinalMsa= squeezedMsa}
 
+    attendance(foundSequencesCount,seqsInvalidCount,structurelessCount,finalMsa,fullInputSeqsNum)
+
+    summary(allSequences,fullInputSeqsNum,
+                params.dropSimilar, collapsedSequencesCount,reducedSeqsClstr, 
+                params.seqQC,seqsInvalidCount, seqsInvalidFile,
+                params.structures,providedModelsCount,foundModelsAF, foundModelsESM, structurelessCount ,structurelessFile ,
+                params.createSubsets, subsetClstr,
+                foundSeqs, finalMsa,
+                params.squeezePerc , mappedFinalMsaSqueeze , squeezedMsa)
+//params.useSubsets,
 
     //select output format for MSA
     if (params.convertMSA){

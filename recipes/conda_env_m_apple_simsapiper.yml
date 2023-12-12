@@ -64,6 +64,7 @@ dependencies:
   - pip=20.0.2=py37_1
   - python=3.7.12=hf3644f1_100_cpython
   - python-dateutil=2.8.0=py37_0
+  - python-levenshtein+0.12.2=py37h69ee0a8_2
   - python_abi=3.7=3_cp37m
   - pytz=2022.7=py37hecd8cb5_0
   - readline=8.2=h9e318b2_1

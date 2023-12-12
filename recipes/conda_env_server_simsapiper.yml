@@ -64,7 +64,8 @@ dependencies:
   - perl-scalar-list-utils=1.52=pl526h516909a_0
   - pip=23.2.1=py311h06a4308_0
   - python=3.11.4=h955ad1f_0
-  - python-dateutil=2.8.2=pyhd3eb1b0_0
+  - python-dateutil=2.8.2=pyhd3eb1b0_0 
+  - python-levenshtein=0.12.2=py311h5eee18b_0 
   - pytz=2022.7=py311h06a4308_0
   - readline=8.2=h5eee18b_0
   - setuptools=68.0.0=py311h06a4308_0
