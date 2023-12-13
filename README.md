@@ -1,4 +1,4 @@
-# SIMSApiper: Large-scale Structure-Informed Multiple Sequence Alignment pipeline
+# SIMSApiper
 
 SIMSApiper is a nextflow pipeline that enables users to create structure informed multiple sequence alignments simply from a set of protein sequences.
 Structural information may be provided by the user or directly retrieved by the pipeline (AlphaFold Database or ESMFold). 
