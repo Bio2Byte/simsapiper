@@ -1,14 +1,14 @@
 #!/bin/bash
-module load Nextflow/22.10.4
-house=./toy_example
-data=data
+module load Nextflow/23.04.2
+house=$(pwd)
+data=toy_example
 now=`date +"%Y_%m_%d_%H_%M_%S"`
-output=${now}
+output=toy_example_${now}
 mkdir $house/results
 mkdir $house/results/$output
 nextflow run simsapiper.nf \
     -profile hpc,withsingularity \
-    --data $house/$data \
+    --data $house/$data/data \
     --seqQC 5 \
     --dropSimilar 90 \
     --createSubsets 30 \
