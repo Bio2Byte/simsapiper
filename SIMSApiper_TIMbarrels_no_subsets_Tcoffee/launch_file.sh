@@ -8,7 +8,7 @@ output_folder=$house/results/$output_name
 mkdir -p $house/results
 mkdir -p $output_folder
 nextflow run ../simsapiper.nf \
-    -profile hydra,withsingularity\
+    -profile hpc,withsingularity\
     --data $house/$data/data \
     --seqQC 5 \
     --dropSimilar 90 \
