@@ -1,5 +1,0 @@
-No. of sequences in inputfile(s):  663
-No. of invalid sequences:  0
-No. of sequences not matched to a model:  0
-No. of sequences matched to a model:  379
-No. of sequences in final alignment:  379
