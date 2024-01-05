@@ -3,9 +3,10 @@ module load Nextflow/23.04.2
 house=$(pwd)
 data=toy_example
 now=`date +"%Y_%m_%d_%H_%M_%S"`
-output=toy_example_${now}
+output_name=toy_example_${now}
+output_folder=$house/results/$output_name
 mkdir $house/results
-mkdir $house/results/$output
+mkdir $house/results/$output_name
 nextflow run simsapiper.nf \
     -profile hpc,withsingularity \
     --data $house/$data/data \
@@ -18,7 +19,7 @@ nextflow run simsapiper.nf \
     --dssp true \
     --squeeze "H,G,E" \
     --reorder true \
-    --outFolder $house/results/$output \
-    |& tee  $house/results/$output/$output.nflog
-sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $house/results/$output/$output.nflog)
-nextflow log | grep $sessionName >> $house/results/$output/$output.nflog
+    --outFolder $output_folder \
+    |& tee  $output_folder/run_report_$output_name.nflog
+sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $output_folder/run_report_$output_name.nflog)
+nextflow log | grep $sessionName >> $output_folder/run_report_$output_name.nflog
