@@ -1,5 +1,4 @@
 #!/bin/bash
-module load Nextflow/23.04.2
 house=$(pwd)
 data=SIMSApiper_TIMbarrels_no_subsets_Tcoffee
 now=`date +"%Y_%m_%d_%H_%M_%S"`
