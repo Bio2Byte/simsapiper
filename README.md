@@ -31,11 +31,11 @@ The directory contains:
 
 Enable recommended settings using **--magic**
 ```
-nextflow run simsapiper.nf -profile server,withsingularity --data toy_example/data --magic
+nextflow run simsapiper.nf -profile server,withsingularity --data toy_example/data --magic --squeeze "H,G,E" --minSubsetID 20
 ```
 or use 
 ```
-./magic_align.sh
+./toy_example_launch_file.sh
 ```
 This file can also be double-clicked to run the toy_example dataset.
 
