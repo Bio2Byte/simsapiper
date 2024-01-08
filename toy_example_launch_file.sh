@@ -1,5 +1,4 @@
 #!/bin/bash
-module load Nextflow/23.04.2
 house=$(pwd)
 data=toy_example
 now=`date +"%Y_%m_%d_%H_%M_%S"`
@@ -13,6 +12,7 @@ nextflow run simsapiper.nf \
     --seqQC 5 \
     --dropSimilar 90 \
     --createSubsets 30 \
+    --minSubsetID 20 \
     --retrieve true \
     --model true \
     --strucQC 5 \
