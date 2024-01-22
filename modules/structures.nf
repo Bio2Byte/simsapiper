@@ -40,7 +40,10 @@ process getAFmodels {
     """
     echo Fetching model ${id} from AFDB
 
-    curl https://alphafold.ebi.ac.uk/files/AF-${id}-F1-model_v4.pdb -o ${id}.pdb
+    result=\$(echo ${id} | cut -d '_' -f 1)
+    echo \$result
+
+    curl https://alphafold.ebi.ac.uk/files/AF-\${result}-F1-model_v4.pdb -o ${id}.pdb
 
     find . -type f -name "*.pdb" -size -2k -exec bash -c 'mv "\$1" "\${1%.pdb}".fail' - '{}' +
     """

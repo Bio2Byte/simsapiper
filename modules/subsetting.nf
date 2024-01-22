@@ -42,7 +42,7 @@ process cdHitSubsetting{
 
     input:
     path sequencesValid
-    val initclustering
+    val initcluster
     val minSubsetSimilarity
     val maxSubsetSize
 
@@ -52,13 +52,20 @@ process cdHitSubsetting{
 
     script:
     """
-    result_perc=\$(echo $initclustering 5 | awk '{ print \$1+\$2-\$1*\$2 }')
+    attempt=$task.attempt
+    echo "Attempt \$attempt"
+
+    factor=\$(echo 5 \$attempt | awk '{ print \$1*\$2-\$1 }')
+    echo "factor \$factor"
+    clustering=\$(echo $initcluster \$factor | awk '{ print \$1-\$2 }')
+
+
+    outname=${sequencesValid.baseName}_\${clustering}_clustered
+    echo "try with \$clustering"
+   
+    result_perc=\$(echo \$clustering 100 | awk '{ print \$1/\$2 }')
     result_perc=\$(echo "\$result_perc" |tr ',' '.')
 
-    clustering=\$(echo \$result_perc 100 | awk '{ print \$1/\$2 }')
-    clustering=\$(echo "\$clustering" |tr ',' '.')
-    
-    outname=${sequencesValid.baseName}_\${clustering}_clustered
 
     if ((\$clustering >=40)); then
          if ((\$clustering >=70)); then
@@ -74,6 +81,7 @@ process cdHitSubsetting{
     else
         $projectDir/bin/psi-cd-hit.pl -i ${sequencesValid} -o \$outname  -c \$result_perc 
     fi
+
 
     python3 $projectDir/bin/cluster_to_subset.py ${sequencesValid} \${outname}.clstr \$result_perc $minSubsetSimilarity $maxSubsetSize
     """

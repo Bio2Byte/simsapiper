@@ -146,7 +146,7 @@ workflow {
 
     //joined.modelFound.view{"Provided model matched:" + it[0]}
     joined.modelFound.count().view{"Provided model matched:" + it}
-    joined.sequenceNotFound.view {"Model without matching sequence:" +it[0]}
+    joined.sequenceNotFound.count().view {"Model without matching sequence:" +it}
     nosequenceModels = joined.sequenceNotFound.map{it[1]}
 
 
