@@ -47,6 +47,7 @@ User provides fasta files with subsets (--useSubsets): $params.useSubsets
 Retrieve protein structure models from AFDB (--retrieve): $params.retrieve
 Predict protein structure models with ESM Atlas (--model): $params.model
 Predict protein structure models with Local ESMfold (--localModel): $params.localModel
+    !Add factor for each multiple of 300 you expect to model to allocate more time
 Maximal % of sequences not matched to a model (--strucQC 5): $params.strucQC
 ================================================================================
                                 ALINGMENT PARAMETERS
