@@ -72,8 +72,13 @@ process missingQC {
     script:
 
     """
+    if [ $missing = "true" ];then
+        missing=0
+    else
+        missing=$missing
+    fi
 
-    result=\$(echo $missing $all | awk '{ print \$1/\$2 }')
+    result=\$(echo \$missing $all | awk '{ print \$1/\$2 }')
     result=\$(echo "\$result" |tr ',' '.')
 
     result_perc=\$(awk -v res=\$result -v perc=100 'BEGIN{print (res*perc); }')

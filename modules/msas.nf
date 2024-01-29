@@ -10,6 +10,7 @@ process runTcoffee {
     path seqsToAlign
     path strucsToAlign
     val tcoffeeParams
+    val gate
 
     output:
     path "*.aln", emit : msa

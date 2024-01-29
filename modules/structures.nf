@@ -73,3 +73,25 @@ process runDssp{
     //T = H-bonded turn
     //S = beta-bend or beta-turn
 }
+
+
+process esmFolds{
+    publishDir "$params.structures", mode: "copy"
+    //errorStrategy { task.attempt > 3 ? 'retry' : 'complete' }
+    
+    input:
+    path structureless
+
+    output:
+    path "*.pdb", emit: esmFoldsStructures
+    val true, emit: gate
+
+    script:
+    """
+    head $structureless
+    export TORCH_HOME=\$VSC_SCRATCH_VO/ESMFold
+     
+    python3 $projectDir/bin/esmfold_inference.py --chunk-size 32 -i $structureless -o .
+    """
+
+}

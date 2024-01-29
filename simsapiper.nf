@@ -46,6 +46,7 @@ User provides fasta files with subsets (--useSubsets): $params.useSubsets
 
 Retrieve protein structure models from AFDB (--retrieve): $params.retrieve
 Predict protein structure models with ESM Atlas (--model): $params.model
+Predict protein structure models with Local ESMfold (--localModel): $params.localModel
 Maximal % of sequences not matched to a model (--strucQC 5): $params.strucQC
 ================================================================================
                                 ALINGMENT PARAMETERS
@@ -69,6 +70,7 @@ include {readSeqs as convertSeqs;
             writeFastaFromChannel as writeFastaFromMissing ;
             writeFastaFromChannel as writeFastaFromFound ;
             writeFastaFromChannel as writeFastaFromSeqsInvalid ;
+            writeFastaFromChannel as writeFastaFromSeqsValid ;
 } from "$projectDir/modules/utils"
 
 include {userSubsetting;
@@ -80,6 +82,7 @@ include {
     fetchEsmAtlasStructure;
     getAFmodels;
     runDssp;
+    esmFolds;
 } from "$projectDir/modules/structures"
 
 include{
@@ -230,10 +233,22 @@ workflow {
     writeFastaFromMissing(finalMissingModels.map{record -> ">"+ record[0] + ',' + record[2]}.collect(), 'structureless_seqs.fasta')
     structureless_seqs = writeFastaFromMissing.out.found
 
-    missingQC (allSequencesCount, structurelessCount, params.strucQC)
+    //run local esmfold
+    if (params.localModel){
+        esmFolds(structureless_seqs)
+        esmFoldsGate = esmFolds.out.gate 
+        
+        writeFastaFromSeqsValid (seqIDs.map{record -> ">"+ record[0]+ ',' + record[1]}.collect(),'seqs_to_align.fasta')
 
-    writeFastaFromFound(finalModelFound.map{record ->  ">"+ record[0] + ',' + record[2]}.collect(), 'seqs_to_align.fasta')
-    foundSeqs = writeFastaFromFound.out.found
+        foundSeqs = writeFastaFromSeqsValid.out.found
+        missingQC (allSequencesCount, esmFoldsGate, params.strucQC)
+    
+    }else{
+        missingQC (allSequencesCount, structurelessCount, params.strucQC)
+        writeFastaFromFound(finalModelFound.map{record ->  ">"+ record[0] + ',' + record[2]}.collect(), 'seqs_to_align.fasta')
+        foundSeqs = writeFastaFromFound.out.found
+    }
+
 
     //subsetting
     if (params.useSubsets){
@@ -255,7 +270,7 @@ workflow {
     seqsToAlign = subSeqs.subsets
 
     //submit to tcoffee
-    runTcoffee(seqsToAlign, params.structures, params.tcoffeeParams)
+    runTcoffee(seqsToAlign, params.structures, params.tcoffeeParams, missingQC.out.gate)
     strucMsa =runTcoffee.out.msa.flatten()
 
     convertTCMsa('clustal', strucMsa)

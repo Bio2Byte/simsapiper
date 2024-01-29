@@ -38,7 +38,7 @@ process cdHitSubsetting{
     publishDir "$params.outFolder/seqs/CD-HIT_for_t-coffee", mode: "copy"
     
     errorStrategy 'retry'
-    maxRetries 15
+    maxRetries 5
 
     input:
     path sequencesValid
