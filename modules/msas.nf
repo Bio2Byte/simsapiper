@@ -3,8 +3,7 @@ process runTcoffee {
     publishDir "$params.outFolder/msas/t-coffee", mode: "copy" 
     tag "$seqsToAlign"
 
-    errorStrategy 'retry'
-    maxRetries 3
+    errorStrategy {task.attempt < 3 ? 'retry' : 'finish' }
 
     input:
     path seqsToAlign
@@ -164,7 +163,7 @@ process mapDssp{
 
     script:
     """
-    python3 $projectDir/bin/map_dssp.py $msa dssp_${msa.baseName}
+    python3 $projectDir/bin/map_dssp.py $msa dssp_${msa.baseName} dssp
     """
 }
 

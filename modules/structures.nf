@@ -85,6 +85,8 @@ process esmFolds{
     output:
     path "*.pdb", emit: esmFoldsStructures
     val true, emit: gate
+    path "esm_fold_statistics.csv"
+    path "*.pae"
 
     script:
     """
@@ -92,6 +94,7 @@ process esmFolds{
     export TORCH_HOME=\$VSC_SCRATCH_VO/ESMFold
      
     python3 $projectDir/bin/esmfold_inference.py --chunk-size 32 -i $structureless -o .
+    python3 $projectDir/bin/extract_plddt.py . esm_fold_statistics.csv .
     """
-
+    
 }

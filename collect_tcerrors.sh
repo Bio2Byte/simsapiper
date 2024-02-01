@@ -27,7 +27,7 @@ while read -r line; do
 
         # Copy tcoffee_*.log file to the current location
         if [ -n "$folder_path" ]; then
-            cp $folder_path/tcoffee_* ./${file_name}_tcoffee.fail
+            cp $folder_path/tcoffee_* ./${file_name}_${folders[0]}_${folders[1]}_tcoffee.fail
             echo "Copied tcoffee log from $folder_path to current location."
         else
             echo "Error: Folder with name $folder_path not found in ../../work/."

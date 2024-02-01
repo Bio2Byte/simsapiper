@@ -6,12 +6,12 @@ from Bio.PDB.DSSP import make_dssp_dict
 import numpy as np
 import glob
 
-#dssp_files = sys.argv[1]
-dssp_files = glob.glob("dssp/*.dssp")
 
 msa_file = sys.argv[1] #input file - finalMSA.fasta?
 annotated_dssp_msa = sys.argv[2] #output file that will be written- finalMSA_dssp.fasta?
 
+#dssp_files = glob.glob("dssp/*.dssp")
+dssp_files = glob.glob(sys.argv[3]+"/*.dssp") 
 
 
 def dssp_parse(dssp_file):
@@ -82,12 +82,12 @@ def map_msa_dssp(df):
         out_df= pd.concat([df_same,nomap])
         #drop seqs that have been collapsed with cd-hit
         out_df = out_df.dropna(subset = ['mapped_dssp'])
-        print (out_df)
+        #print (out_df)
     else:
         out_df = df_same
 
     write_fasta_from_df(out_df,annotated_dssp_msa)
-    print (out_df)
+    #print (out_df)
 
 def write_fasta_from_df(df,outname):
     out_name = outname + '.fasta'
@@ -107,7 +107,7 @@ def write_fasta_from_df(df,outname):
 #dssp_list = dssp_files.split(' ')
 dssp_parsed = {}
 for dssp_file in dssp_files:
-    id = dssp_file.split(".")[0].split("/")[1]
+    id = dssp_file.split(".")[0].split("/")[-1]
     if len(id.rsplit("_",1)) >1:
         if 'active' in id.rsplit("_",1)[1] : #remove _active or _inactive (only for AFms) 
             id = id.rsplit("_",1)[0]

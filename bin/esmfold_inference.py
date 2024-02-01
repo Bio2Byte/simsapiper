@@ -7,6 +7,7 @@ import typing as T
 from pathlib import Path
 from timeit import default_timer as timer
 
+import numpy as np
 import torch
 
 import esm
@@ -170,6 +171,9 @@ if __name__ == "__main__":
             raise
 
         output = {key: value.cpu() for key, value in output.items()}
+        
+       
+
         pdbs = model.output_to_pdb(output)
         tottime = timer() - start
         time_string = f"{tottime / len(headers):0.1f}s"
@@ -180,6 +184,14 @@ if __name__ == "__main__":
         ):
             output_file = args.pdb / f"{header}.pdb"
             output_file.write_text(pdb_string)
+             #get paes
+            pae = (output["aligned_confidence_probs"][0].cpu().numpy() * np.arange(64)).mean(-1) * 31
+            mask = output["atom37_atom_exists"][0,:,1] == 1
+            mask = mask.cpu()
+            pae = pae[mask,:][:,mask]
+            np.savetxt(f"{header}.pae", pae, "%.3f")
+
+
             num_completed += 1
             logger.info(
                 f"Predicted structure for {header} with length {len(seq)}, pLDDT {mean_plddt:0.1f}, "
