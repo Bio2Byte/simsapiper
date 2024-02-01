@@ -37,3 +37,13 @@ while read -r line; do
     fi
 done < "$log_file"
 
+for file in *fail; do
+    while read -r line; do
+        if [[ $line == *"WARNING: Could not use SEQRES field in structures/"* ]]; then
+            #match structures/A0A7S9PST3_E__Epichloe_festucae.pdb : /*_
+            echo "$line" | grep -oE '\/([^_]+)_' | sed 's/\// /; s/_$//' >> collected_fail_ids.txt
+        fi
+    done < $file
+done
+
+#use bin/parse_failids.py to filter them out of the sequence file 
