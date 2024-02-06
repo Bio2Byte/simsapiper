@@ -5,9 +5,9 @@ import glob
 p=sys.argv[1]
 #p='results/simsa_all_groel_80_enr_2024_01_30_15_12_49/collected_fail_ids.txt'
 
-fulldata=sys.argv[2]
+fulldatafiles=sys.argv[2]
 #fulldata='data/seqs/'
-fulldatafiles=glob.glob(fulldata+'*.fasta')
+f#ulldatafiles=glob.glob(fulldata+'*.fasta')
 
 with open(p,'r') as pf:
     l=pf.read().splitlines()
@@ -42,4 +42,6 @@ for f in fulldatafiles:
         with open(f[:-6]+'_filtered.fasta', 'a+') as of:
             of.write(nelem+'\n')
 
+    print('output file:', f[:-6]+'_filtered.fasta')
     print ("input seqs", int(len(fasta)/2-0.5), "filter:" ,len(l), 'ouput seqs:', int(len(outfasta)/2-0.5))
+

@@ -50,7 +50,8 @@ process getAFmodels {
 }
 
 process runDssp{
-    publishDir "$params.outFolder/dssp", mode: "copy"
+    
+    publishDir "$params.data/dssp", mode: "copy"
 
     input:
     path model

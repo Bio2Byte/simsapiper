@@ -1,12 +1,16 @@
 #!/bin/bash
 
-log_file="$1"
-# Check if the log file exists
-if [ ! -f "$log_file" ]; then
-    echo "Log file $log_file not found."
-    exit 1
-fi
+log_filepath="$1"
+log_file="${1}*.nflog"
+simsapath="$2"
 
+echo logfilepath: $1
+echo pipelinepath: $2
+
+tail -n 30 log_file
+
+
+echo 'Find failed T-coffee runs'
 
 # Extract information from the log file using regex
 while read -r line; do
@@ -27,7 +31,7 @@ while read -r line; do
 
         # Copy tcoffee_*.log file to the current location
         if [ -n "$folder_path" ]; then
-            cp $folder_path/tcoffee_* ./${file_name}_${folders[0]}_${folders[1]}_tcoffee.fail
+            cp $folder_path/.command.log ./${file_name}_${folders[0]}_${folders[1]}_tcoffee.fail
             echo "Copied tcoffee log from $folder_path to current location."
         else
             echo "Error: Folder with name $folder_path not found in ../../work/."
@@ -37,13 +41,23 @@ while read -r line; do
     fi
 done < "$log_file"
 
+
+echo "Collect problematic sequence identifiers"
+
 for file in *fail; do
     while read -r line; do
-        if [[ $line == *"WARNING: Could not use SEQRES field in structures/"* ]]; then
+            if [[ $line == *".pl structures/"* ]]; then
+            result=$(echo "$line" | grep -oE 'structures/[^.]+\.pdb')
+
             #match structures/A0A7S9PST3_E__Epichloe_festucae.pdb : /*_
-            echo "$line" | grep -oE '\/([^_]+)_' | sed 's/\// /; s/_$//' >> collected_fail_ids.txt
+            echo "$result" | grep -oE '\/([^_]+)_' | sed 's/\// /; s/_$//' >> collected_fail_ids.txt
         fi
     done < $file
 done
 
+echo "Create filtered sequence file, please rerun SIMSApiper with this"
+
 #use bin/parse_failids.py to filter them out of the sequence file 
+python3 ${2}bin/parse_failids.py collected_fail_ids.txt seqs/seqs_to_align.fasta 
+
+

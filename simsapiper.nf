@@ -46,8 +46,8 @@ User provides fasta files with subsets (--useSubsets): $params.useSubsets
 
 Retrieve protein structure models from AFDB (--retrieve): $params.retrieve
 Predict protein structure models with ESM Atlas (--model): $params.model
-Predict protein structure models with Local ESMfold (--localModel): $params.localModel
-    !Add factor for each multiple of 300 you expect to model to allocate more time
+Predict protein structure models with Local ESMfold (--localModel X): $params.localModel
+    !Add factor X for each 100 sequences you expect to model
 Maximal % of sequences not matched to a model (--strucQC 5): $params.strucQC
 ================================================================================
                                 ALINGMENT PARAMETERS
@@ -55,6 +55,7 @@ Maximal % of sequences not matched to a model (--strucQC 5): $params.strucQC
 Additional parameters for Tcoffee (--tcoffeeParams): $params.tcoffeeParams
 Additional parameters for MAFFT (--mafftParams "--localpair --maxiterate 1000"): $params.mafftParams
 Map DSSP to alignment (--dssp): $params.dssp
+Save DSSP files (--dsspPath): $params.dsspPath
 Squeeze alignment towards anchors (--squeeze "H,E"): $params.squeeze
     !Select secondary structure elements for anchor points according to DSSP annotation
 Set minimal occurence % of anchor element in MSA: (--squeezePerc 80): $params.squeezePerc
@@ -248,6 +249,7 @@ workflow {
         missingQC (allSequencesCount, structurelessCount, params.strucQC)
         writeFastaFromFound(finalModelFound.map{record ->  ">"+ record[0] + ',' + record[2]}.collect(), 'seqs_to_align.fasta')
         foundSeqs = writeFastaFromFound.out.found
+        esmFoldsGate = true
     }
 
 
@@ -288,12 +290,29 @@ workflow {
 
     //map to dssp
     if (params.dssp){
-        foundModels = userStructures.mix(protsFromAF,protsFromESM )
-        runDssp(foundModels, missingQC.out.gate)
+        foundModels = userStructures.mix(protsFromAF,protsFromESM ).map{mod -> tuple(mod.baseName, mod)}
+        foundDssps=Channel.fromPath("$params.dsspPath/*.dssp").map{dssp -> tuple(dssp.baseName, dssp)}
+        
+
+        foundModels.join(foundDssps, remainder:true)
+            .branch {
+                missingDssp: it[2] == null
+                missingModel: it[1] == null
+                matchedDssp: true
+            }.set{dsspFilter}
+         
+        
+        dsspFilter.missingDssp.count().view{"DSSP will be calculated for models:" + it}      
+        dsspFilter.missingModel.count().view{"DSSP file without matching model found, this is likely an error:" + it}
+        dsspFilter.matchedDssp.count().view{"DSSP files matched to models:" + it}
+
+        modsForDssp = dsspFilter.missingDssp.map{it -> it[1]}
+
+        runDssp(modsForDssp, missingQC.out.gate)
         dssps = runDssp.out.dsspout.collect()
 
         //relies on dssp being finished WAY before tcoffee alignment. 
-        mapDsspRough("$params.outFolder/dssp", finalMsa)
+        mapDsspRough("$params.dsspPath", finalMsa)
         mappedFinalMsa = mapDsspRough.out.mmsa
     }
 
@@ -303,7 +322,7 @@ workflow {
         squeezedMsa = squeeze.out.msa
 
         //map dssp to final msa
-        mapDsspSqueeze("$params.outFolder/dssp", squeezedMsa)
+        mapDsspSqueeze("$params.dsspPath", squeezedMsa)
         mappedFinalMsaSqueeze = mapDsspSqueeze.out.mmsa
     }else{squeezedMsa=finalMsa}
 
@@ -331,8 +350,7 @@ workflow.onComplete {
 }
 
 workflow.onError {
-    println "Oops... Pipeline execution stopped with the following message: ${workflow.errorMessage}"
-    println "Details: \n ${workflow.errorReport}"
+    println "Oops... Pipeline execution stopped with the following message: \n ${workflow.errorReport}"
     
 }
 
