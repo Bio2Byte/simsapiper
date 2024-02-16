@@ -1,20 +1,16 @@
 #!/bin/bash
 module load Nextflow/23.04.2
-house=/scratch/brussel/106/vsc10611/nf_tcoffee_bitbucket/
-data=Daan_beta_barrels
+house=$VSC_SCRATCH/simsapiper
+data=toy_example
 now=`date +"%Y_%m_%d_%H_%M_%S"`
-output_name=${now}_no_subset
+output_name=${data}_${now}_test
 output_folder=$house/results/$output_name
-mkdir -p $house/$data/results
+mkdir -p $house/results
 mkdir -p $output_folder
 nextflow run simsapiper.nf \
-    -profile hpc,withsingularity \
+    -profile hydra,withsingularity \
     --data $house/$data/data \
-    --seqQC 5 \
-    --createSubsets true \
-    --minSubsetID "min" \
-    --strucQC 5 \
-    --reorder true \
+    --magic \
     --outFolder $output_folder \
     -with-trace $output_folder/timing_$output_name.txt \
     |& tee  $output_folder/run_report_$output_name.nflog
