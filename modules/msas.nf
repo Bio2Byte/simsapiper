@@ -15,40 +15,71 @@ process runTcoffee {
 
     script:
     """
-    # Set up environment variables
-    export PATH="/software:/software/.t_coffee/bin/linux:/usr/local/bin:\$PATH"
-    export PLUGINS_4_TCOFFEE="/software/.t_coffee/plugins/linux"
-    export MAX_N_PID_4_TCOFFEE="\${MAX_N_PID_4_TCOFFEE:-5000000}"
-
     # Default values
     WORKING_DIRECTORY_4_TCOFFEE=\$PWD
     SEQUENCE=$seqsToAlign
-
-    CACHE_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/cache"
-    mkdir -p "\$CACHE_DIRECTORY"
-    echo "Cache directory: \$CACHE_DIRECTORY"
-
-    TMP_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/tmp"
-    mkdir -p "\$TMP_DIRECTORY"
-    echo "Temp directory: \$TMP_DIRECTORY"
-
     PDB_DIR=$strucsToAlign
-    echo "PDB directory: \$PDB_DIR"
+    CACHE_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/cache"
+    TMP_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/tmp"
+    PLUGINS_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/plugins"
+    TCOFFEE_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/"
+    OUTPUT_DIRECTORY=\$PWD
+    OUTPUT_PATH="\$OUTPUT_DIRECTORY"
+
+    # Check if all mandatory parameters are provided
+    if [[ -z "\$WORKING_DIRECTORY_4_TCOFFEE" || -z "\$SEQUENCE" || -z "\$PDB_DIR" || -z "\$OUTPUT_DIRECTORY" ]]; then
+    echo "Error: Missing arguments."
+    display_usage
+    exit 1
+    fi
+
+    # Create necessary directories
+    mkdir -p "\$CACHE_DIRECTORY"
+    mkdir -p "\$TMP_DIRECTORY"
+    mkdir -p "\$PLUGINS_DIRECTORY"
+    mkdir -p "\$TCOFFEE_DIRECTORY"
+    mkdir -p "\$OUTPUT_PATH"
+
+    # Set up environment variables
+    export MAX_N_PID_4_TCOFFEE="9000000"
     export PDB_DIR=\$PDB_DIR
+    export PLUGINS_4_TCOFFEE=\$PLUGINS_DIRECTORY
+    export DIR_4_TCOFFEE=\$TCOFFEE_DIRECTORY
+    export TMP_4_TCOFFEE=\$TMP_DIRECTORY
+    export CACHE_4_TCOFFEE=\$CACHE_DIRECTORY
+
+    echo "Working directory: \$WORKING_DIRECTORY_4_TCOFFEE"
+    echo "Cache directory: \$CACHE_DIRECTORY"
+    echo "Temp directory: \$TMP_DIRECTORY"
+    echo "Output directory: \$OUTPUT_PATH"
+    echo "Input sequence: \$SEQUENCE"
+    echo "PDB directory: \$PDB_DIR"
+    echo "Environment variables:"
+    echo "PATH: \$PATH"
+    echo "PLUGINS_4_TCOFFEE: \$PLUGINS_4_TCOFFEE"
+    echo "MAX_N_PID_4_TCOFFEE: \$MAX_N_PID_4_TCOFFEE"
+
+    # Run T-Coffee and save output to a unique log file
+    TIMESTAMP=\$(date +"%Y%m%d%H%M%S")
+    LOG_FILE="\$WORKING_DIRECTORY_4_TCOFFEE/tcoffee_\${TIMESTAMP}.log"
 
     echo "Running T-Coffee..."
-    t_coffee ${params.tcoffeeParams ? tcoffeeParams : ''} -thread ${task.cpus}  -in="\$SEQUENCE" \
+    t_coffee ${params.tcoffeeParams ? tcoffeeParams : ''} -thread 0 -in="\$SEQUENCE" \
         -method TMalign_pair \
+        -evaluate_mode=t_coffee_slow \
         -mode=3dcoffee \
-        -outfile=${seqsToAlign.baseName}.aln  -debug  
+        -pdb_min_cov=1 \
+        -outfile="\$OUTPUT_PATH/aligned_${seqsToAlign.baseName}.aln" > "\$LOG_FILE" 2>&1
 
     echo "T-Coffee execution completed successfully."
 
-    if grep -q "proba_pair" .command.log ; then
+    if grep -q "proba_pair" "\$LOG_FILE"; then
         echo "Error: File contains proba_pair, a HMM-based alignment tool that T-Coffee automatically runs when something is wrong with the structure models. If you want to proceed anyways, remove these lines from modules/msas.nf"
         exit 1
         fi
+     
     """
+
 }
 
 process mergeMafft {
