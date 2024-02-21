@@ -9,10 +9,19 @@ dssp_file = sys.argv[2] #final_MSA_dssp.fasta = MSA with dssp code instead of re
 squeeze = sys.argv[3]
 conserved_2structure_dssp = squeeze.split(',') # ["H","E"]
 
+#Replace "G" and "I" by "H" as they are equivalent. When couting the frequencies for "H" we will also look for "G" and "I"
+if "G" in conserved_2structure_dssp:
+    conserved_2structure_dssp.remove("G")
+    conserved_2structure_dssp.append("H")
+if "I" in conserved_2structure_dssp:
+    conserved_2structure_dssp.remove("I")
+    conserved_2structure_dssp.append("H")
+conserved_2structure_dssp=list(dict.fromkeys(conserved_2structure_dssp))
+
 anchor_point = int(sys.argv[4]) / 100
 
 if anchor_point > 0: 
-    print ('Conservation of secondary structure element per position is %', anchor_point )
+    print ('Conservation of secondary structure element per position is %', anchor_point*100 )
 else:
     raise ValueError('Conservation of secondary structure element per position must be larger then 0%! Try adding --squeezePerc 80 to your command line ')
     
@@ -47,7 +56,10 @@ last_structured = 0
 for conserved in conserved_2structure_dssp:
     positions = []
     for position,column in enumerate(transposed_dsspMSA_array):
-        count = list(column).count(conserved)
+        if conserved == "H" or conserved == "G" or conserved == "I": #As H,G,I all stand for helix ss, we consider them as the same ss
+            count = list(column).count("H")+list(column).count("G")+list(column).count("I")
+        else:
+            count = list(column).count(conserved)
         freq = count/len(list(column))
         if freq >= anchor_point:
             positions.append(position) #positions part of the anchor region
@@ -83,7 +95,7 @@ for i in range(len(structure_elements) - 1):
     ss_end = structure_elements[i + 1][1][0]
     loop_name = f'loop{i + 1}'
     loop_regions.append((loop_name, (ss_start, ss_end)))
-loop_regions.append((f'loop_final', (last_structured, alignment_length)))
+loop_regions.append((f'loop_final', (last_structured, alignment_length-1))) #all the positions are in Python counting 
 
 #all 2nd structure elements
 all_regions = loop_regions
