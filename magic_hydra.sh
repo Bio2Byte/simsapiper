@@ -12,6 +12,7 @@ nextflow run simsapiper.nf \
     --data $house/$data/data \
     --magic \
     --outFolder $output_folder \
+    -with-trace $output_folder/timing_$output_name.txt \
     |& tee  $output_folder/run_report_$output_name.nflog
 sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $output_folder/run_report_$output_name.nflog)
 nextflow log | grep $sessionName >> $output_folder/run_report_$output_name.nflog
