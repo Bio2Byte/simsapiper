@@ -95,7 +95,7 @@ for i in range(len(structure_elements) - 1):
     ss_end = structure_elements[i + 1][1][0]
     loop_name = f'loop{i + 1}'
     loop_regions.append((loop_name, (ss_start, ss_end)))
-loop_regions.append((f'loop_final', (last_structured, alignment_length-1))) #all the positions are in Python counting 
+loop_regions.append((f'loop_final', (last_structured, alignment_length))) #all the positions are in Python counting 
 
 #all 2nd structure elements
 all_regions = loop_regions
