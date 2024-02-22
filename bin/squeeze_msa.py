@@ -63,15 +63,16 @@ for conserved in conserved_2structure_dssp:
         freq = count/len(list(column))
         if freq >= anchor_point:
             positions.append(position) #positions part of the anchor region
+    print(positions)
     if positions == []:
-        print('The secondary structure element',conserved,'was not found in all sequences')
+        print('The secondary structure element',conserved,'doesn"t seem to be a conserved element in your dataset. It will be ignored for the squeezing.')
         continue
     else:
     #find start and end anchor points
         start = positions[0]
         stop = None
         counter = 1
-        for i in range(1, len(positions)-1):
+        for i in range(1, len(positions)):
             if positions[i] - positions[i - 1] != 1:
                 stop = positions[i-1]
             if stop != None:
@@ -84,6 +85,7 @@ for conserved in conserved_2structure_dssp:
             last_structured = positions[-1]
 
 structure_elements = sorted(structure_elements, key=lambda x: x[1][0]) #sort it in ascending order
+print(structure_elements)
 
 #add the unstructured regions
 #here, with loop in mean all 2nd structure elements that are not in conserved_2structure_dssp 
@@ -101,7 +103,7 @@ loop_regions.append((f'loop_final', (last_structured, alignment_length))) #all t
 all_regions = loop_regions
 all_regions.extend(structure_elements)
 all_regions = sorted(all_regions, key=lambda x: x[1][0])
-
+print(all_regions)
 # Get the minimum loop's length
 loop_len = []
 for region in loop_regions:

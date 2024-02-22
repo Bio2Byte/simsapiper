@@ -77,7 +77,7 @@ def handle_unmappable(df):
                     fixed = True
                 elif aligned_model_seq[0] != "-" and aligned_model_seq[-1]== "-": #longer at the end 
                     for i in range(len(aligned_model_seq)-1):
-                        if aligned_model_seq[i]=="-" and aligned_model_seq[i+1]!='-':
+                        if aligned_model_seq[i]!="-" and aligned_model_seq[i+1]=='-':
                             start_back_alignment = i+1
                             break
                     dssp=dssp+unali_seq[start_back_alignment:]
@@ -86,8 +86,8 @@ def handle_unmappable(df):
                     for i in range(len(aligned_model_seq)-1):
                         if aligned_model_seq[i]=="-" and aligned_model_seq[i+1]!='-':
                             end_front_alignment = i+1
-                        elif aligned_model_seq[i-1]!="-" and aligned_model_seq[i]=='-':
-                            start_back_alignment = i
+                        elif aligned_model_seq[i]!="-" and aligned_model_seq[i+1]=='-':
+                            start_back_alignment = i+1
                             break
                     dssp = unali_seq[:end_front_alignment] + dssp + unali_seq[start_back_alignment:]
                     fixed = True
@@ -96,25 +96,25 @@ def handle_unmappable(df):
                     df.at[index, 'same'] = True
             elif gap_count_unali > 1 and gap_count_model==0: #seq is shorter than seq model
                 if aligned_unali_seq[0] == "-" and aligned_unali_seq[-1] != "-": #longer at the front
-                    for i in range(len(aligned_model_seq)-1):
+                    for i in range(len(aligned_unali_seq)-1):
                         if aligned_unali_seq[i]=="-" and aligned_unali_seq[i+1]!='-':
                             end_front_alignment = i+1
                             break
                     dssp=dssp[end_front_alignment:]
                     fixed = True
                 elif aligned_unali_seq[0] != "-" and aligned_unali_seq[-1] == "-": #longer at the end 
-                    for i in range(len(aligned_model_seq)-1):
-                        if aligned_model_seq[i]=="-" and aligned_model_seq[i+1]!='-':
+                    for i in range(len(aligned_unali_seq)-1):
+                        if aligned_unali_seq[i]!="-" and aligned_unali_seq[i+1]=='-':
                             start_back_alignment = i+1
                             break
                     dssp=dssp[:start_back_alignment]
                     fixed = True
                 elif aligned_unali_seq[0] == "-" and aligned_unali_seq[-1]== "-": #longer both at front and end of protein
-                    for i in range(len(aligned_model_seq)-1):
+                    for i in range(len(aligned_unali_seq)-1):
                         if aligned_unali_seq[i]=="-" and aligned_unali_seq[i+1]!='-':
                             end_front_alignment = i+1
-                        elif aligned_unali_seq[i-1]!="-" and aligned_unali_seq[i]=='-':
-                            start_back_alignment = i
+                        elif aligned_unali_seq[i]!="-" and aligned_unali_seq[i+1]=='-':
+                            start_back_alignment = i+1
                             break
                     dssp = dssp[end_front_alignment:start_back_alignment]
                     fixed = True
