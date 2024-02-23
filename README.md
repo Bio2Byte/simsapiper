@@ -205,8 +205,8 @@ Input: `data/structures/`
 - Sequence labels and the structure filenames must match exactly! \
     \>P25106 will only match P25106.pdb
 - Can be experimentally generated structures, from the PDB or modeled structures
-- Squeezing (step 6) will fail if files contain more than one chain, large gaps, mutations
-	- Extract a specific chain: [pdb-tools](http://www.bonvinlab.org/pdb-tools/)
+- Good to know:
+	- Make sure your file contains only your chain of interest. Otherwise, extract a specific chain: [pdb-tools](http://www.bonvinlab.org/pdb-tools/)
 	- Mutations in 3D structure will not impact MSA quality if mutations do not impact the overall organisation of the protein
 	- Omit these issues by using predicted 3D models, even poor AlphaFold models have been [shown](https://doi.org/10.1093/bioinformatics/btac625) to improve the quality of MSAs
 - Compute your own AlphaFold2 model using [ColabFold](https://colab.research.google.com/github/deepmind/alphafold/blob/main/notebooks/AlphaFold.ipynb) (very user friendly) or directly the [AlphaFold2](https://github.com/deepmind/alphafold) software instead of relying on [ESMFold](https://esmatlas.com/resources?action=fold) if
@@ -409,7 +409,8 @@ Output: `results/outFolder/msas/dssp_merged_finalmsa_alignment.fasta`
 - Map [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html) on sequences of the MSA, conserving the gaps.
 
 Common Issues:
-- Mapping fails if sequence of model and sequence do not match exactly (eg. structure file contains more than one chain, large gaps, mutations) : sequence is added to mapped alignment without being converted to its DSSP codes
+- Mapping fails if the sequence of the model and the sequence have the same length but are more than 5% different because of point mutations or have different lengths because of deletion/insertion mutations: these troublesome sequences can be find in the `results/outFolder/msas/unmappable.fasta` file and will be added to the mapped alignment without being converted to their DSSP codes
+- Your structure file contains more than one chain: extract a specific chain using [pdb-tools](http://www.bonvinlab.org/pdb-tools/) or use predicted models
 
 ### 7.2 Squeeze MSA towards conserved secondary structure elements (--squeeze)
 Output: `results/outFolder/msas/squeezed_dssp_merged_finalmsa_alignment.fasta`
@@ -422,11 +423,16 @@ How?
 
 - Identifying conserved secondary structure elements such as ɑ-helices and β-sheets with **--squeeze “H,E”**, and squeeze MSA towards these regions
 - Select threshold for region to be considered 'conserved' with **--squeezePerc**
+- Note: The DSSP codes representing helices, i.e, H, G and I, are considered the same by SIMSApiper.
 
 ### 7.3 Map DSSP to squeezed MSA
 Output: `results/outFolder/msas/dssp_squeezed_dssp_merged_finalmsa_alignment.fasta`
 
 - Map [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html) on sequences of the squeezed MSA, conserving the gaps.
+
+Common Issues:
+- Mapping fails if the sequence of the model and the sequence have the same length but are more than 5% different because of point mutations or have different lengths because of deletion/insertion mutations: these troublesome sequences can be find in the `results/outFolder/msas/unmappable.fasta` file and will be added to the mapped alignment without being converted to their DSSP codes
+-  Your structure file contains more than one chain: extract a specific chain using [pdb-tools](http://www.bonvinlab.org/pdb-tools/) or use predicted models
 
 ## 8. Reorder MSA (--reorder)
 Output: `results/outFolder/reordered_*_merged_finalmsa_alignment.fasta`
