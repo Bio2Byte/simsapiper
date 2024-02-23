@@ -56,13 +56,30 @@ def handle_unmappable(df):
         print(dssp)
 
         if len(model_seq)==len(unali_seq): #unmatching is because of point mutations, we ignore point mutations
-            df.at[index, 'same'] = True
+            counter = 0
+            for i,j in zip(model_seq,unali_seq): #how many point mutations
+                if i!=j:
+                    counter+=1
+            if counter <= 0.05*len(unali_seq): # less than 5% can be mutated
+                df.at[index, 'same'] = True
+            else:
+                print(f"Could not match the sequence of {row['label']} to the sequence of its 3D model probably because more than 5% of the sequence has been mutated. This can affect the alignment quality. Please check the file './msas/unmappable.txt' file.")
         else: #either the sequence of entry of the sequence of the 3D structure/model have different length
             # align
             alignments = pairwise2.align.globalms(model_seq, unali_seq,2, -1, -10, -0.1)
             print(alignments)
             aligned_model_seq = alignments[0][0]
             aligned_unali_seq = alignments[0][1]
+
+            #When there are 2 Met at the start of 1 of the sequences and only 1 at the start of the other seq, then the alignment gets confused and always align the first Met and inserts a gap
+            #hacky way to circumvent this
+            if "M" == aligned_unali_seq[0] and "-" == aligned_unali_seq[1]:
+                aligned_unali_seq[0] == "-"
+                aligned_unali_seq[1] == "-"
+            elif "M" == aligned_model_seq[0] and "-" == aligned_model_seq[1]:
+                aligned_model_seq[0] == "-"
+                aligned_model_seq[1] == "-"
+
             # Count gaps
             gap_count_unali = aligned_unali_seq.count('-')
             gap_count_model = aligned_model_seq.count('-')
@@ -121,8 +138,9 @@ def handle_unmappable(df):
                 if fixed:
                     df.at[index, 'dssp'] = dssp
                     df.at[index, 'same'] = True
-
-
+            else:
+                print(f"Could not match the sequence of {row['label']} to the sequence of its 3D model probably because your sequence does not match the sequence of the given 3D model. This can affect the alignment quality. Please check the file './msas/unmappable.txt' file.")
+        print(dssp) 
 def map_msa_dssp(df):
     #cases that make modelseq != msaseq:
     #   -used esm fold, but sequence had X? (add more gaps)
@@ -134,8 +152,6 @@ def map_msa_dssp(df):
     df['unali'] =  df.seq.str.replace('-','')
 
     df['same'] = np.where((df.model == df.seq.str.replace('-','')), True, False)
-
-    df.to_csv("before_clean_dssp_csv.csv")
 
     handle_unmappable(df)
 
@@ -161,7 +177,7 @@ def map_msa_dssp(df):
 
     df_false = df[df.same==False]
     if len(df_false) >0: 
-        error_df = df_false.filter(items=['label', 'dssp'])
+        error_df = df_false.filter(items=['label', 'unali','model','dssp'])
         write_fasta_from_df(error_df,'unmappable_dssp')
 
         #for seqs without dssp match, just add the sequence back
@@ -179,14 +195,31 @@ def map_msa_dssp(df):
 def write_fasta_from_df(df,outname):
     out_name = outname + '.fasta'
 
-    df.iloc[:,0]= df.iloc[:,0] + '\n'
+    lines = []
 
-    rows = df.to_string(header=False,index=False,index_names=False).split('\n')
+    if outname == "unmappable_dssp":
+        for i in range(len(df)):
+            line = df.iloc[i,0]+"_seq_inputted" + "\n"+ df.iloc[i,1]
+            lines.append(line)
+            line = df.iloc[i,0]+"_seq_model" + "\n"+ df.iloc[i,2]
+            lines.append(line)
+            line = df.iloc[i,0]+"_dssp" + "\n"+ df.iloc[i,3]
+            lines.append(line)
 
-    with open (out_name, 'w') as m:
-        for row in rows:
-            row = row.replace('\\n','\n').replace(' ','')
-            m.write( row + '\n')
+        with open (out_name, 'w') as m:
+                for line in lines:
+                    line = line.replace('\\n','\n').replace(' ','')
+                    m.write( line + '\n')
+    
+    else:
+        df.iloc[:,0]= df.iloc[:,0] + '\n'
+
+        rows = df.to_string(header=False,index=False,index_names=False).split('\n')
+
+        with open (out_name, 'w') as m:
+            for row in rows:
+                row = row.replace('\\n','\n').replace(' ','')
+                m.write( row + '\n')
 
 
 #dssp_list = dssp_files.split(' ')
