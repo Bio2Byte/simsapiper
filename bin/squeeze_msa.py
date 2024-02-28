@@ -76,8 +76,9 @@ for conserved in conserved_2structure_dssp:
             if positions[i] - positions[i - 1] != 1:
                 stop = positions[i-1]
             if stop != None:
-                structure_elements.append((conserved+str(counter),(start,stop+1)))
-                counter +=1
+                if stop-start+1 > 2: #we need at least 3 consecutive columns with enough conserved secondary structure elements before considering it as an anchor region
+                    structure_elements.append((conserved+str(counter),(start,stop+1)))
+                    counter +=1
                 stop = None
                 start = positions[i]
         structure_elements.append((conserved+str(counter),(start,positions[-1])))
@@ -120,9 +121,11 @@ with open(output_file, "w+") as outfile:
     fasta_sequences = SeqIO.parse(open(input_file), 'fasta')
     for fasta in fasta_sequences:
         name, sequence = fasta.id, str(fasta.seq)
+        print(sequence)
         outfile.write(">" + name + "\n")
         new_align = str()
         for region, length in zip(all_regions, loop_len):
+            print("length",length)
             if region[0].startswith("loop"):
                 nogaps_seq = sequence[region[1][0]:region[1][1]].replace("-", "")
                 if region[0] == "loop0":
@@ -133,4 +136,5 @@ with open(output_file, "w+") as outfile:
                     new_align += nogaps_seq[0:len(nogaps_seq)//2] + "-"*(length - len(nogaps_seq)) + nogaps_seq[len(nogaps_seq)//2:]
             else:
                 new_align += sequence[region[1][0]:region[1][1]]
+            print(new_align)
         outfile.write(new_align + "\n")

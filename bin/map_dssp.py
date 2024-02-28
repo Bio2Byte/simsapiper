@@ -11,9 +11,7 @@ from Bio import pairwise2, SeqIO
 msa_file = sys.argv[1] #input file - finalMSA.fasta?
 annotated_dssp_msa = sys.argv[2] #output file that will be written- finalMSA_dssp.fasta?
 
-#dssp_files = glob.glob("dssp/*.dssp")
-dssp_files = glob.glob(sys.argv[3]+"/*.dssp") 
-dssp_folder = sys.argv[3]
+dssp_files = glob.glob("dssp/*.dssp")
 
 def dssp_parse(dssp_file):
         dssp_tup = make_dssp_dict(dssp_file)
@@ -39,119 +37,116 @@ def match_msa(dssp_parsed,msa_file):
 
     df = msa_df.merge(dssp_df, how='outer', on='label')
 
-    print(df.iloc[[2]])
+    print(df)
     return (df)
 
 def handle_unmappable(df):
     # Iterate over rows where df.same == False
     for index, row in df[df['same'] == False].iterrows():
-        print(row)
-        fixed=False
-        model_seq = row['model']
-        unali_seq = row['unali']
-        dssp = row['dssp']
+        if type(row['model']) == str :
+            print(row)
+            fixed=False
+            model_seq = row['model']
+            unali_seq = row['unali']
+            dssp = row['dssp']
 
-        print(unali_seq)
-        print(model_seq)
-        print(dssp)
+            print(unali_seq)
+            print(model_seq)
+            print(dssp)
 
-        if len(model_seq)==len(unali_seq): #unmatching is because of point mutations, we ignore point mutations
-            counter = 0
-            for i,j in zip(model_seq,unali_seq): #how many point mutations
-                if i!=j:
-                    counter+=1
-            if counter <= 0.05*len(unali_seq): # less than 5% can be mutated
-                df.at[index, 'same'] = True
-            else:
-                print(f"Could not match the sequence of {row['label']} to the sequence of its 3D model probably because more than 5% of the sequence has been mutated. This can affect the alignment quality. Please check the file './msas/unmappable.txt' file.")
-        else: #either the sequence of entry of the sequence of the 3D structure/model have different length
-            # align
-            alignments = pairwise2.align.globalms(model_seq, unali_seq,2, -1, -10, -0.1)
-            print(alignments)
-            aligned_model_seq = alignments[0][0]
-            aligned_unali_seq = alignments[0][1]
-
-            #When there are 2 Met at the start of 1 of the sequences and only 1 at the start of the other seq, then the alignment gets confused and always align the first Met and inserts a gap
-            #hacky way to circumvent this
-            if "M" == aligned_unali_seq[0] and "-" == aligned_unali_seq[1]:
-                aligned_unali_seq[0] == "-"
-                aligned_unali_seq[1] == "-"
-            elif "M" == aligned_model_seq[0] and "-" == aligned_model_seq[1]:
-                aligned_model_seq[0] == "-"
-                aligned_model_seq[1] == "-"
-
-            # Count gaps
-            gap_count_unali = aligned_unali_seq.count('-')
-            gap_count_model = aligned_model_seq.count('-')
-
-            if gap_count_unali == 0 and gap_count_model>1: #seq model is shorter than seq
-                if aligned_model_seq[0] == "-" and aligned_model_seq[-1]!= "-": #longer at the front
-                    for i in range(len(aligned_model_seq)-1):
-                        if aligned_model_seq[i]=="-" and aligned_model_seq[i+1]!='-':
-                            end_front_alignment = i+1
-                            break
-                    dssp=unali_seq[:end_front_alignment]+dssp
-                    fixed = True
-                elif aligned_model_seq[0] != "-" and aligned_model_seq[-1]== "-": #longer at the end 
-                    for i in range(len(aligned_model_seq)-1):
-                        if aligned_model_seq[i]!="-" and aligned_model_seq[i+1]=='-':
-                            start_back_alignment = i+1
-                            break
-                    dssp=dssp+unali_seq[start_back_alignment:]
-                    fixed = True
-                elif aligned_model_seq[0] == "-" and aligned_model_seq[-1]== "-": #longer both at front and end of protein
-                    for i in range(len(aligned_model_seq)-1):
-                        if aligned_model_seq[i]=="-" and aligned_model_seq[i+1]!='-':
-                            end_front_alignment = i+1
-                        elif aligned_model_seq[i]!="-" and aligned_model_seq[i+1]=='-':
-                            start_back_alignment = i+1
-                            break
-                    dssp = unali_seq[:end_front_alignment] + dssp + unali_seq[start_back_alignment:]
-                    fixed = True
-                if fixed:
-                    df.at[index, 'dssp'] = dssp
+            if len(model_seq)==len(unali_seq): #unmatching is because of point mutations, we ignore point mutations
+                counter = 0
+                for i,j in zip(model_seq,unali_seq): #how many point mutations
+                    if i!=j:
+                        counter+=1
+                if counter <= 0.05*len(unali_seq): # less than 5% can be mutated
                     df.at[index, 'same'] = True
-            elif gap_count_unali > 1 and gap_count_model==0: #seq is shorter than seq model
-                if aligned_unali_seq[0] == "-" and aligned_unali_seq[-1] != "-": #longer at the front
-                    for i in range(len(aligned_unali_seq)-1):
-                        if aligned_unali_seq[i]=="-" and aligned_unali_seq[i+1]!='-':
-                            end_front_alignment = i+1
-                            break
-                    dssp=dssp[end_front_alignment:]
-                    fixed = True
-                elif aligned_unali_seq[0] != "-" and aligned_unali_seq[-1] == "-": #longer at the end 
-                    for i in range(len(aligned_unali_seq)-1):
-                        if aligned_unali_seq[i]!="-" and aligned_unali_seq[i+1]=='-':
-                            start_back_alignment = i+1
-                            break
-                    dssp=dssp[:start_back_alignment]
-                    fixed = True
-                elif aligned_unali_seq[0] == "-" and aligned_unali_seq[-1]== "-": #longer both at front and end of protein
-                    for i in range(len(aligned_unali_seq)-1):
-                        if aligned_unali_seq[i]=="-" and aligned_unali_seq[i+1]!='-':
-                            end_front_alignment = i+1
-                        elif aligned_unali_seq[i]!="-" and aligned_unali_seq[i+1]=='-':
-                            start_back_alignment = i+1
-                            break
-                    dssp = dssp[end_front_alignment:start_back_alignment]
-                    fixed = True
-                if fixed:
-                    df.at[index, 'dssp'] = dssp
-                    df.at[index, 'same'] = True
-            else:
-                print(f"Could not match the sequence of {row['label']} to the sequence of its 3D model probably because your sequence does not match the sequence of the given 3D model. This can affect the alignment quality. Please check the file './msas/unmappable.txt' file.")
-        print(dssp) 
+                else:
+                    print(f"Could not match the sequence of {row['label']} to the sequence of its 3D model probably because more than 5% of the sequence has been mutated. This can affect the alignment quality. Please check the file './msas/unmappable.txt' file.")
+            else: #either the sequence of entry of the sequence of the 3D structure/model have different length
+                # align
+                alignments = pairwise2.align.globalms(model_seq, unali_seq,2, -1, -10, -0.1)
+                print(alignments)
+                aligned_model_seq = alignments[0][0]
+                aligned_unali_seq = alignments[0][1]
+
+                #When there are 2 Met at the start of 1 of the sequences and only 1 at the start of the other seq, then the alignment gets confused and always align the first Met and inserts a gap
+                #hacky way to circumvent this
+                if "M" == aligned_unali_seq[0] and "-" == aligned_unali_seq[1]:
+                    aligned_unali_seq[0] == "-"
+                    aligned_unali_seq[1] == "-"
+                elif "M" == aligned_model_seq[0] and "-" == aligned_model_seq[1]:
+                    aligned_model_seq[0] == "-"
+                    aligned_model_seq[1] == "-"
+
+                # Count gaps
+                gap_count_unali = aligned_unali_seq.count('-')
+                gap_count_model = aligned_model_seq.count('-')
+
+                if gap_count_unali == 0 and gap_count_model>1: #seq model is shorter than seq
+                    if aligned_model_seq[0] == "-" and aligned_model_seq[-1]!= "-": #longer at the front
+                        for i in range(len(aligned_model_seq)-1):
+                            if aligned_model_seq[i]=="-" and aligned_model_seq[i+1]!='-':
+                                end_front_alignment = i+1
+                                break
+                        dssp=unali_seq[:end_front_alignment]+dssp
+                        fixed = True
+                    elif aligned_model_seq[0] != "-" and aligned_model_seq[-1]== "-": #longer at the end 
+                        for i in range(len(aligned_model_seq)-1):
+                            if aligned_model_seq[i]!="-" and aligned_model_seq[i+1]=='-':
+                                start_back_alignment = i+1
+                                break
+                        dssp=dssp+unali_seq[start_back_alignment:]
+                        fixed = True
+                    elif aligned_model_seq[0] == "-" and aligned_model_seq[-1]== "-": #longer both at front and end of protein
+                        for i in range(len(aligned_model_seq)-1):
+                            if aligned_model_seq[i]=="-" and aligned_model_seq[i+1]!='-':
+                                end_front_alignment = i+1
+                            elif aligned_model_seq[i]!="-" and aligned_model_seq[i+1]=='-':
+                                start_back_alignment = i+1
+                                break
+                        dssp = unali_seq[:end_front_alignment] + dssp + unali_seq[start_back_alignment:]
+                        fixed = True
+                    if fixed:
+                        df.at[index, 'dssp'] = dssp
+                        df.at[index, 'same'] = True
+                elif gap_count_unali > 1 and gap_count_model==0: #seq is shorter than seq model
+                    if aligned_unali_seq[0] == "-" and aligned_unali_seq[-1] != "-": #longer at the front
+                        for i in range(len(aligned_unali_seq)-1):
+                            if aligned_unali_seq[i]=="-" and aligned_unali_seq[i+1]!='-':
+                                end_front_alignment = i+1
+                                break
+                        dssp=dssp[end_front_alignment:]
+                        fixed = True
+                    elif aligned_unali_seq[0] != "-" and aligned_unali_seq[-1] == "-": #longer at the end 
+                        for i in range(len(aligned_unali_seq)-1):
+                            if aligned_unali_seq[i]!="-" and aligned_unali_seq[i+1]=='-':
+                                start_back_alignment = i+1
+                                break
+                        dssp=dssp[:start_back_alignment]
+                        fixed = True
+                    elif aligned_unali_seq[0] == "-" and aligned_unali_seq[-1]== "-": #longer both at front and end of protein
+                        for i in range(len(aligned_unali_seq)-1):
+                            if aligned_unali_seq[i]=="-" and aligned_unali_seq[i+1]!='-':
+                                end_front_alignment = i+1
+                            elif aligned_unali_seq[i]!="-" and aligned_unali_seq[i+1]=='-':
+                                start_back_alignment = i+1
+                                break
+                        dssp = dssp[end_front_alignment:start_back_alignment]
+                        fixed = True
+                    if fixed:
+                        df.at[index, 'dssp'] = dssp
+                        df.at[index, 'same'] = True
+                else:
+                    print(f"Could not match the sequence of {row['label']} to the sequence of its 3D model probably because your sequence does not match the sequence of the given 3D model. This can affect the alignment quality. Please check the file './msas/unmappable.txt' file.")
+            print(dssp) 
 def map_msa_dssp(df):
-    #cases that make modelseq != msaseq:
-    #   -used esm fold, but sequence had X? (add more gaps)
-    #   -beginning, end, loops not resolved
-    #   -sg nuc mutation (easy)
-    # we need to rethink that, this is a lot of work. 
-    # probably align seqs and only map common regions? 
-    # for now return fasta file with non-matching seqs and their dssp
+
     df['unali'] =  df.seq.str.replace('-','')
 
     df['same'] = np.where((df.model == df.seq.str.replace('-','')), True, False)
+
+    df.to_csv("dssp_csv_before_handling.csv")
 
     handle_unmappable(df)
 
@@ -198,13 +193,14 @@ def write_fasta_from_df(df,outname):
     lines = []
 
     if outname == "unmappable_dssp":
-        for i in range(len(df)):
-            line = df.iloc[i,0]+"_seq_inputted" + "\n"+ df.iloc[i,1]
-            lines.append(line)
-            line = df.iloc[i,0]+"_seq_model" + "\n"+ df.iloc[i,2]
-            lines.append(line)
-            line = df.iloc[i,0]+"_dssp" + "\n"+ df.iloc[i,3]
-            lines.append(line)
+        if len(df)>2:
+            for i in range(len(df)):
+                line = df.iloc[i,0]+"_seq_inputted" + "\n"+ df.iloc[i,1]
+                lines.append(line)
+                line = df.iloc[i,0]+"_seq_model" + "\n"+ df.iloc[i,2]
+                lines.append(line)
+                line = df.iloc[i,0]+"_dssp" + "\n"+ df.iloc[i,3]
+                lines.append(line)
 
         with open (out_name, 'w') as m:
                 for line in lines:
@@ -224,11 +220,9 @@ def write_fasta_from_df(df,outname):
 
 #dssp_list = dssp_files.split(' ')
 dssp_parsed = {}
-# for dssp_file in dssp_files:
-for record in SeqIO.parse(msa_file,"fasta"):
-    id=record.id
-    # id = dssp_file.split(".")[0].split("/")[-1]
-    dssp_parsed['>'+id] = dssp_parse(dssp_folder+"/"+id+".dssp")
+for dssp_file in dssp_files:
+    id = dssp_file.split(".")[0].split("/")[-1]
+    dssp_parsed['>'+id] = dssp_parse(dssp_file)
 
 df = match_msa(dssp_parsed,msa_file)
 map_msa_dssp(df)
