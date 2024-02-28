@@ -26,6 +26,7 @@ Input sequence format (--seqFormat fasta): $params.seqFormat
     !Find all possible formats at https://biopython.org/wiki/SeqIO
 Ignore sequences with % unknown characters (--seqQC 5): $params.seqQC    
 Collapse sequences with % sequence identity (--dropSimilar 90): $params.dropSimilar
+Sequences that a required to be in the alignment (--favoriteSeqs "fav1,fav2"): $params.favoriteSeqs
 ================================================================================
                                 OUTPUT FILES
 
@@ -106,7 +107,7 @@ workflow {
 
     //data reduction with cdhit
     if (params.dropSimilar){
-        cdHitCollapse(sequenceFastas, params.dropSimilar)
+        cdHitCollapse(sequenceFastas, params.dropSimilar, params.favoriteSeqs)
         reducedSeqs = cdHitCollapse.out.seqs
     } else {
         reducedSeqs = sequenceFastas

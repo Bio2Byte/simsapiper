@@ -195,12 +195,19 @@ def write_fasta_from_df(df,outname):
     if outname == "unmappable_dssp":
         if len(df)>2:
             for i in range(len(df)):
-                line = df.iloc[i,0]+"_seq_inputted" + "\n"+ df.iloc[i,1]
+                line = df.iloc[i,0]+"_seq_inputted" + "\n"+ str(df.iloc[i,1])
                 lines.append(line)
-                line = df.iloc[i,0]+"_seq_model" + "\n"+ df.iloc[i,2]
+                line = df.iloc[i,0]+"_seq_model" + "\n"+ str(df.iloc[i,2])
                 lines.append(line)
-                line = df.iloc[i,0]+"_dssp" + "\n"+ df.iloc[i,3]
+                line = df.iloc[i,0]+"_dssp" + "\n"+ str(df.iloc[i,3])
                 lines.append(line)
+
+                #line = df.iloc[i,0]+"_seq_inputted" + "\n"+ df.iloc[i,1]
+                #lines.append(line)
+                #line = df.iloc[i,0]+"_seq_model" + "\n"+ df.iloc[i,2]
+                #lines.append(line)
+                #line = df.iloc[i,0]+"_dssp" + "\n"+ df.iloc[i,3]
+                #lines.append(line)
 
         with open (out_name, 'w') as m:
                 for line in lines:

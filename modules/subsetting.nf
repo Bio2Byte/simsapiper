@@ -6,10 +6,12 @@ process cdHitCollapse{
     input:
     path sequencesValid
     val clustering
+    val favs
 
     output:
     path "*_collapsed.clstr", emit: clusters
-    path "*_collapsed", emit: seqs
+    path "*_collapsed.fasta", emit: seqs
+    path "*_perc_similar.fasta"
     env num , emit: num
 
     script:
@@ -29,6 +31,9 @@ process cdHitCollapse{
     cd-hit -i ${sequencesValid} -o ${sequencesValid.baseName}_${clustering}_collapsed  -c \$result_perc -n \$n -d 200 
 
     num=\$(grep "total seq:" .command.log | awk '{print \$NF}')
+
+
+    python3 $projectDir/bin/post_collapse.py $sequencesValid  ${sequencesValid.baseName}_${clustering}_collapsed "$favs" removed_${sequencesValid.baseName}_${clustering}_perc_similar
     """
 
 }
