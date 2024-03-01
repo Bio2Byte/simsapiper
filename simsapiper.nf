@@ -74,6 +74,7 @@ include {readSeqs as convertSeqs;
             writeFastaFromChannel as writeFastaFromFound ;
             writeFastaFromChannel as writeFastaFromSeqsInvalid ;
             writeFastaFromChannel as writeFastaFromSeqsValid ;
+            createSummary;
 } from "$projectDir/modules/utils"
 
 include {userSubsetting;
@@ -109,6 +110,7 @@ workflow {
     if (params.dropSimilar){
         cdHitCollapse(sequenceFastas, params.dropSimilar, params.favoriteSeqs)
         reducedSeqs = cdHitCollapse.out.seqs
+
     } else {
         reducedSeqs = sequenceFastas
     }
@@ -128,7 +130,9 @@ workflow {
     seqsFiltered.invalid.view { "INVALID >${it.header}" }
     seqsInvalidCount = seqsFiltered.invalid.count()
     writeFastaFromSeqsInvalid (seqsFiltered.invalid.map{record -> '>' + record.header + ',' + record.sequence}.collect(), "too_many_unknown_characters.fasta")
-    
+ 
+
+
     //compare sequence and structure labels
     seqIDs =seqsFiltered.valid.map{tuple(it.header , it.sequence)}
     allSequencesCount = seqIDs.count()
@@ -349,8 +353,21 @@ workflow {
     //select output format for MSA
     if (params.convertMSA){
         convertFinalMsa(params.convertMSA, reorderedFinalMsa)
-
     }
+
+    createSummary(
+        params.outFolder,
+        allSequences,
+        fullInputSeqsNum,
+        params.seqs,
+        params.dropSimilar,
+        allSequencesCount,
+        params.favoriteSeqs,
+        cdHitCollapse.out.clusters,
+        params.seqQC,
+        seqsInvalidCount ,
+        writeFastaFromSeqsInvalid.out.found ? writeFastaFromSeqsInvalid.out.found : Channel.fromPath("$projectDir/modules/dummy")
+        )
 
 }
 
