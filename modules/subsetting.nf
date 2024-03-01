@@ -11,7 +11,7 @@ process cdHitCollapse{
     output:
     path "*_collapsed.clstr", emit: clusters
     path "*_collapsed.fasta", emit: seqs
-    path "*_perc_similar.fasta"
+    path "*_perc_similar.fasta", emit:removed
     env num , emit: num
 
     script:

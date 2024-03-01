@@ -112,3 +112,63 @@ process readSeqs {
     python3 $projectDir/bin/convert_to_fasta.py $sequenceFiles $format converted_${sequenceFiles.baseName}
     """
 }
+
+
+process createSummary{
+    publishDir "$params.outFolder", mode:"copy"
+
+    input:
+    path outdir 
+
+    path inputSeqFiles //allSequences
+    val foundSequencesCount //fullInputSeqsNum
+    val seqsdir // params.seqs
+
+    val dropSimilar //param
+    val collapsedSequencesCount //allSequencesCount
+    val favoriteSeqs //param
+    path similarClstr //cdHitCollapse.out.clusters
+
+    val seqQC
+    val seqsInvalidCount
+    path seqsInvalidFile
+
+
+
+    output:
+    path "*.md"
+
+    script:
+
+    """
+    outfile=simsapiper_summary.md
+    
+    echo "# Input sequences files " >> \$outfile
+    echo ' No. of sequences in inputfile(s): ' $foundSequencesCount >> \$outfile
+    echo '\n Input files can be found in' $seqsdir >> \$outfile
+    echo '\n SIMSApiper found these files:' $inputSeqFiles >> \$outfile
+
+
+    echo ' # 1 Data preparation' >> \$outfile
+    echo " ## 1.2 Data reduction with CD-Hit" >> \$outfile
+    echo ' + Similarity cutoff for CD-Hit: ' $dropSimilar >> \$outfile
+    echo ' + No. of sequences after collapsing: ' $collapsedSequencesCount >> \$outfile
+	echo ' + Included selected sequences to respresenting sequence file: ' $favoriteSeqs >> \$outfile
+    echo ' + Find representing and represented sequences here: ' >> \$outfile
+    echo \$(readlink -f $similarClstr ) >> \$outfile
+
+
+    echo " ## 1.3 Invalid sequences " >>\$outfile
+    echo '+ $seqsInvalidCount sequences removed because they contain more then $seqQC % non-standard or unresolved amino acids' >> \$outfile
+    echo '+ Find invalid sequences here: ' >> \$outfile
+
+
+    echo "$outdir"  >> \$outfile
+
+    """    
+
+    //echo  \$(readlink -f $seqsInvalidFile) >> \$outfile
+    //inputSeqFilePath=\$(readlink -f $inputSeqFiles )
+    //echo '[$inputSeqFiles]('\$inputSeqFilePath')' >> \$outfile
+
+}
