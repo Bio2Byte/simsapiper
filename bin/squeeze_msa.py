@@ -88,53 +88,57 @@ for conserved in conserved_2structure_dssp:
 structure_elements = sorted(structure_elements, key=lambda x: x[1][0]) #sort it in ascending order
 print(structure_elements)
 
-#add the unstructured regions
-#here, with loop in mean all 2nd structure elements that are not in conserved_2structure_dssp 
-loop_regions = []
-loop_regions.append(('loop0', (0, structure_elements[0][1][0])))
-# Iterate through the existing secondary structure elements and add the loops in between
-for i in range(len(structure_elements) - 1):
-    ss_start = structure_elements[i][1][1]
-    ss_end = structure_elements[i + 1][1][0]
-    loop_name = f'loop{i + 1}'
-    loop_regions.append((loop_name, (ss_start, ss_end)))
-loop_regions.append((f'loop_final', (last_structured, alignment_length))) #all the positions are in Python counting 
+if len(structure_elements) > 0:
+    #add the unstructured regions
+    #here, with loop in mean all 2nd structure elements that are not in conserved_2structure_dssp 
+    loop_regions = []
+    loop_regions.append(('loop0', (0, structure_elements[0][1][0])))
+    # Iterate through the existing secondary structure elements and add the loops in between
+    for i in range(len(structure_elements) - 1):
+        ss_start = structure_elements[i][1][1]
+        ss_end = structure_elements[i + 1][1][0]
+        loop_name = f'loop{i + 1}'
+        loop_regions.append((loop_name, (ss_start, ss_end)))
+    loop_regions.append((f'loop_final', (last_structured, alignment_length))) #all the positions are in Python counting 
 
-#all 2nd structure elements
-all_regions = loop_regions
-all_regions.extend(structure_elements)
-all_regions = sorted(all_regions, key=lambda x: x[1][0])
-print(all_regions)
-# Get the minimum loop's length
-loop_len = []
-for region in loop_regions:
-    gaps_list = []
-    fasta_sequences = SeqIO.parse(open(input_file), 'fasta')
-    for fasta in fasta_sequences:
-        name, sequence = fasta.id, str(fasta.seq)
-        gaps_list.append(sequence[region[1][0]:region[1][1]].count("-")) # count number of gaps in one loop
-    loop_len.append(len(sequence[region[1][0]:region[1][1]]) - min(gaps_list)) #give the number of gaps in the sequence with the most AA in one loop
-    loop_len.append(0)
+    #all 2nd structure elements
+    all_regions = loop_regions
+    all_regions.extend(structure_elements)
+    all_regions = sorted(all_regions, key=lambda x: x[1][0])
+    print(all_regions)
+    # Get the minimum loop's length
+    loop_len = []
+    for region in loop_regions:
+        gaps_list = []
+        fasta_sequences = SeqIO.parse(open(input_file), 'fasta')
+        for fasta in fasta_sequences:
+            name, sequence = fasta.id, str(fasta.seq)
+            gaps_list.append(sequence[region[1][0]:region[1][1]].count("-")) # count number of gaps in one loop
+        loop_len.append(len(sequence[region[1][0]:region[1][1]]) - min(gaps_list)) #give the number of gaps in the sequence with the most AA in one loop
+        loop_len.append(0)
 
-# Squeeze the alignment
-with open(output_file, "w+") as outfile:
-    fasta_sequences = SeqIO.parse(open(input_file), 'fasta')
-    for fasta in fasta_sequences:
-        name, sequence = fasta.id, str(fasta.seq)
-        print(sequence)
-        outfile.write(">" + name + "\n")
-        new_align = str()
-        for region, length in zip(all_regions, loop_len):
-            print("length",length)
-            if region[0].startswith("loop"):
-                nogaps_seq = sequence[region[1][0]:region[1][1]].replace("-", "")
-                if region[0] == "loop0":
-                    new_align += "-"*(length - len(nogaps_seq)) + nogaps_seq
-                elif region[0] == "loop_final":
-                    new_align += nogaps_seq + "-"*(length - len(nogaps_seq))
+    # Squeeze the alignment
+    with open(output_file, "w+") as outfile:
+        fasta_sequences = SeqIO.parse(open(input_file), 'fasta')
+        for fasta in fasta_sequences:
+            name, sequence = fasta.id, str(fasta.seq)
+            print(sequence)
+            outfile.write(">" + name + "\n")
+            new_align = str()
+            for region, length in zip(all_regions, loop_len):
+                print("length",length)
+                if region[0].startswith("loop"):
+                    nogaps_seq = sequence[region[1][0]:region[1][1]].replace("-", "")
+                    if region[0] == "loop0":
+                        new_align += "-"*(length - len(nogaps_seq)) + nogaps_seq
+                    elif region[0] == "loop_final":
+                        new_align += nogaps_seq + "-"*(length - len(nogaps_seq))
+                    else:
+                        new_align += nogaps_seq[0:len(nogaps_seq)//2] + "-"*(length - len(nogaps_seq)) + nogaps_seq[len(nogaps_seq)//2:]
                 else:
-                    new_align += nogaps_seq[0:len(nogaps_seq)//2] + "-"*(length - len(nogaps_seq)) + nogaps_seq[len(nogaps_seq)//2:]
-            else:
-                new_align += sequence[region[1][0]:region[1][1]]
-            print(new_align)
-        outfile.write(new_align + "\n")
+                    new_align += sequence[region[1][0]:region[1][1]]
+                print(new_align)
+            outfile.write(new_align + "\n")
+
+else:
+    print("You have asked to squeeze towards the conserved columns containing {} but no such column was found. Therefore, this pipeline fails. We suggest, either squeezing towards other dssp codes or to omit the squeezing of your MSA.")
