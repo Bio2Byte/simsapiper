@@ -363,10 +363,23 @@ workflow {
         params.dropSimilar,
         allSequencesCount,
         params.favoriteSeqs,
-        cdHitCollapse.out.clusters,
+        cdHitCollapse.out.clusters.ifEmpty([]),
         params.seqQC,
         seqsInvalidCount ,
-        writeFastaFromSeqsInvalid.out.found ? writeFastaFromSeqsInvalid.out.found : Channel.fromPath("$projectDir/modules/dummy")
+        writeFastaFromSeqsInvalid.out.found.ifEmpty([]),
+        params.structures,
+        joined.modelFound.count(),
+        afjoined.modelFound.count(),
+        esmfjoined.modelFound.count(),
+        structurelessCount,
+        structureless_seqs.ifEmpty([]),
+        params.createSubsets,
+        params.useSubsets,
+        cdHitSubsetting.out.clusters.ifEmpty([]),
+        foundSeqs,
+        params.tcoffeeParams,
+        mergeMafft.out.finalMsa,
+        params.mafftParams
         )
 
 }
