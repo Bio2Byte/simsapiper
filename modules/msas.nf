@@ -64,7 +64,7 @@ process runTcoffee {
     LOG_FILE="\$WORKING_DIRECTORY_4_TCOFFEE/tcoffee_\${TIMESTAMP}.log"
 
     echo "Running T-Coffee..."
-    t_coffee ${params.tcoffeeParams ? tcoffeeParams : ''} -thread 0 -in="\$SEQUENCE" \
+    t_coffee ${params.tcoffeeParams ? tcoffeeParams : ''} -thread ${task.cpus} -ulimit=${task.memory} -in="\$SEQUENCE" \
         -method TMalign_pair \
         -evaluate_mode=t_coffee_slow \
         -mode=3dcoffee \
