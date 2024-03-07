@@ -110,9 +110,11 @@ workflow {
     if (params.dropSimilar){
         cdHitCollapse(sequenceFastas, params.dropSimilar, params.favoriteSeqs)
         reducedSeqs = cdHitCollapse.out.seqs
+        reducedClusters=  cdHitCollapse.out.clusters
 
     } else {
         reducedSeqs = sequenceFastas
+        reducedClusters = Channel.empty()
     }
     
     //Quality control input sequences 
@@ -363,7 +365,7 @@ workflow {
         params.dropSimilar,
         allSequencesCount,
         params.favoriteSeqs,
-        cdHitCollapse.out.clusters.ifEmpty([]),
+        reducedClusters.ifEmpty([]),
         params.seqQC,
         seqsInvalidCount ,
         writeFastaFromSeqsInvalid.out.found.ifEmpty([]),
