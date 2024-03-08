@@ -84,18 +84,22 @@ process esmFolds{
     path structureless
 
     output:
-    path "*.pdb", emit: esmFoldsStructures
+    path "*.pdb", emit: esmFoldsStructures 
     val true, emit: gate
-    path "esm_fold_statistics.csv"
+    path "esm_fold_statistics.csv" 
     path "*.pae"
 
     script:
     """
-    head $structureless
     export TORCH_HOME=\$VSC_SCRATCH_VO/ESMFold
-     
-    python3 $projectDir/bin/esmfold_inference.py --chunk-size 32 -i $structureless -o .
-    python3 $projectDir/bin/extract_plddt.py . esm_fold_statistics.csv .
+    
+    if [ -z "$structureless" ] ; then
+        echo "There is no proteins to fold here"
+    else
+        head $structureless
+        python3 $projectDir/bin/esmfold_inference.py --chunk-size 32 -i $structureless -o .
+        python3 $projectDir/bin/extract_plddt.py . esm_fold_statistics.csv .
+    fi
     """
     
 }

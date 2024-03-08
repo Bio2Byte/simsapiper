@@ -139,7 +139,8 @@ def handle_unmappable(df):
                         df.at[index, 'same'] = True
                 else:
                     print(f"Could not match the sequence of {row['label']} to the sequence of its 3D model probably because your sequence does not match the sequence of the given 3D model. This can affect the alignment quality. Please check the file './msas/unmappable.txt' file.")
-            print(dssp) 
+            #print(dssp) 
+    return df
 def map_msa_dssp(df):
 
     df['unali'] =  df.seq.str.replace('-','')
@@ -148,7 +149,11 @@ def map_msa_dssp(df):
 
     df.to_csv("dssp_csv_before_handling.csv")
 
-    handle_unmappable(df)
+    #remove protein models without matching sequence
+    df=df.dropna(subset=['seq'])  
+    print(df)
+
+    df=handle_unmappable(df)
 
     df.to_csv("dssp_csv.csv")
 

@@ -216,7 +216,6 @@ workflow {
             protsFromESM = Channel.empty()
         }
 
-
     // assess which models could not be found in the folder, AFDB or ESM Atlas
     if (params.model) {
         finalMissingModels = esmfjoined.modelNotFound
@@ -233,26 +232,37 @@ workflow {
     structurelessCount.view{"Missing models: " + it}
     foundSequencesCount = finalModelFound.count()
     
-    writeFastaFromMissing(finalMissingModels.map{record -> ">"+ record[0] + ',' + record[2]}.collect(), 'structureless_seqs.fasta')
-    structureless_seqs = writeFastaFromMissing.out.found
+    
 
     //run local esmfold
     if (params.localModel){
-        esmFolds(structureless_seqs)
-        esmFoldsGate = esmFolds.out.gate 
-        
-        writeFastaFromSeqsValid (seqIDs.map{record -> ">"+ record[0]+ ',' + record[1]}.collect(),'seqs_to_align.fasta')
+        writeFastaFromMissing(finalMissingModels.map{record -> ">"+ record[0] + ',' + record[2]}.collect(), 'seqs_to_model.fasta')
+        seqs_to_model = writeFastaFromMissing.out.found
 
-        foundSeqs = writeFastaFromSeqsValid.out.found
-        missingQC (allSequencesCount, esmFoldsGate, params.strucQC)
-    
+        esmFolds(seqs_to_model)
+        //if seqs_to_model is empty, the pipeline does not complete, but if it is not empty, strucQC needs to wait for esm?
+        //esmStructuresCounter= Channel.fromPath("$params.structures/*.pdb").count()
+        //this does not work as a gate
+
+
+        foundSequencesCount = finalModelFound.mix(esmFolds.out.esmFoldsStructures).count()
+        
+        finalModelFound=seqIDs
+        structureless_seqs=Channel.empty()
+        structurelessCount==structureless_seqs.count()
+
+
+
     }else{
-        missingQC (allSequencesCount, structurelessCount, params.strucQC)
-        writeFastaFromFound(finalModelFound.map{record ->  ">"+ record[0] + ',' + record[2]}.collect(), 'seqs_to_align.fasta')
-        foundSeqs = writeFastaFromFound.out.found
-        esmFoldsGate = true
+        writeFastaFromMissing(finalMissingModels.map{record -> ">"+ record[0] + ',' + record[2]}.collect(), 'structureless_seqs.fasta')
+        structureless_seqs = writeFastaFromMissing.out.found
+
     }
 
+
+    missingQC (allSequencesCount, foundSequencesCount, params.strucQC)
+    writeFastaFromSeqsValid (finalModelFound.map{record -> ">"+ record[0]+ ',' + record[1]}.collect(),'seqs_to_align.fasta')
+    foundSeqs = writeFastaFromSeqsValid.out.found
 
     //subsetting
     if (params.useSubsets){

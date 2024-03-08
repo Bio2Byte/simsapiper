@@ -63,7 +63,7 @@ process missingQC {
 
     input:
     val all 
-    val missing
+    val found
     val strucQC
 
     output:
@@ -71,22 +71,20 @@ process missingQC {
 
     script:
 
-    """
-    if [ $missing = "true" ];then
-        missing=0
-    else
-        missing=$missing
-    fi
-
-    result=\$(echo \$missing $all | awk '{ print \$1/\$2 }')
+   """
+    result=\$(echo $found $all | awk '{ print \$1/\$2 }')
     result=\$(echo "\$result" |tr ',' '.')
 
     result_perc=\$(awk -v res=\$result -v perc=100 'BEGIN{print (res*perc); }')
     result_perc=\$(echo "\$result_perc" |tr ',' '.')
+    echo \$result_perc
+
+    qc=\$(echo 100 $strucQC | awk '{ print \$1-\$2 }')
+    echo \$qc
 
     message="\$result_perc % of sequences not could be matched to a model, please check the structureless_sequences.fasta in the output directory! Try using Colabfold (https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb) to provide the missing models!"
 
-    if (( \$(echo "\$result_perc $strucQC" | awk '{ print (\$1 >\$2)}') )); then
+    if (( \$result_perc < \$qc )) ; then
         echo "ERROR!"
         echo \$message
         exit 1
