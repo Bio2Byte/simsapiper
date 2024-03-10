@@ -31,7 +31,7 @@ The directory contains:
 
 Enable recommended settings using **--magic**
 ```
-nextflow run simsapiper.nf -profile server,withsingularity --data toy_example/data --magic --squeeze "H,G,E" --minSubsetID 20
+nextflow run simsapiper.nf -profile server,withsingularity --data toy_example/data --magic --minSubsetID 20
 ```
 or use 
 ```
@@ -60,7 +60,7 @@ nextflow run simsapiper.nf
     --model
     --strucQC 5
     --dssp
-    --squeeze "H"
+    --squeeze "H,E"
     --squeezePerc 80
     --reorder
 ```
@@ -95,7 +95,7 @@ nextflow run simsapiper.nf
 | --tcoffeeParams	| Additional parameters for Tcoffee 	 | false | "--help" | 
 | --mafftParams	| Additional parameters for MAFFT 	 | false	 | "--localpair --maxiterate 100" | 
 | --dssp	| Map DSSP code to alignment 	 | false | 	 | 
-| --squeeze	| Squeeze alignment towards conserved 2nd structure elements <br>  Find all possible 2nd structure [elements](https://ssbio.readthedocs.io/en/latest/instructions/dssp.html) | false	 | "H,E" |
+| --squeeze	| Squeeze alignment towards conserved 2nd structure categories <br>  Find all possible 2nd structure [elements](https://ssbio.readthedocs.io/en/latest/instructions/dssp.html) (note: if H is indicated, it will squeeze towards H,I,G) | false	 | "H,E" |
 | --squeezePerc	| Set minimal occurence % of anchor element in MSA 	 | 80	 |  |  
 | --reorder	| Order final MSA by input file order 	| false	 | "gamma.fasta,delta.fasta” <br>  “true” for alphabetical order  | 
 | --convertMSA	| Covert final MSA file from fasta to selected file format	| 	false |  "clustal" | 
@@ -206,9 +206,9 @@ Input: `data/structures/`
     \>P25106 will only match P25106.pdb
 - Can be experimentally generated structures, from the PDB or modeled structures
 - Good to know:
-	- Make sure your file contains only your chain of interest. Otherwise, extract a specific chain: [pdb-tools](http://www.bonvinlab.org/pdb-tools/)
-	- Mutations in 3D structure will not impact MSA quality if mutations do not impact the overall organisation of the protein
-	- Omit these issues by using predicted 3D models, even poor AlphaFold models have been [shown](https://doi.org/10.1093/bioinformatics/btac625) to improve the quality of MSAs
+	- The squeezing step (step 6) will fail if your structure file contains multiple chains. Extract a specific chain: [pdb-tools](http://www.bonvinlab.org/pdb-tools/)
+	- Mutations in 3D structure will not impact MSA quality if mutations do not impact the overall organisation of the protein. The squeezing step (step 6) will fail if more than 5% of 		your protein is mutated.
+	- Omit these issues been [shown](https://doi.org/10.1093/bioinformatics/btac625) to improve the quality of MSAs
 - Compute your own AlphaFold2 model using [ColabFold](https://colab.research.google.com/github/deepmind/alphafold/blob/main/notebooks/AlphaFold.ipynb) (very user friendly) or directly the [AlphaFold2](https://github.com/deepmind/alphafold) software instead of relying on [ESMFold](https://esmatlas.com/resources?action=fold) if
 	- Proteins are very different from proteins previously solved in the PDB
 	- Proteins are larger than 400 residues
@@ -409,8 +409,12 @@ Output: `results/outFolder/msas/dssp_merged_finalmsa_alignment.fasta`
 - Map [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html) on sequences of the MSA, conserving the gaps.
 
 Common Issues:
-- Mapping fails if the sequence of the model and the sequence have the same length but are more than 5% different because of point mutations or have different lengths because of deletion/insertion mutations: these troublesome sequences can be find in the `results/outFolder/msas/unmappable.fasta` file and will be added to the mapped alignment without being converted to their DSSP codes
-- Your structure file contains more than one chain: extract a specific chain using [pdb-tools](http://www.bonvinlab.org/pdb-tools/) or use predicted models
+- Mapping fails if the sequence of the model and the sequence to align have:
+	- The same length but are more than 5% different because of point mutations
+ 	- Different lengths because of deletion/insertion mutations in the middle of one of the sequences (allowed at extremeties)
+- Your structure file contains more than one chain: extract a specific chain using pdb-tools or use predicted models
+
+These troublesome sequences can be find in the results/outFolder/msas/unmappable.fasta file and will be added to the mapped alignment without being converted to their DSSP codes
 
 ### 7.2 Squeeze MSA towards conserved secondary structure elements (--squeeze)
 Output: `results/outFolder/msas/squeezed_dssp_merged_finalmsa_alignment.fasta`
@@ -421,9 +425,11 @@ Why?
 
 How?
 
-- Identifying conserved secondary structure elements such as ɑ-helices and β-sheets with **--squeeze “H,E”**, and squeeze MSA towards these regions
+- Identifying conserved secondary structure categories such as helices and β-sheets with **--squeeze “H,E”**, and squeeze MSA towards these regions (note: if H is indicated, it will 		automatically squeeze towards H,I,G).
 - Select threshold for region to be considered 'conserved' with **--squeezePerc**
 - Note: The DSSP codes representing helices, i.e, H, G and I, are considered the same by SIMSApiper.
+
+Note: There must be at least 3 consecutive conserved columns before it is considered as a conserved region and the pipeline will squeeze towards that region.
 
 ### 7.3 Map DSSP to squeezed MSA
 Output: `results/outFolder/msas/dssp_squeezed_dssp_merged_finalmsa_alignment.fasta`
