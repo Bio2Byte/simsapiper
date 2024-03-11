@@ -57,14 +57,16 @@ process cdHitSubsetting{
 
     script:
     """
-    attempt=$task.attempt
-    echo "Attempt \$attempt"
+    #attempt=$task.attempt
+    #echo "Attempt \$attempt"
 
-    factor=\$(echo 5 \$attempt | awk '{ print \$1*\$2-\$1 }')
-    echo "factor \$factor"
-    clustering=\$(echo $initcluster \$factor | awk '{ print \$1-\$2 }')
+    #factor=\$(echo 5 \$attempt | awk '{ print \$1*\$2-\$1 }')
+    #echo "factor \$factor"
+    #clustering=\$(echo $initcluster \$factor | awk '{ print \$1-\$2 }')
 
 
+    clustering=$initcluster
+    
     outname=${sequencesValid.baseName}_\${clustering}_clustered
     echo "try with \$clustering"
    
