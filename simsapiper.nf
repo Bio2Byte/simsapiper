@@ -247,22 +247,23 @@ workflow {
 
         foundSequencesCount = finalModelFound.mix(esmFolds.out.esmFoldsStructures).count()
         
-        finalModelFound=seqIDs
         structureless_seqs=Channel.empty()
         structurelessCount==structureless_seqs.count()
 
+        writeFastaFromSeqsValid (seqIDs.map{record -> ">"+ record[0]+ ',' + record[1]}.collect(),'seqs_to_align.fasta')
+        foundSeqs = writeFastaFromSeqsValid.out.found
 
 
     }else{
         writeFastaFromMissing(finalMissingModels.map{record -> ">"+ record[0] + ',' + record[2]}.collect(), 'structureless_seqs.fasta')
         structureless_seqs = writeFastaFromMissing.out.found
 
+        writeFastaFromSeqsValid (finalModelFound.map{record -> ">"+ record[0]+ ',' + record[2]}.collect(),'seqs_to_align.fasta')
+        foundSeqs = writeFastaFromSeqsValid.out.found
+
     }
 
-
     missingQC (allSequencesCount, foundSequencesCount, params.strucQC)
-    writeFastaFromSeqsValid (finalModelFound.map{record -> ">"+ record[0]+ ',' + record[1]}.collect(),'seqs_to_align.fasta')
-    foundSeqs = writeFastaFromSeqsValid.out.found
 
     //subsetting
     if (params.useSubsets){
