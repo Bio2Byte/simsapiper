@@ -12,7 +12,7 @@ Conserved secondary structure elements are used to reduce gaps for a high-qualit
 
 - [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html)
 - [Singularity](https://apptainer.org/admin-docs/master/installation.html#installation-on-linux)/Apptainer or [Docker](https://docs.docker.com/get-docker/)
-- Sufficient amount of scratch space and RAM (50 Sequences of 400 residues with 60% sequence identity need 30GB disk space and 10GB RAM)
+- Sufficient amount of scratch space and RAM (300 Sequences of 400 residues with 30% sequence identity need 30GB disk space and 32GB RAM)
 - Copy of this repository
   ```
   git clone https://github.com/Bio2Byte/simsapiper.git
@@ -111,7 +111,6 @@ CD-Hit clusters
 - [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html) 
 - Java V11
 - Python3
-- Sufficient amount of scratch space and RAM (300 Sequences of 400 residues with 30% sequence identity need 30GB disk space and 32GB RAM)
 
 ### Dependencies
 - [Singularity](https://apptainer.org/admin-docs/master/installation.html#installation-on-linux)/Apptainer (-profile withsingularity)
