@@ -381,7 +381,7 @@ t_coffee -in=subset_0.fasta  -method TMalign_pair
 -evaluate_mode=t_coffee_slow  -mode=3dcoffee  -pdb_min_cov=1  -thread 0 
 -outfile="output/t-coffee/subset_0_aligned.aln" 
 ``` 
-(note that sap_pair is used by default by the 3DCoffee mode of T-Coffee)
+- Mode 3DCoffee uses method sap_pair by default
 - Append any other T-Coffee flag with **--tcoffeeParams “-quiet”**
 
 
@@ -509,7 +509,6 @@ Output: `results/outFolder/run_id_time.nflog`
         and rerun.
     - check for spaces behind `\` in the launch file, there can not be any.
     - On MacOS, replace `|& tee` with `>>`  
-- 
 - Modeling with ESMFold has low yield: 
     - Sequences longer than 400 residues cannot be modeled: try [ColabFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/AlphaFold2_advanced.ipynb) to generate your own models
     - ESM Atlas was asked to model too many sequences at once, resume the job
