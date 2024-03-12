@@ -31,13 +31,15 @@ The directory contains:
 
 Enable recommended settings using **--magic**
 ```
-nextflow run simsapiper.nf -profile server,withsingularity --data toy_example/data --magic --minSubsetID 20
+nextflow run simsapiper.nf -profile server,withsingularity --data $(pwd)/toy_example/data --magic
 ```
 or use 
 ```
 ./toy_example_launch_file.sh
 ```
 This file can also be double-clicked to run the toy_example dataset.
+
+Use absolute files paths (`/Users/me/workspace/simsapiper/toy_example/data`).
 
 By default most flags are set to False. 
 Adding a flag to the command line will set it to True and activate it. 
@@ -80,13 +82,15 @@ nextflow run simsapiper.nf
 | --data	| Path to data directory 	 | data	 |    | 
 | --structures	| Path to structure files directory  | **--data**/structures	 | | 
 | --seqs	| Path to sequence files directory  | **--data**/seqs	 |  | 
-| --seqFormat	| Input sequence format according to biopython <br>  Find all possible [formats](https://biopython.org/wiki/SeqIO) | 	fasta	 |  | 
+| --seqFormat	| Input sequence format according to biopython [formats](https://biopython.org/wiki/SeqIO) | 	fasta	 |  | 
 | --seqQC	| Ignore sequences with % non-standard amino acids	 | 5	 | | 
 | --dropSimilar 	| Collapse sequences with % sequence identity	| false	 | 90 | 
+|--favoriteSeqs | Select sequence labels that need to stay in the alignemnt | false | "SeqLabel1,SeqLabel2" |
 | --outFolder	| Set directory name for output files	 | results/simsa_time_of_execution	 |  | 
 | --outName 	| Set final MSA file name	| 	finalmsa |   | 
 | --createSubsets	| Creates subsets of maximally % sequence identity	 | false	 | 30 | 
-|--minSubsetID | Sets minimal % sequence identity for sequences to be in a subset | 20 | "min" to collate smaller <br>   CD-Hit clusters|
+|--minSubsetID | Sets minimal % sequence identity for sequences to be in a subset | 20 | "min" to collate small
+CD-Hit clusters
 |--maxSubsetSize | Sets maximal number of sequences in a subset | true | <400AA: --maxSubsetSize 100,<br> >400AA: --maxSubsetSize 50|
 | --useSubsets	| User provides multiple sequence files corresponding to subsets <br> Provide sequences not fitting any subset in a file containing 'orphan' in filename  | false	 | | 
 | --retrieve	| Retrieve protein structure models from AFDB  | 	false | 	 | 
@@ -95,7 +99,7 @@ nextflow run simsapiper.nf
 | --tcoffeeParams	| Additional parameters for Tcoffee 	 | false | "--help" | 
 | --mafftParams	| Additional parameters for MAFFT 	 | false	 | "--localpair --maxiterate 100" | 
 | --dssp	| Map DSSP code to alignment 	 | false | 	 | 
-| --squeeze	| Squeeze alignment towards conserved 2nd structure categories <br>  Find all possible 2nd structure [elements](https://ssbio.readthedocs.io/en/latest/instructions/dssp.html) (note: if H is indicated, it will squeeze towards H,I,G) | false	 | "H,E" |
+| --squeeze	| Squeeze alignment towards conserved 2nd structure categories | false	 | "H,E" |
 | --squeezePerc	| Set minimal occurence % of anchor element in MSA 	 | 80	 |  |  
 | --reorder	| Order final MSA by input file order 	| false	 | "gamma.fasta,delta.fasta” <br>  “true” for alphabetical order  | 
 | --convertMSA	| Covert final MSA file from fasta to selected file format	| 	false |  "clustal" | 
@@ -195,7 +199,6 @@ Input: `data/seqs/`
 - Sequence IDs: 
     If **--retrieve**: use Uniprot ID as sequence ID to enable retrieval from [AlphaFold Database](https://alphafold.ebi.ac.uk)
 
-
 ### Structural input (--structures)
 
 Input: `data/structures/` 
@@ -205,13 +208,16 @@ Input: `data/structures/`
 - Sequence labels and the structure filenames must match exactly! \
     \>P25106 will only match P25106.pdb
 - Can be experimentally generated structures, from the PDB or modeled structures
-- Good to know:
-	- The squeezing step (step 6) will fail if your structure file contains multiple chains. Extract a specific chain: [pdb-tools](http://www.bonvinlab.org/pdb-tools/)
-	- Mutations in 3D structure will not impact MSA quality if mutations do not impact the overall organisation of the protein. The squeezing step (step 6) will fail if more than 5% of 		your protein is mutated.
-	- Omit these issues been [shown](https://doi.org/10.1093/bioinformatics/btac625) to improve the quality of MSAs
-- Compute your own AlphaFold2 model using [ColabFold](https://colab.research.google.com/github/deepmind/alphafold/blob/main/notebooks/AlphaFold.ipynb) (very user friendly) or directly the [AlphaFold2](https://github.com/deepmind/alphafold) software instead of relying on [ESMFold](https://esmatlas.com/resources?action=fold) if
-	- Proteins are very different from proteins previously solved in the PDB
-	- Proteins are larger than 400 residues
+
+Good to know:
+- Step [squeeze](#squeeze) will fail if your structure file contains multiple chains. Extract a specific chain: [pdb-tools](http://www.bonvinlab.org/pdb-tools/)
+- Mutations in 3D structure will not impact MSA quality if mutations do not impact the overall organisation of the protein. 
+- Step [squeeze](#squeeze) will fail if more than 5% of your protein is mutated.
+<a id="strucin"></a>
+- Omit these issues by computing your own AlphaFold2 model using [ColabFold](https://colab.research.google.com/github/deepmind/alphafold/blob/main/notebooks/AlphaFold.ipynb) (very user friendly) or directly the [AlphaFold2](https://github.com/deepmind/alphafold) software instead of relying on [ESMFold](https://esmatlas.com/resources?action=fold) if:
+    - Proteins are very different from proteins previously solved in the PDB
+    - Proteins are larger than 400 residues
+- Modeled structure information has been [shown](https://doi.org/10.1093/bioinformatics/btac625) to improve the quality of MSAs
 
 ### Output directory (--outFolder)
 
@@ -241,11 +247,12 @@ Why?
 
 How?
 
-- Use [CD-Hit](https://github.com/weizhongli/cdhit) with high sequence identify cutoff (e.g. 90%)
+- Use [CD-Hit](https://github.com/weizhongli/cdhit) with high sequence identify cutoff
 - Keep cluster representatives 
 - Proteins inside clusters will be excluded from the downstream processess
-- Find in which cluster a specific protein is in `results/outFolder/seqs/CD-HIT/*.clstr` file
-
+- Add important proteins to the representatives with **--favoriteSeqs**
+- Find in which cluster a specific protein is in `results/outFolder/seqs/CD-HIT/*.clstr`
+- Find excluded similar sequences in `results/outFolder/seqs/CD-HIT/removed_*_perc_similar.fasta`
 ### 1.3 Quality control for input sequences (--seqQC)
 Output: `results/outFolder/seqs/too_many_unknown_characters.fasta`
 
@@ -275,11 +282,11 @@ Why?
 
 How?
 
-- Only possible if sequence ID is the Uniprot ID 
+- Only possible if sequence ID starts with the Uniprot ID `>UniprotID_more_information`
 
 Common Issues:
 
-- Entries in Uniprot that are not on the AlphaFold Database: generate model yourself (see tips in Structural input section )and add manually to `data/structures/` 
+- Entries in Uniprot that are not on the AlphaFold Database: [generate model yourself](#strucin) and add manually to `data/structures/` 
 
 ### 2.3 Identify missing models
 (same as step 2.1)
@@ -350,8 +357,8 @@ Common Issues:
     - Increase initial clustering threshold **--createSubsets**
     - Clusters get split randomly to attain evenly distributed clusters smaller then **--maxSubsetSize** 
 - More then 5% of the clusters are singletons:
-    - Threshold will automatically decrease until **--minSubsetIdentity** (20%) iteratively
-    - Set **--minSubsetIdentity "min"** to reduce overall number of subsets by collating small clusters until **--maxSubsetSize** reached
+    - Threshold will interatively decrease by 5% until **--minSubsetIdentity** 
+    - Set **--minSubsetIdentity "min"** to reduce overall number of subsets by collating small clusters and singletons until **--maxSubsetSize** reached
     
 ## 4. Run T-Coffee (--tcoffeeParams)
 Output: `results/outFolder/msas/t-coffee/aligned_subset_*.aln `
@@ -406,17 +413,18 @@ Output: `results/outFolder/dssp/model_name.dssp`
 ### 7.1 Map DSSP to MSA
 Output: `results/outFolder/msas/dssp_merged_finalmsa_alignment.fasta`
 
-- Map [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html) on sequences of the MSA, conserving the gaps.
+- Map [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html) on sequences of the MSA, conserving the gaps
 
+<a id="mappingissues"></a>
 Common Issues:
-- Mapping fails if the sequence of the model and the sequence to align have:
-	- The same length but are more than 5% different because of point mutations
- 	- Different lengths because of deletion/insertion mutations in the middle of one of the sequences (allowed at extremeties)
-- Your structure file contains more than one chain: extract a specific chain using pdb-tools or use predicted models
+- Sequence of the model and the sequence to align have:
+	- Same length but more than 5% different (point mutations)
+ 	- Different lengths (deletions/insertions) in the middle of one of the sequences (allowed at extremeties)
+- Your structure file contains more than one chain: extract a specific chain using [pdb-tools](http://www.bonvinlab.org/pdb-tools/) or use predicted models
+- Find these troublesome sequences in `results/outFolder/msas/unmappable_dssp.fasta` and unconverted in the mapped alignment
 
-These troublesome sequences can be find in the results/outFolder/msas/unmappable.fasta file and will be added to the mapped alignment without being converted to their DSSP codes
-
-### 7.2 Squeeze MSA towards conserved secondary structure elements (--squeeze)
+<a id="squeeze"></a>
+### 7.2 Squeeze MSA towards conserved secondary structure elements (--squeeze) 
 Output: `results/outFolder/msas/squeezed_dssp_merged_finalmsa_alignment.fasta`
 
 Why?
@@ -425,11 +433,10 @@ Why?
 
 How?
 
-- Identifying conserved secondary structure categories such as helices and β-sheets with **--squeeze “H,E”**, and squeeze MSA towards these regions (note: if H is indicated, it will 		automatically squeeze towards H,I,G).
+- Identify conserved secondary structure categories such as helices and β-sheets with **--squeeze “H,E”**, and squeeze MSA towards these regions
+- DSSP codes representing helices, i.e, H, G and I, are considered the same by SIMSApiper
 - Select threshold for region to be considered 'conserved' with **--squeezePerc**
-- Note: The DSSP codes representing helices, i.e, H, G and I, are considered the same by SIMSApiper.
-
-Note: There must be at least 3 consecutive conserved columns before it is considered as a conserved region and the pipeline will squeeze towards that region.
+- Must have at least 3 consecutive conserved columns to be considered a conserved region
 
 ### 7.3 Map DSSP to squeezed MSA
 Output: `results/outFolder/msas/dssp_squeezed_dssp_merged_finalmsa_alignment.fasta`
@@ -437,8 +444,7 @@ Output: `results/outFolder/msas/dssp_squeezed_dssp_merged_finalmsa_alignment.fas
 - Map [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html) on sequences of the squeezed MSA, conserving the gaps.
 
 Common Issues:
-- Mapping fails if the sequence of the model and the sequence have the same length but are more than 5% different because of point mutations or have different lengths because of deletion/insertion mutations: these troublesome sequences can be find in the `results/outFolder/msas/unmappable.fasta` file and will be added to the mapped alignment without being converted to their DSSP codes
--  Your structure file contains more than one chain: extract a specific chain using [pdb-tools](http://www.bonvinlab.org/pdb-tools/) or use predicted models
+see [above](#mappingissues)
 
 ## 8. Reorder MSA (--reorder)
 Output: `results/outFolder/reordered_*_merged_finalmsa_alignment.fasta`
@@ -464,7 +470,7 @@ Output: `results/outFolder/sequence_report.text`
 
 
 ### Resource log
-Output: `results/outFolder/nextflow_report_outName.html`
+Output: `results/outFolder/nextflow_report_outName.html`, `resources_outName.txt`
 
 - Log file created by nextflow pipeline
 - Shows execution times and resource usage per job
@@ -473,6 +479,7 @@ Output: `results/outFolder/nextflow_report_outName.html`
 Output: `results/outFolder/run_id_time.nflog`
 
 - Created ONLY when using the launch file
+- Reports all **--flag** settings 
 - Captures terminal output of nextflow pipeline for error tracing
 - Captures unique execution hash and flags for resuming the specific job
 
@@ -480,7 +487,6 @@ Output: `results/outFolder/run_id_time.nflog`
 
 - Sequence labels and the structure filenames must match exactly!  
 - Cancel a running Nextflow job: **Crtl + C**
-- At the top and the end of the `*.nflog` file all your flag settings are reported. 
 - Pipeline failed to complete:  
     - to rerun the last job: append **-resume** to the launch command 
     - to rerun a specific job: check the `*.nflog` files last line to get the unique hash 
@@ -503,6 +509,7 @@ Output: `results/outFolder/run_id_time.nflog`
         and rerun.
     - check for spaces behind `\` in the launch file, there can not be any.
     - On MacOS, replace `|& tee` with `>>`  
+- 
 - Modeling with ESMFold has low yield: 
     - Sequences longer than 400 residues cannot be modeled: try [ColabFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/AlphaFold2_advanced.ipynb) to generate your own models
     - ESM Atlas was asked to model too many sequences at once, resume the job

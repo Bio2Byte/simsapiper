@@ -61,7 +61,16 @@ selectedLabels=favselectedDf.label.tolist()
 
 collapsedDf=inputDf[~inputDf.label.isin(favselectedDf.label)].dropna()
 
+print(inputDf)
+print (inputDf[~inputDf.label.isin(favselectedDf.label)])
+print(collapsedDf)
+
+
+
 if len(inputDf)-len(favselectedDf) != len(collapsedDf):
     print ("something went wrong here")
 else:
-    write_fasta_from_df(favselectedDf,'label','seq',collapsedFileName)
+    if len(collapsedDf)>0:
+        write_fasta_from_df(collapsedDf,'label','seq',collapsedFileName)
+    else:
+        print("No sequence was excluded here!")
