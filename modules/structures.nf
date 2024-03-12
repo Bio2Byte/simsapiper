@@ -50,7 +50,8 @@ process getAFmodels {
 }
 
 process runDssp{
-    publishDir "$params.outFolder/dssp", mode: "copy"
+    
+    publishDir "$params.data/dssp", mode: "copy"
 
     input:
     path model
@@ -72,4 +73,33 @@ process runDssp{
     //I = 5-helix
     //T = H-bonded turn
     //S = beta-bend or beta-turn
+}
+
+
+process esmFolds{
+    publishDir "$params.structures", mode: "copy"
+    //errorStrategy { task.attempt > 3 ? 'retry' : 'complete' }
+    
+    input:
+    path structureless
+
+    output:
+    path "*.pdb", emit: esmFoldsStructures 
+    val true, emit: gate
+    path "esm_fold_statistics.csv" 
+    path "*.pae"
+
+    script:
+    """
+    export TORCH_HOME=\$VSC_SCRATCH_VO/ESMFold
+    
+    if [ -z "$structureless" ] ; then
+        echo "There is no proteins to fold here"
+    else
+        head $structureless
+        python3 $projectDir/bin/esmfold_inference.py --chunk-size 32 -i $structureless -o .
+        python3 $projectDir/bin/extract_plddt.py . esm_fold_statistics.csv .
+    fi
+    """
+    
 }

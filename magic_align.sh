@@ -16,3 +16,5 @@ nextflow run simsapiper.nf \
     |& tee  $output_folder/run_report_$output_name.nflog
 sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $output_folder/run_report_$output_name.nflog)
 nextflow log | grep $sessionName >> $output_folder/run_report_$output_name.nflog
+
+#screen -S nextflowalign bash -c ./magic_align.sh

@@ -6,10 +6,12 @@ process cdHitCollapse{
     input:
     path sequencesValid
     val clustering
+    val favs
 
     output:
     path "*_collapsed.clstr", emit: clusters
-    path "*_collapsed", emit: seqs
+    path "*_collapsed.fasta", emit: seqs
+    path "*_perc_similar.fasta"
     env num , emit: num
 
     script:
@@ -29,6 +31,9 @@ process cdHitCollapse{
     cd-hit -i ${sequencesValid} -o ${sequencesValid.baseName}_${clustering}_collapsed  -c \$result_perc -n \$n -d 200 
 
     num=\$(grep "total seq:" .command.log | awk '{print \$NF}')
+
+
+    python3 $projectDir/bin/post_collapse.py $sequencesValid  ${sequencesValid.baseName}_${clustering}_collapsed "$favs" removed_${sequencesValid.baseName}_${clustering}_perc_similar
     """
 
 }
@@ -38,7 +43,7 @@ process cdHitSubsetting{
     publishDir "$params.outFolder/seqs/CD-HIT_for_t-coffee", mode: "copy"
     
     errorStrategy 'retry'
-    maxRetries 15
+    maxRetries 5
 
     input:
     path sequencesValid
@@ -52,14 +57,16 @@ process cdHitSubsetting{
 
     script:
     """
-    attempt=$task.attempt
-    echo "Attempt \$attempt"
+    #attempt=$task.attempt
+    #echo "Attempt \$attempt"
 
-    factor=\$(echo 5 \$attempt | awk '{ print \$1*\$2-\$1 }')
-    echo "factor \$factor"
-    clustering=\$(echo $initcluster \$factor | awk '{ print \$1-\$2 }')
+    #factor=\$(echo 5 \$attempt | awk '{ print \$1*\$2-\$1 }')
+    #echo "factor \$factor"
+    #clustering=\$(echo $initcluster \$factor | awk '{ print \$1-\$2 }')
 
 
+    clustering=$initcluster
+    
     outname=${sequencesValid.baseName}_\${clustering}_clustered
     echo "try with \$clustering"
    

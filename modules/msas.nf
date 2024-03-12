@@ -1,69 +1,46 @@
-
 process runTcoffee {
     publishDir "$params.outFolder/msas/t-coffee", mode: "copy" 
     tag "$seqsToAlign"
 
-    errorStrategy 'retry'
-    maxRetries 3
+    errorStrategy {task.attempt < 3 ? 'retry' : 'terminate' }
 
     input:
     path seqsToAlign
     path strucsToAlign
     val tcoffeeParams
+    val gate
 
     output:
     path "*.aln", emit : msa
 
     script:
     """
-    head $seqsToAlign
-
-    echo $tcoffeeParams
-    echo '\n ---------------------- \n'
-
-    set -e # Exit immediately if any command fails
-
-    # Set up environment variables
-    export PATH="/software:/software/.t_coffee/bin/linux:/usr/local/bin:\$PATH"
-    export PLUGINS_4_TCOFFEE="/software/.t_coffee/plugins/linux"
-    export MAX_N_PID_4_TCOFFEE="\${MAX_N_PID_4_TCOFFEE:-5000000}"
-
     # Default values
     WORKING_DIRECTORY_4_TCOFFEE=\$PWD
     SEQUENCE=$seqsToAlign
     PDB_DIR=$strucsToAlign
-    CACHE_DIRECTORY=""
-    TMP_DIRECTORY=""
-    OUTPUT_DIRECTORY=\$PWD
-
-    # Check if all mandatory parameters are provided
-    if [[ -z "\$WORKING_DIRECTORY_4_TCOFFEE" || -z "\$SEQUENCE" || -z "\$PDB_DIR" || -z "\$OUTPUT_DIRECTORY" ]]; then
-    echo "Error: Missing arguments."
-    display_usage
-    exit 1
-    fi
-
-    # Set default cache and tmp directories if not provided
-    if [ -z "\$CACHE_DIRECTORY" ]; then
     CACHE_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/cache"
-    fi
-
-    if [ -z "\$TMP_DIRECTORY" ]; then
     TMP_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/tmp"
-    fi
+    PLUGINS_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/plugins"
+    TCOFFEE_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/"
 
     # Create necessary directories
     mkdir -p "\$CACHE_DIRECTORY"
     mkdir -p "\$TMP_DIRECTORY"
-    OUTPUT_PATH="\$OUTPUT_DIRECTORY"
-    mkdir -p "\$OUTPUT_PATH"
+    mkdir -p "\$PLUGINS_DIRECTORY"
+    mkdir -p "\$TCOFFEE_DIRECTORY"
 
+    # Set up environment variables
+    export MAX_N_PID_4_TCOFFEE="9000000"
     export PDB_DIR=\$PDB_DIR
+    export PLUGINS_4_TCOFFEE=\$PLUGINS_DIRECTORY
+    export DIR_4_TCOFFEE=\$TCOFFEE_DIRECTORY
+    export TMP_4_TCOFFEE=\$TMP_DIRECTORY
+    export CACHE_4_TCOFFEE=\$CACHE_DIRECTORY
 
     echo "Working directory: \$WORKING_DIRECTORY_4_TCOFFEE"
     echo "Cache directory: \$CACHE_DIRECTORY"
     echo "Temp directory: \$TMP_DIRECTORY"
-    echo "Output directory: \$OUTPUT_PATH"
     echo "Input sequence: \$SEQUENCE"
     echo "PDB directory: \$PDB_DIR"
     echo "Environment variables:"
@@ -72,8 +49,6 @@ process runTcoffee {
     echo "MAX_N_PID_4_TCOFFEE: \$MAX_N_PID_4_TCOFFEE"
 
     # Run T-Coffee and save output to a unique log file
-    TIMESTAMP=\$(date +"%Y%m%d%H%M%S")
-    LOG_FILE="\$WORKING_DIRECTORY_4_TCOFFEE/tcoffee_\${TIMESTAMP}.log"
 
     echo "Running T-Coffee..."
     t_coffee ${params.tcoffeeParams ? tcoffeeParams : ''} -thread 0 -in="\$SEQUENCE" \
@@ -81,11 +56,11 @@ process runTcoffee {
         -evaluate_mode=t_coffee_slow \
         -mode=3dcoffee \
         -pdb_min_cov=1 \
-        -outfile="\$OUTPUT_PATH/aligned_${seqsToAlign.baseName}.aln" > "\$LOG_FILE" 2>&1
+        -outfile=aligned_${seqsToAlign.baseName}.aln
 
     echo "T-Coffee execution completed successfully."
 
-    if grep -q "proba_pair" "\$LOG_FILE"; then
+    if grep -q "proba_pair" .command.log; then
         echo "Error: File contains proba_pair, a HMM-based alignment tool that T-Coffee automatically runs when something is wrong with the structure models. If you want to proceed anyways, remove these lines from modules/msas.nf"
         exit 1
         fi
@@ -93,7 +68,6 @@ process runTcoffee {
     """
 
 }
-
 
 process mergeMafft {
     publishDir "$params.outFolder/msas", mode: "copy"  
@@ -146,10 +120,6 @@ process mergeMafft {
 
 }
 
-
-
-
-
 process mapDssp{
     publishDir "$params.outFolder/msas", mode: "copy"
 
@@ -163,7 +133,7 @@ process mapDssp{
 
     script:
     """
-    python3 $projectDir/bin/map_dssp.py $msa dssp_${msa.baseName}
+    python3 $projectDir/bin/map_dssp.py $msa dssp_${msa.baseName} dssp
     """
 }
 

@@ -9,10 +9,19 @@ dssp_file = sys.argv[2] #final_MSA_dssp.fasta = MSA with dssp code instead of re
 squeeze = sys.argv[3]
 conserved_2structure_dssp = squeeze.split(',') # ["H","E"]
 
+#Replace "G" and "I" by "H" as they are equivalent. When couting the frequencies for "H" we will also look for "G" and "I"
+if "G" in conserved_2structure_dssp:
+    conserved_2structure_dssp.remove("G")
+    conserved_2structure_dssp.append("H")
+if "I" in conserved_2structure_dssp:
+    conserved_2structure_dssp.remove("I")
+    conserved_2structure_dssp.append("H")
+conserved_2structure_dssp=list(dict.fromkeys(conserved_2structure_dssp))
+
 anchor_point = int(sys.argv[4]) / 100
 
 if anchor_point > 0: 
-    print ('Conservation of secondary structure element per position is %', anchor_point )
+    print ('Conservation of secondary structure element per position is %', anchor_point*100 )
 else:
     raise ValueError('Conservation of secondary structure element per position must be larger then 0%! Try adding --squeezePerc 80 to your command line ')
     
@@ -47,24 +56,29 @@ last_structured = 0
 for conserved in conserved_2structure_dssp:
     positions = []
     for position,column in enumerate(transposed_dsspMSA_array):
-        count = list(column).count(conserved)
+        if conserved == "H" or conserved == "G" or conserved == "I": #As H,G,I all stand for helix ss, we consider them as the same ss
+            count = list(column).count("H")+list(column).count("G")+list(column).count("I")
+        else:
+            count = list(column).count(conserved)
         freq = count/len(list(column))
         if freq >= anchor_point:
             positions.append(position) #positions part of the anchor region
+    print(positions)
     if positions == []:
-        print('The secondary structure element',conserved,'was not found in all sequences')
+        print('The secondary structure element',conserved,'doesn"t seem to be a conserved element in your dataset. It will be ignored for the squeezing.')
         continue
     else:
     #find start and end anchor points
         start = positions[0]
         stop = None
         counter = 1
-        for i in range(1, len(positions)-1):
+        for i in range(1, len(positions)):
             if positions[i] - positions[i - 1] != 1:
                 stop = positions[i-1]
             if stop != None:
-                structure_elements.append((conserved+str(counter),(start,stop+1)))
-                counter +=1
+                if stop-start+1 > 2: #we need at least 3 consecutive columns with enough conserved secondary structure elements before considering it as an anchor region
+                    structure_elements.append((conserved+str(counter),(start,stop+1)))
+                    counter +=1
                 stop = None
                 start = positions[i]
         structure_elements.append((conserved+str(counter),(start,positions[-1])))
@@ -72,51 +86,59 @@ for conserved in conserved_2structure_dssp:
             last_structured = positions[-1]
 
 structure_elements = sorted(structure_elements, key=lambda x: x[1][0]) #sort it in ascending order
+print(structure_elements)
 
-#add the unstructured regions
-#here, with loop in mean all 2nd structure elements that are not in conserved_2structure_dssp 
-loop_regions = []
-loop_regions.append(('loop0', (0, structure_elements[0][1][0])))
-# Iterate through the existing secondary structure elements and add the loops in between
-for i in range(len(structure_elements) - 1):
-    ss_start = structure_elements[i][1][1]
-    ss_end = structure_elements[i + 1][1][0]
-    loop_name = f'loop{i + 1}'
-    loop_regions.append((loop_name, (ss_start, ss_end)))
-loop_regions.append((f'loop_final', (last_structured, alignment_length)))
+if len(structure_elements) > 0:
+    #add the unstructured regions
+    #here, with loop in mean all 2nd structure elements that are not in conserved_2structure_dssp 
+    loop_regions = []
+    loop_regions.append(('loop0', (0, structure_elements[0][1][0])))
+    # Iterate through the existing secondary structure elements and add the loops in between
+    for i in range(len(structure_elements) - 1):
+        ss_start = structure_elements[i][1][1]
+        ss_end = structure_elements[i + 1][1][0]
+        loop_name = f'loop{i + 1}'
+        loop_regions.append((loop_name, (ss_start, ss_end)))
+    loop_regions.append((f'loop_final', (last_structured, alignment_length))) #all the positions are in Python counting 
 
-#all 2nd structure elements
-all_regions = loop_regions
-all_regions.extend(structure_elements)
-all_regions = sorted(all_regions, key=lambda x: x[1][0])
+    #all 2nd structure elements
+    all_regions = loop_regions
+    all_regions.extend(structure_elements)
+    all_regions = sorted(all_regions, key=lambda x: x[1][0])
+    print(all_regions)
+    # Get the minimum loop's length
+    loop_len = []
+    for region in loop_regions:
+        gaps_list = []
+        fasta_sequences = SeqIO.parse(open(input_file), 'fasta')
+        for fasta in fasta_sequences:
+            name, sequence = fasta.id, str(fasta.seq)
+            gaps_list.append(sequence[region[1][0]:region[1][1]].count("-")) # count number of gaps in one loop
+        loop_len.append(len(sequence[region[1][0]:region[1][1]]) - min(gaps_list)) #give the number of gaps in the sequence with the most AA in one loop
+        loop_len.append(0)
 
-# Get the minimum loop's length
-loop_len = []
-for region in loop_regions:
-    gaps_list = []
-    fasta_sequences = SeqIO.parse(open(input_file), 'fasta')
-    for fasta in fasta_sequences:
-        name, sequence = fasta.id, str(fasta.seq)
-        gaps_list.append(sequence[region[1][0]:region[1][1]].count("-")) # count number of gaps in one loop
-    loop_len.append(len(sequence[region[1][0]:region[1][1]]) - min(gaps_list)) #give the number of gaps in the sequence with the most AA in one loop
-    loop_len.append(0)
-
-# Squeeze the alignment
-with open(output_file, "w+") as outfile:
-    fasta_sequences = SeqIO.parse(open(input_file), 'fasta')
-    for fasta in fasta_sequences:
-        name, sequence = fasta.id, str(fasta.seq)
-        outfile.write(">" + name + "\n")
-        new_align = str()
-        for region, length in zip(all_regions, loop_len):
-            if region[0].startswith("loop"):
-                nogaps_seq = sequence[region[1][0]:region[1][1]].replace("-", "")
-                if region[0] == "loop0":
-                    new_align += "-"*(length - len(nogaps_seq)) + nogaps_seq
-                elif region[0] == "loop_final":
-                    new_align += nogaps_seq + "-"*(length - len(nogaps_seq))
+    # Squeeze the alignment
+    with open(output_file, "w+") as outfile:
+        fasta_sequences = SeqIO.parse(open(input_file), 'fasta')
+        for fasta in fasta_sequences:
+            name, sequence = fasta.id, str(fasta.seq)
+            print(sequence)
+            outfile.write(">" + name + "\n")
+            new_align = str()
+            for region, length in zip(all_regions, loop_len):
+                print("length",length)
+                if region[0].startswith("loop"):
+                    nogaps_seq = sequence[region[1][0]:region[1][1]].replace("-", "")
+                    if region[0] == "loop0":
+                        new_align += "-"*(length - len(nogaps_seq)) + nogaps_seq
+                    elif region[0] == "loop_final":
+                        new_align += nogaps_seq + "-"*(length - len(nogaps_seq))
+                    else:
+                        new_align += nogaps_seq[0:len(nogaps_seq)//2] + "-"*(length - len(nogaps_seq)) + nogaps_seq[len(nogaps_seq)//2:]
                 else:
-                    new_align += nogaps_seq[0:len(nogaps_seq)//2] + "-"*(length - len(nogaps_seq)) + nogaps_seq[len(nogaps_seq)//2:]
-            else:
-                new_align += sequence[region[1][0]:region[1][1]]
-        outfile.write(new_align + "\n")
+                    new_align += sequence[region[1][0]:region[1][1]]
+                print(new_align)
+            outfile.write(new_align + "\n")
+
+else:
+    print("You have asked to squeeze towards the conserved columns containing {} but no such column was found. Therefore, this pipeline fails. We suggest, either squeezing towards other dssp codes or to omit the squeezing of your MSA.")

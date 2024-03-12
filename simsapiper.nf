@@ -26,6 +26,7 @@ Input sequence format (--seqFormat fasta): $params.seqFormat
     !Find all possible formats at https://biopython.org/wiki/SeqIO
 Ignore sequences with % unknown characters (--seqQC 5): $params.seqQC    
 Collapse sequences with % sequence identity (--dropSimilar 90): $params.dropSimilar
+Sequences that a required to be in the alignment (--favoriteSeqs "fav1,fav2"): $params.favoriteSeqs
 ================================================================================
                                 OUTPUT FILES
 
@@ -46,6 +47,8 @@ User provides fasta files with subsets (--useSubsets): $params.useSubsets
 
 Retrieve protein structure models from AFDB (--retrieve): $params.retrieve
 Predict protein structure models with ESM Atlas (--model): $params.model
+Predict protein structure models with Local ESMfold (--localModel X): $params.localModel
+    !Add factor X for each 100 sequences you expect to model
 Maximal % of sequences not matched to a model (--strucQC 5): $params.strucQC
 ================================================================================
                                 ALINGMENT PARAMETERS
@@ -53,6 +56,7 @@ Maximal % of sequences not matched to a model (--strucQC 5): $params.strucQC
 Additional parameters for Tcoffee (--tcoffeeParams): $params.tcoffeeParams
 Additional parameters for MAFFT (--mafftParams "--localpair --maxiterate 1000"): $params.mafftParams
 Map DSSP to alignment (--dssp): $params.dssp
+Save DSSP files (--dsspPath): $params.dsspPath
 Squeeze alignment towards anchors (--squeeze "H,E"): $params.squeeze
     !Select secondary structure elements for anchor points according to DSSP annotation
 Set minimal occurence % of anchor element in MSA: (--squeezePerc 80): $params.squeezePerc
@@ -69,6 +73,7 @@ include {readSeqs as convertSeqs;
             writeFastaFromChannel as writeFastaFromMissing ;
             writeFastaFromChannel as writeFastaFromFound ;
             writeFastaFromChannel as writeFastaFromSeqsInvalid ;
+            writeFastaFromChannel as writeFastaFromSeqsValid ;
 } from "$projectDir/modules/utils"
 
 include {userSubsetting;
@@ -80,6 +85,7 @@ include {
     fetchEsmAtlasStructure;
     getAFmodels;
     runDssp;
+    esmFolds;
 } from "$projectDir/modules/structures"
 
 include{
@@ -101,7 +107,7 @@ workflow {
 
     //data reduction with cdhit
     if (params.dropSimilar){
-        cdHitCollapse(sequenceFastas, params.dropSimilar)
+        cdHitCollapse(sequenceFastas, params.dropSimilar, params.favoriteSeqs)
         reducedSeqs = cdHitCollapse.out.seqs
     } else {
         reducedSeqs = sequenceFastas
@@ -210,7 +216,6 @@ workflow {
             protsFromESM = Channel.empty()
         }
 
-
     // assess which models could not be found in the folder, AFDB or ESM Atlas
     if (params.model) {
         finalMissingModels = esmfjoined.modelNotFound
@@ -227,13 +232,38 @@ workflow {
     structurelessCount.view{"Missing models: " + it}
     foundSequencesCount = finalModelFound.count()
     
-    writeFastaFromMissing(finalMissingModels.map{record -> ">"+ record[0] + ',' + record[2]}.collect(), 'structureless_seqs.fasta')
-    structureless_seqs = writeFastaFromMissing.out.found
+    
 
-    missingQC (allSequencesCount, structurelessCount, params.strucQC)
+    //run local esmfold
+    if (params.localModel){
+        writeFastaFromMissing(finalMissingModels.map{record -> ">"+ record[0] + ',' + record[2]}.collect(), 'seqs_to_model.fasta')
+        seqs_to_model = writeFastaFromMissing.out.found
 
-    writeFastaFromFound(finalModelFound.map{record ->  ">"+ record[0] + ',' + record[2]}.collect(), 'seqs_to_align.fasta')
-    foundSeqs = writeFastaFromFound.out.found
+        esmFolds(seqs_to_model)
+        //if seqs_to_model is empty, the pipeline does not complete, but if it is not empty, strucQC needs to wait for esm?
+        //esmStructuresCounter= Channel.fromPath("$params.structures/*.pdb").count()
+        //this does not work as a gate
+
+
+        foundSequencesCount = finalModelFound.mix(esmFolds.out.esmFoldsStructures).count()
+        
+        structureless_seqs=Channel.empty()
+        structurelessCount==structureless_seqs.count()
+
+        writeFastaFromSeqsValid (seqIDs.map{record -> ">"+ record[0]+ ',' + record[1]}.collect(),'seqs_to_align.fasta')
+        foundSeqs = writeFastaFromSeqsValid.out.found
+
+
+    }else{
+        writeFastaFromMissing(finalMissingModels.map{record -> ">"+ record[0] + ',' + record[2]}.collect(), 'structureless_seqs.fasta')
+        structureless_seqs = writeFastaFromMissing.out.found
+
+        writeFastaFromSeqsValid (finalModelFound.map{record -> ">"+ record[0]+ ',' + record[2]}.collect(),'seqs_to_align.fasta')
+        foundSeqs = writeFastaFromSeqsValid.out.found
+
+    }
+
+    missingQC (allSequencesCount, foundSequencesCount, params.strucQC)
 
     //subsetting
     if (params.useSubsets){
@@ -255,7 +285,7 @@ workflow {
     seqsToAlign = subSeqs.subsets
 
     //submit to tcoffee
-    runTcoffee(seqsToAlign, params.structures, params.tcoffeeParams)
+    runTcoffee(seqsToAlign, params.structures, params.tcoffeeParams, missingQC.out.gate)
     strucMsa =runTcoffee.out.msa.flatten()
 
     convertTCMsa('clustal', strucMsa)
@@ -272,12 +302,29 @@ workflow {
 
     //map to dssp
     if (params.dssp){
-        foundModels = userStructures.mix(protsFromAF,protsFromESM )
-        runDssp(foundModels, missingQC.out.gate)
+        foundModels = userStructures.mix(protsFromAF,protsFromESM ).map{mod -> tuple(mod.baseName, mod)}
+        foundDssps=Channel.fromPath("$params.dsspPath/*.dssp").map{dssp -> tuple(dssp.baseName, dssp)}
+        
+
+        foundModels.join(foundDssps, remainder:true)
+            .branch {
+                missingDssp: it[2] == null
+                missingModel: it[1] == null
+                matchedDssp: true
+            }.set{dsspFilter}
+         
+        
+        dsspFilter.missingDssp.count().view{"DSSP will be calculated for models:" + it}      
+        dsspFilter.missingModel.count().view{"DSSP file without matching model found, this is likely an error:" + it}
+        dsspFilter.matchedDssp.count().view{"DSSP files matched to models:" + it}
+
+        modsForDssp = dsspFilter.missingDssp.map{it -> it[1]}
+
+        runDssp(modsForDssp, missingQC.out.gate)
         dssps = runDssp.out.dsspout.collect()
 
         //relies on dssp being finished WAY before tcoffee alignment. 
-        mapDsspRough("$params.outFolder/dssp", finalMsa)
+        mapDsspRough("$params.dsspPath", finalMsa)
         mappedFinalMsa = mapDsspRough.out.mmsa
     }
 
@@ -287,7 +334,7 @@ workflow {
         squeezedMsa = squeeze.out.msa
 
         //map dssp to final msa
-        mapDsspSqueeze("$params.outFolder/dssp", squeezedMsa)
+        mapDsspSqueeze("$params.dsspPath", squeezedMsa)
         mappedFinalMsaSqueeze = mapDsspSqueeze.out.mmsa
     }else{squeezedMsa=finalMsa}
 
@@ -315,8 +362,7 @@ workflow.onComplete {
 }
 
 workflow.onError {
-    println "Oops... Pipeline execution stopped with the following message: ${workflow.errorMessage}"
-    println "Details: \n ${workflow.errorReport}"
+    println "Oops... Pipeline execution stopped with the following message: \n ${workflow.errorReport}"
     
 }
 

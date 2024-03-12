@@ -59,4 +59,6 @@ Thumbs.db
 *.fls 
 *.synctex.gz
 
+results/*
+
 
