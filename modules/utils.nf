@@ -72,6 +72,12 @@ process missingQC {
     script:
 
    """
+
+    if(( $all == 0 )) ; then
+        echo "ERROR! No sequences found!"
+        exit 1
+    fi
+
     result=\$(echo $found $all | awk '{ print \$1/\$2 }')
     result=\$(echo "\$result" |tr ',' '.')
 
