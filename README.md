@@ -35,7 +35,7 @@ nextflow run simsapiper.nf -profile server,withsingularity --data $(pwd)/toy_exa
 ```
 or use 
 ```
-./toy_example_launch_file.sh
+./magic_align.sh
 ```
 This file can also be double-clicked to run the toy_example dataset.
 
