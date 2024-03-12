@@ -512,14 +512,15 @@ Output: `results/outFolder/run_id_time.nflog`
 - Modeling with ESMFold has low yield: 
     - Sequences longer than 400 residues cannot be modeled: try [ColabFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/AlphaFold2_advanced.ipynb) to generate your own models
     - ESM Atlas was asked to model too many sequences at once, resume the job
--Random crash T-Coffee: 
-    - Go to the T-Coffee log file to better understand the problem: find the work directory of the T-Coffee step in `*.nflog`
-    - If the error contains "sap_pair error": it is very likely that one of the troublesome proteins mentioned in the T-Coffee log file has a ESMFold model in the data/structures folder. Sometimes, the ESMFold models can contain regions with very odd 3D structures (prediction error). The sap_pair algorithm of T-Coffee detects those and because of that, it makes the entire pipeline fail.
-  	Suggestions to circumvent this:
-    	- Retrieve the AF model of the protein from AFDB using the --retrieve parameter
-    	- If the protein is not available on AFDB:
-    		- Try [ColabFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/AlphaFold2_advanced.ipynb) to generate your own model
-     		- Remove the ESMFold model of the troublesome protein from the data/structures folder and set --model false; the protein will be added to the MSA purely based on sequence info
-      		- Remove the troublesome protein from the data/seqs/*.fasta file; the protein is removed from the dataset 
+- SIMSApiper crashes at T-Coffee stage:
+	- Error contains "sap_pair error" and -model true: possibly ESMFold prediction error
+ 		- Remove the ESMFold model of protein in error message  from  `data/structures`
+  			- Set --model false to add protein to the MSA based on sequence
+			- **--retrieve**  AF model of the protein from AFDB
+			- Generate model with [ColabFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/AlphaFold2_advanced.ipynb) and add manually
+		- Remove protein from the data/seqs/*.fasta file to removed from the dataset entirely
+	- Error contains "proba_pair": T-Coffee could not find the structures and uses a sequence based alignemnt method
+		- Use complete path to data/structure directory
+		- Check protein model files 
 - Learn how to adapt this pipeline using Nextflow [here](https://www.nextflow.io/docs/latest/basic.html)
  
