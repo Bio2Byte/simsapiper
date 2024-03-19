@@ -1,6 +1,6 @@
 # SIMSApiper
 
-SIMSApiper is a nextflow pipeline that enables users to create structure informed multiple sequence alignments simply from a set of protein sequences.
+SIMSApiper is a Nextflow pipeline that enables users to create structure informed multiple sequence alignments simply from a set of protein sequences.
 Structural information may be provided by the user or directly retrieved by the pipeline (AlphaFold Database or ESMFold). 
 The process is significantly sped up by using sequence identity-based subsets and aligning them in parallel. 
 Conserved secondary structure elements are used to reduce gaps for a high-quality final alignment.
@@ -21,7 +21,7 @@ Conserved secondary structure elements are used to reduce gaps for a high-qualit
 ### Prepare data
 
 Use directory `toy_example` to test installation.
-SIMSAPiper will automatically recognise directories called `data` if none is specified.
+SIMSAPiper will automatically recognize directories called `data` if none is specified.
 The directory contains:
 
 - Subdirectory `seqs` with fasta-formatted protein sequences
@@ -85,7 +85,7 @@ nextflow run simsapiper.nf
 | --seqFormat	| Input sequence format according to biopython [formats](https://biopython.org/wiki/SeqIO) | 	fasta	 |  | 
 | --seqQC	| Ignore sequences with % non-standard amino acids	 | 5	 | | 
 | --dropSimilar 	| Collapse sequences with % sequence identity	| false	 | 90 | 
-|--favoriteSeqs | Select sequence labels that need to stay in the alignemnt | false | "SeqLabel1,SeqLabel2" |
+|--favoriteSeqs | Select sequence labels that need to stay in the alignment | false | "SeqLabel1,SeqLabel2" |
 | --outFolder	| Set directory name for output files	 | results/simsa_time_of_execution	 |  | 
 | --outName 	| Set final MSA file name	| 	finalmsa |   | 
 | --createSubsets	| Creates subsets of maximally % sequence identity	 | false	 | 30 | 
@@ -106,7 +106,7 @@ CD-Hit clusters
 | --magic	| Launch a run with recommended settings for all parameters	 | false	 |  | 
 
 # Documentation 
-![Extensive representation of pipelign workflow!](schemes/detailedScheme.png "Extensive representation of SIMSApiper workflow")
+![Extensive representation of pipeline workflow!](schemes/detailedScheme.png "Extensive representation of SIMSApiper workflow")
 ### Requirements
 - [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html) 
 - Java V11
@@ -136,7 +136,7 @@ CD-Hit clusters
 ### Launch file: `Magic_align.sh`
 
 - Creates log file `*.nflog` with working directories for all subjobs, error messages, and execution hash for resuming
-- Add more flags to standardise runs, alternatively create profiles in `nextflow.config` file
+- Add more flags to standardize runs, alternatively create profiles in `nextflow.config` file
 
 ```bash
 #!/bin/bash
@@ -178,10 +178,10 @@ sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $output_folder/run_report_$output_
 - Holds all variables needed to adapt SIMSApiper to your system
 - Local, server and HPC-SLURM execution profiles are prepared
 - Edit to change standard parameters (as listed under available flags)
-- Learn how to make nextflow profiles [here](https://www.nextflow.io/docs/latest/config.html?highlight=config) 
+- Learn how to make Nextflow profiles [here](https://www.nextflow.io/docs/latest/config.html?highlight=config) 
 
-<!-- In this study, we execute Simsapiper on VSC Tier-2 general-purpose clusters provided by VUB-HPC, a member of the Vlaams Supercomputer Centrum (VSC). VSC is a collaborative effort among the five Flemish universities and their university associations, aimed at providing high-performance computing (HPC) resources to both the academic and industrial communities in Flanders. The infrastructure at VUB-HPC is based on CentOS v7 (Core) GNU/Linux distribution and is managed using the SLURM Workload Manager, which coordinates resource allocation and job scheduling across the clusters.
-The compatibility of NextFlow with HPC environments is natively provided by this Workflow framework, therefore the execution of Simsapiper on VUB-HPC Tier-2 clusters is straightforward. Each step in the pipeline is translated by Nextflow into a SLURM job which allocates 1 CPU, 1 GB of RAM, and a 10-minute wall-time limit. However, it's important to note that steps involving T-Coffee require more extensive computational resources, so that, they request 10 CPUs, 15 GB of RAM, and a progressively increasing wall-time allocation (up to 2 hours for the first attempt, 8 hours for the second, and 64 hours for the final attempt).
+<!-- In this study, we execute SIMSApiper on VSC Tier-2 general-purpose clusters provided by VUB-HPC, a member of the Vlaams Supercomputer Centrum (VSC). VSC is a collaborative effort among the five Flemish universities and their university associations, aimed at providing high-performance computing (HPC) resources to both the academic and industrial communities in Flanders. The infrastructure at VUB-HPC is based on CentOS v7 (Core) GNU/Linux distribution and is managed using the SLURM Workload Manager, which coordinates resource allocation and job scheduling across the clusters.
+The compatibility of NextFlow with HPC environments is natively provided by this Workflow framework, therefore the execution of SIMSApiper on VUB-HPC Tier-2 clusters is straightforward. Each step in the pipeline is translated by Nextflow into a SLURM job which allocates 1 CPU, 1 GB of RAM, and a 10-minute wall-time limit. However, it's important to note that steps involving T-Coffee require more extensive computational resources, so that, they request 10 CPUs, 15 GB of RAM, and a progressively increasing wall-time allocation (up to 2 hours for the first attempt, 8 hours for the second, and 64 hours for the final attempt).
 Within the pipeline, NextFlow manages step dependencies, automating the dispatch of new SLURM jobs upon the completion of preceding steps. Additionally, it is possible to fine-tune the number of concurrently running jobs using specific configuration parameters defined in the NextFlow configuration file to optimize.
 
 other profiles available on nf core
@@ -220,7 +220,7 @@ Good to know:
 
 ### Output directory (--outFolder)
 
-- Nextflow creates directory `results` in nextflow directory
+- Nextflow creates directory `results` in Nextflow directory
 - Every run creates a unique subdirectory
 - Set name using **--outFolder**
 
@@ -248,7 +248,7 @@ How?
 
 - Use [CD-Hit](https://github.com/weizhongli/cdhit) with high sequence identify cutoff
 - Keep cluster representatives 
-- Proteins inside clusters will be excluded from the downstream processess
+- Proteins inside clusters will be excluded from the downstream processes
 - Add important proteins to the representatives with **--favoriteSeqs**
 - Find in which cluster a specific protein is in `results/outFolder/seqs/CD-HIT/*.clstr`
 - Find excluded similar sequences in `results/outFolder/seqs/CD-HIT/removed_*_perc_similar.fasta`
@@ -263,7 +263,7 @@ How?
 
 - Remove all sequences containing more than **--seqQC** % non-standard amino acids
 
-## 2. Match sequence with stucture information
+## 2. Match sequence with structure information
 ### 2.1 Identify missing models
 
 - Match sequence ID and structure model filenames 
@@ -356,7 +356,7 @@ Common Issues:
     - Increase initial clustering threshold **--createSubsets**
     - Clusters get split randomly to attain evenly distributed clusters smaller then **--maxSubsetSize** 
 - More then 5% of the clusters are singletons:
-    - Threshold will interatively decrease by 5% until **--minSubsetIdentity** 
+    - Threshold will interactively decrease by 5% until **--minSubsetIdentity** 
     - Set **--minSubsetIdentity "min"** to reduce overall number of subsets by collating small clusters and singletons until **--maxSubsetSize** reached
     
 ## 4. Run T-Coffee (--tcoffeeParams)
@@ -404,7 +404,7 @@ mafft --merge tableMAFFT.txt input > prefinalMSA.fasta
 
 
 ## 6. Run DSSP (--dssp)
-Output: `results/outFolder/dssp/model_name.dssp`
+Output: `results/data/dssp/model_name.dssp`
 
 - Translate structure models into 2D secondary structure nomenclature using the [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html)
 
@@ -471,7 +471,7 @@ Output: `results/outFolder/sequence_report.text`
 ### Resource log
 Output: `results/outFolder/nextflow_report_outName.html`, `resources_outName.txt`
 
-- Log file created by nextflow pipeline
+- Log file created by Nextflow pipeline
 - Shows execution times and resource usage per job
 
 ### Execution log
@@ -479,7 +479,7 @@ Output: `results/outFolder/run_id_time.nflog`
 
 - Created ONLY when using the launch file
 - Reports all **--flag** settings 
-- Captures terminal output of nextflow pipeline for error tracing
+- Captures terminal output of Nextflow pipeline for error tracing
 - Captures unique execution hash and flags for resuming the specific job
 
 # Tips, tricks and common issues
@@ -495,7 +495,7 @@ Output: `results/outFolder/run_id_time.nflog`
     Attention: last state will be permanently overwritten 
 - All intermediate results are unique subdirectory of the directory `work` \
     Find directory hash for each step in `*.nflog` 
-- Run in the background: launch simsapiper in a [screen](https://gist.github.com/jctosta/af918e1618682638aa82) 
+- Run in the background: launch SIMSApiper in a [screen](https://gist.github.com/jctosta/af918e1618682638aa82) 
     ```bash
     screen -S nextflowalign bash -c ./magic_align.sh
     ```
