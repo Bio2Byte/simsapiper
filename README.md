@@ -31,7 +31,7 @@ The directory contains:
 
 Enable recommended settings using **--magic**
 ```
-nextflow run simsapiper.nf -profile server,withsingularity --data $(pwd)/toy_example/data --magic
+nextflow run simsapiper.nf -profile server,withsingularity --data $PWD/toy_example/data --magic
 ```
 or use 
 ```

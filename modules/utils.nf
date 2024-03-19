@@ -161,13 +161,17 @@ process createSummary{
     script:
 
     """
-    outfile=simsapiper_summary.md
+    outname=simsapiper_summary
+    outfile=\${outname}.md
     
+    echo "# Summary file for SIMSApiper " >> \$outfile
+    echo "Find detailed explations for each step on [GitHub](https://github.com/Bio2Byte/simsapiper) "  >> \$outfile
     echo "# Input sequences files " >> \$outfile
     echo ' No. of sequences in inputfile(s): ' $foundSequencesCount >> \$outfile
-    echo '\n Input files can be found in' $seqsdir >> \$outfile
-    echo '\n SIMSApiper found these files:' $inputSeqFiles >> \$outfile
+    echo '\n Input files can be found in $seqsdir' >> \$outfile
 
+    echo '\n SIMSApiper found these files: '$inputSeqFiles >> \$outfile
+    
 
     echo ' # 1 Data preparation' >> \$outfile
     echo " ## 1.2 Data reduction with CD-Hit" >> \$outfile
@@ -225,10 +229,21 @@ process createSummary{
 
     echo "$outdir"  >> \$outfile
     
+
+    
     """    
 
     //echo  \$(readlink -f $seqsInvalidFile) >> \$outfile
     //inputSeqFilePath=\$(readlink -f $inputSeqFiles )
     //echo '[$inputSeqFiles]('\$inputSeqFilePath')' >> \$outfile
+
+    //[link](file:///Users/matb/Desktop/cat.gif) 
+    //echo '<a href="file://'\$inputSeqFilesPath'">link</a>' >>\$outfile
+
+
+
+    //inputSeqFilesPath=\$(readlink -f $inputSeqFiles) 
+    //echo '\n SIMSApiper found these files: ![$inputSeqFiles](file://'\$inputSeqFilesPath')' >> \$outfile
+    
 
 }

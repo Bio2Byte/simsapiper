@@ -182,10 +182,12 @@ workflow {
             }.set{afjoined}
             //afjoined.modelFound.view{"Post AF Models matched:" + it[0]} 
             //afjoined.modelNotFound.view{"Missing after AF2DB search:" + it[0]}
+            afmodelCount=afjoined.modelFound.count()
         
     } else {
         getAFout = Channel.empty()
         protsFromAF= Channel.empty()
+        afmodelCount=Channel.empty()
     }
 
     
@@ -218,8 +220,10 @@ workflow {
             }.set{esmfjoined}
             //esmfjoined.modelFound.view{"Post ESMF Models matched:" + it[0]}      
             //esmfjoined.modelNotFound.view{"Missing after ESM Atlas search:" + it[0]}
+            esmmodelCount= esmfjoined.modelFound.count()
         }else{
             protsFromESM = Channel.empty()
+            esmmodelCount=Channel.of("none")
         }
 
     // assess which models could not be found in the folder, AFDB or ESM Atlas
@@ -279,8 +283,10 @@ workflow {
     }else if (params.createSubsets){
         cdHitSubsetting(foundSeqs, params.createSubsets, params.minSubsetID, params.maxSubsetSize)
         subsets =  cdHitSubsetting.out.seq.collect().flatten()
+        cdHitSubsettingClusters=cdHitSubsetting.out.clusters
     }else{
         subsets = foundSeqs 
+        cdHitSubsettingClusters=Channel.empty()
     }
 
     subsets.branch{
@@ -371,13 +377,13 @@ workflow {
         writeFastaFromSeqsInvalid.out.found.ifEmpty([]),
         params.structures,
         joined.modelFound.count(),
-        afjoined.modelFound.count(),
-        esmfjoined.modelFound.count(),
+        afmodelCount,
+        esmmodelCount,
         structurelessCount,
         structureless_seqs.ifEmpty([]),
         params.createSubsets,
         params.useSubsets,
-        cdHitSubsetting.out.clusters.ifEmpty([]),
+        cdHitSubsettingClusters.ifEmpty([]),
         foundSeqs,
         params.tcoffeeParams,
         mergeMafft.out.finalMsa,
