@@ -9,7 +9,7 @@ output_name=${data}_${now}_test
 output_folder=$house/results/$output_name
 mkdir -p $house/results
 mkdir -p $output_folder
-nextflow run simsapiper.nf \
+nextflow run simsapiper.nf -resume \
     -profile hydra \
     --data $house/$data/data \
     --magic \

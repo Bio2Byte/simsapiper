@@ -361,7 +361,8 @@ workflow {
     //select output format for MSA
     if (params.convertMSA){
         convertFinalMsa(params.convertMSA, reorderedFinalMsa)
-    }
+        convertFinalMsaFile =convertFinalMsa.out.convertedSeqs
+    }else{convertFinalMsaFile=Channel.empty()}
 
     createSummary(
         params.outFolder,
@@ -377,7 +378,9 @@ workflow {
         writeFastaFromSeqsInvalid.out.found.ifEmpty([]),
         params.structures,
         joined.modelFound.count(),
+        params.retrieve,
         afmodelCount,
+        params.model,
         esmmodelCount,
         structurelessCount,
         structureless_seqs.ifEmpty([]),
@@ -387,7 +390,18 @@ workflow {
         foundSeqs,
         params.tcoffeeParams,
         mergeMafft.out.finalMsa,
-        params.mafftParams
+        params.mafftParams,
+        "$params.data/dssp" ,
+        params.dsspPath ,
+        mappedFinalMsa.ifEmpty([]),
+        params.squeeze ,
+        params.squeezePerc ,
+        squeezedMsa.ifEmpty([]),
+        mappedFinalMsaSqueeze.ifEmpty([]),
+        params.reorder ,
+        reorderedFinalMsa.ifEmpty([]) ,
+        //params.convertMSA ,
+        //convertFinalMsaFile
         )
 
 }
