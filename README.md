@@ -507,10 +507,17 @@ Output: `results/outFolder/run_id_time.nflog`
         ```
         and rerun.
     - check for spaces behind `\` in the launch file, there can not be any.
-    - On MacOS, replace `|& tee` with `>>`  
+    - On MacOS, you may have to replace `|& tee` with `>>`  
 - Modeling with ESMFold has low yield: 
     - Sequences longer than 400 residues cannot be modeled: try [ColabFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/AlphaFold2_advanced.ipynb) to generate your own models
     - ESM Atlas was asked to model too many sequences at once, resume the job
+- SIMSApiper crashes at CD-Hit stage:
+    - try:
+        ```bash
+        chmod +x bin/psi-cd-hit.pl
+        chmod +x bin/psi-cd-hit-local.pl
+        ```
+        and rerun.
 - SIMSApiper crashes at T-Coffee stage:
 	- Error contains "sap_pair error" and -model true: possibly ESMFold prediction error
  		- Remove the ESMFold model of protein in error message  from  `data/structures`
