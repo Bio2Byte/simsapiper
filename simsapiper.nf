@@ -325,10 +325,10 @@ workflow {
                 matchedDssp: true
             }.set{dsspFilter}
          
-        
-        dsspFilter.missingDssp.count().view{"DSSP will be calculated for models:" + it}      
-        dsspFilter.missingModel.count().view{"DSSP file without matching model found, this is likely an error:" + it}
         dsspFilter.matchedDssp.count().view{"DSSP files matched to models:" + it}
+        dsspFilter.missingDssp.count().view{"DSSP will be calculated for models:" + it}      
+        //dsspFilter.missingModel.count().view{"DSSP file without matching model found, this is likely an error:" + it}
+        
 
         modsForDssp = dsspFilter.missingDssp.map{it -> it[1]}
 
@@ -365,6 +365,7 @@ workflow {
     }else{convertFinalMsaFile=Channel.empty()}
 
     createSummary(
+        Channel.empty().mix(finalMsa,convertFinalMsaFile,reorderedFinalMsa,squeezedMsa).collect(),
         params.outFolder,
         allSequences,
         fullInputSeqsNum,
@@ -372,36 +373,25 @@ workflow {
         params.dropSimilar,
         allSequencesCount,
         params.favoriteSeqs,
-        reducedClusters.ifEmpty([]),
         params.seqQC,
         seqsInvalidCount ,
-        writeFastaFromSeqsInvalid.out.found.ifEmpty([]),
         params.structures,
         joined.modelFound.count(),
-        params.retrieve,
-        afmodelCount,
+        "${params.retrieve}",
+        afmodelCount.ifEmpty('0'),
         params.model,
-        esmmodelCount,
+        esmmodelCount.ifEmpty('0'),
         structurelessCount,
-        structureless_seqs.ifEmpty([]),
         params.createSubsets,
         params.useSubsets,
-        cdHitSubsettingClusters.ifEmpty([]),
-        foundSeqs,
         params.tcoffeeParams,
-        mergeMafft.out.finalMsa,
         params.mafftParams,
         params.dssp,
         params.dsspPath ,
-        mappedFinalMsa.ifEmpty([]),
         params.squeeze ,
         params.squeezePerc ,
-        squeezedMsa.ifEmpty([]),
-        mappedFinalMsaSqueeze.ifEmpty([]),
         params.reorder ,
-        reorderedFinalMsa.ifEmpty([]) ,
-        //params.convertMSA ,
-        //convertFinalMsaFile
+        params.convertMSA
         )
 
 }
