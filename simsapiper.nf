@@ -391,7 +391,7 @@ workflow {
         params.tcoffeeParams,
         mergeMafft.out.finalMsa,
         params.mafftParams,
-        "$params.data/dssp" ,
+        params.dssp,
         params.dsspPath ,
         mappedFinalMsa.ifEmpty([]),
         params.squeeze ,
