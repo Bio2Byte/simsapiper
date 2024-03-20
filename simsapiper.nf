@@ -409,6 +409,7 @@ workflow {
 workflow.onComplete {
     println "Pipeline completed at               : $workflow.complete"
     println "Time to complete workflow execution : $workflow.duration"
+    println "Commands executed                   : $workflow.commandLine"
     println "Execution status                    : ${workflow.success ? 'Success' : 'Failed' }"
     println "Output folder                       : $params.outFolder"
 }
