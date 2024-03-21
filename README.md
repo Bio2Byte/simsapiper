@@ -1,6 +1,6 @@
 # SIMSApiper
 
-SIMSApiper is a nextflow pipeline that enables users to create structure informed multiple sequence alignments simply from a set of protein sequences.
+SIMSApiper is a Nextflow pipeline that enables users to create structure informed multiple sequence alignments simply from a set of protein sequences.
 Structural information may be provided by the user or directly retrieved by the pipeline (AlphaFold Database or ESMFold). 
 The process is significantly sped up by using sequence identity-based subsets and aligning them in parallel. 
 Conserved secondary structure elements are used to reduce gaps for a high-quality final alignment.
@@ -12,7 +12,7 @@ Conserved secondary structure elements are used to reduce gaps for a high-qualit
 
 - [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html)
 - [Singularity](https://apptainer.org/admin-docs/master/installation.html#installation-on-linux)/Apptainer or [Docker](https://docs.docker.com/get-docker/)
-- Sufficient amount of scratch space and RAM (50 Sequences of 400 residues with 60% sequence identity need 30GB disk space and 10GB RAM)
+- Sufficient amount of scratch space and RAM (300 Sequences of 400 residues with 30% sequence identity need 30GB disk space and 32GB RAM)
 - Copy of this repository
   ```
   git clone https://github.com/Bio2Byte/simsapiper.git
@@ -21,7 +21,7 @@ Conserved secondary structure elements are used to reduce gaps for a high-qualit
 ### Prepare data
 
 Use directory `toy_example` to test installation.
-SIMSAPiper will automatically recognise directories called `data` if none is specified.
+SIMSAPiper will automatically recognize directories called `data` if none is specified.
 The directory contains:
 
 - Subdirectory `seqs` with fasta-formatted protein sequences
@@ -31,13 +31,15 @@ The directory contains:
 
 Enable recommended settings using **--magic**
 ```
-nextflow run simsapiper.nf -profile server,withsingularity --data toy_example/data --magic --squeeze "H,G,E" --minSubsetID 20
+nextflow run simsapiper.nf -profile server,withsingularity --data $PWD/toy_example/data --magic
 ```
 or use 
 ```
-./toy_example_launch_file.sh
+./magic_align.sh
 ```
 This file can also be double-clicked to run the toy_example dataset.
+
+Use absolute files paths (`/Users/me/workspace/simsapiper/toy_example/data`).
 
 By default most flags are set to False. 
 Adding a flag to the command line will set it to True and activate it. 
@@ -60,7 +62,7 @@ nextflow run simsapiper.nf
     --model
     --strucQC 5
     --dssp
-    --squeeze "H"
+    --squeeze "H,E"
     --squeezePerc 80
     --reorder
 ```
@@ -80,13 +82,15 @@ nextflow run simsapiper.nf
 | --data	| Path to data directory 	 | data	 |    | 
 | --structures	| Path to structure files directory  | **--data**/structures	 | | 
 | --seqs	| Path to sequence files directory  | **--data**/seqs	 |  | 
-| --seqFormat	| Input sequence format according to biopython <br>  Find all possible [formats](https://biopython.org/wiki/SeqIO) | 	fasta	 |  | 
+| --seqFormat	| Input sequence format according to biopython [formats](https://biopython.org/wiki/SeqIO) | 	fasta	 |  | 
 | --seqQC	| Ignore sequences with % non-standard amino acids	 | 5	 | | 
 | --dropSimilar 	| Collapse sequences with % sequence identity	| false	 | 90 | 
+|--favoriteSeqs | Select sequence labels that need to stay in the alignment | false | "SeqLabel1,SeqLabel2" |
 | --outFolder	| Set directory name for output files	 | results/simsa_time_of_execution	 |  | 
 | --outName 	| Set final MSA file name	| 	finalmsa |   | 
 | --createSubsets	| Creates subsets of maximally % sequence identity	 | false	 | 30 | 
-|--minSubsetID | Sets minimal % sequence identity for sequences to be in a subset | 20 | "min" to collate smaller <br>   CD-Hit clusters|
+|--minSubsetID | Sets minimal % sequence identity for sequences to be in a subset | 20 | "min" to collate small
+CD-Hit clusters
 |--maxSubsetSize | Sets maximal number of sequences in a subset | true | <400AA: --maxSubsetSize 100,<br> >400AA: --maxSubsetSize 50|
 | --useSubsets	| User provides multiple sequence files corresponding to subsets <br> Provide sequences not fitting any subset in a file containing 'orphan' in filename  | false	 | | 
 | --retrieve	| Retrieve protein structure models from AFDB  | 	false | 	 | 
@@ -95,19 +99,18 @@ nextflow run simsapiper.nf
 | --tcoffeeParams	| Additional parameters for Tcoffee 	 | false | "--help" | 
 | --mafftParams	| Additional parameters for MAFFT 	 | false	 | "--localpair --maxiterate 100" | 
 | --dssp	| Map DSSP code to alignment 	 | false | 	 | 
-| --squeeze	| Squeeze alignment towards conserved 2nd structure elements <br>  Find all possible 2nd structure [elements](https://ssbio.readthedocs.io/en/latest/instructions/dssp.html) | false	 | "H,E" |
+| --squeeze	| Squeeze alignment towards conserved 2nd structure categories | false	 | "H,E" |
 | --squeezePerc	| Set minimal occurence % of anchor element in MSA 	 | 80	 |  |  
 | --reorder	| Order final MSA by input file order 	| false	 |  | 
 | --convertMSA	| Covert final MSA file from fasta to selected file format	| 	false |  "clustal" | 
 | --magic	| Launch a run with recommended settings for all parameters	 | false	 |  | 
 
 # Documentation 
-![Extensive representation of pipelign workflow!](schemes/detailedScheme.png "Extensive representation of SIMSApiper workflow")
+![Extensive representation of pipeline workflow!](schemes/detailedScheme.png "Extensive representation of SIMSApiper workflow")
 ### Requirements
 - [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html) 
 - Java V11
 - Python3
-- Sufficient amount of scratch space and RAM (300 Sequences of 400 residues with 30% sequence identity need 30GB disk space and 32GB RAM)
 
 ### Dependencies
 - [Singularity](https://apptainer.org/admin-docs/master/installation.html#installation-on-linux)/Apptainer (-profile withsingularity)
@@ -133,7 +136,7 @@ nextflow run simsapiper.nf
 ### Launch file: `Magic_align.sh`
 
 - Creates log file `*.nflog` with working directories for all subjobs, error messages, and execution hash for resuming
-- Add more flags to standardise runs, alternatively create profiles in `nextflow.config` file
+- Add more flags to standardize runs, alternatively create profiles in `nextflow.config` file
 
 ```bash
 #!/bin/bash
@@ -175,10 +178,10 @@ sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $output_folder/run_report_$output_
 - Holds all variables needed to adapt SIMSApiper to your system
 - Local, server and HPC-SLURM execution profiles are prepared
 - Edit to change standard parameters (as listed under available flags)
-- Learn how to make nextflow profiles [here](https://www.nextflow.io/docs/latest/config.html?highlight=config) 
+- Learn how to make Nextflow profiles [here](https://www.nextflow.io/docs/latest/config.html?highlight=config) 
 
-<!-- In this study, we execute Simsapiper on VSC Tier-2 general-purpose clusters provided by VUB-HPC, a member of the Vlaams Supercomputer Centrum (VSC). VSC is a collaborative effort among the five Flemish universities and their university associations, aimed at providing high-performance computing (HPC) resources to both the academic and industrial communities in Flanders. The infrastructure at VUB-HPC is based on CentOS v7 (Core) GNU/Linux distribution and is managed using the SLURM Workload Manager, which coordinates resource allocation and job scheduling across the clusters.
-The compatibility of NextFlow with HPC environments is natively provided by this Workflow framework, therefore the execution of Simsapiper on VUB-HPC Tier-2 clusters is straightforward. Each step in the pipeline is translated by Nextflow into a SLURM job which allocates 1 CPU, 1 GB of RAM, and a 10-minute wall-time limit. However, it's important to note that steps involving T-Coffee require more extensive computational resources, so that, they request 10 CPUs, 15 GB of RAM, and a progressively increasing wall-time allocation (up to 2 hours for the first attempt, 8 hours for the second, and 64 hours for the final attempt).
+<!-- In this study, we execute SIMSApiper on VSC Tier-2 general-purpose clusters provided by VUB-HPC, a member of the Vlaams Supercomputer Centrum (VSC). VSC is a collaborative effort among the five Flemish universities and their university associations, aimed at providing high-performance computing (HPC) resources to both the academic and industrial communities in Flanders. The infrastructure at VUB-HPC is based on CentOS v7 (Core) GNU/Linux distribution and is managed using the SLURM Workload Manager, which coordinates resource allocation and job scheduling across the clusters.
+The compatibility of NextFlow with HPC environments is natively provided by this Workflow framework, therefore the execution of SIMSApiper on VUB-HPC Tier-2 clusters is straightforward. Each step in the pipeline is translated by Nextflow into a SLURM job which allocates 1 CPU, 1 GB of RAM, and a 10-minute wall-time limit. However, it's important to note that steps involving T-Coffee require more extensive computational resources, so that, they request 10 CPUs, 15 GB of RAM, and a progressively increasing wall-time allocation (up to 2 hours for the first attempt, 8 hours for the second, and 64 hours for the final attempt).
 Within the pipeline, NextFlow manages step dependencies, automating the dispatch of new SLURM jobs upon the completion of preceding steps. Additionally, it is possible to fine-tune the number of concurrently running jobs using specific configuration parameters defined in the NextFlow configuration file to optimize.
 
 other profiles available on nf core
@@ -195,7 +198,6 @@ Input: `data/seqs/`
 - Sequence IDs: 
     If **--retrieve**: use Uniprot ID as sequence ID to enable retrieval from [AlphaFold Database](https://alphafold.ebi.ac.uk)
 
-
 ### Structural input (--structures)
 
 Input: `data/structures/` 
@@ -205,17 +207,20 @@ Input: `data/structures/`
 - Sequence labels and the structure filenames must match exactly! \
     \>P25106 will only match P25106.pdb
 - Can be experimentally generated structures, from the PDB or modeled structures
-- Good to know:
-	- Make sure your file contains only your chain of interest. Otherwise, extract a specific chain: [pdb-tools](http://www.bonvinlab.org/pdb-tools/)
-	- Mutations in 3D structure will not impact MSA quality if mutations do not impact the overall organisation of the protein
-	- Omit these issues by using predicted 3D models, even poor AlphaFold models have been [shown](https://doi.org/10.1093/bioinformatics/btac625) to improve the quality of MSAs
-- Compute your own AlphaFold2 model using [ColabFold](https://colab.research.google.com/github/deepmind/alphafold/blob/main/notebooks/AlphaFold.ipynb) (very user friendly) or directly the [AlphaFold2](https://github.com/deepmind/alphafold) software instead of relying on [ESMFold](https://esmatlas.com/resources?action=fold) if
-	- Proteins are very different from proteins previously solved in the PDB
-	- Proteins are larger than 400 residues
+
+Good to know:
+- Step [squeeze](#squeeze) will fail if your structure file contains multiple chains. Extract a specific chain: [pdb-tools](http://www.bonvinlab.org/pdb-tools/)
+- Mutations in 3D structure will not impact MSA quality if mutations do not impact the overall organisation of the protein. 
+- Step [squeeze](#squeeze) will fail if more than 5% of your protein is mutated.
+<a id="strucin"></a>
+- Omit these issues by computing your own AlphaFold2 model using [ColabFold](https://colab.research.google.com/github/deepmind/alphafold/blob/main/notebooks/AlphaFold.ipynb) (very user friendly) or directly the [AlphaFold2](https://github.com/deepmind/alphafold) software instead of relying on [ESMFold](https://esmatlas.com/resources?action=fold) if:
+    - Proteins are very different from proteins previously solved in the PDB
+    - Proteins are larger than 400 residues
+- Modeled structure information has been [shown](https://doi.org/10.1093/bioinformatics/btac625) to improve the quality of MSAs
 
 ### Output directory (--outFolder)
 
-- Nextflow creates directory `results` in nextflow directory
+- Nextflow creates directory `results` in Nextflow directory
 - Every run creates a unique subdirectory
 - Set name using **--outFolder**
 
@@ -241,11 +246,12 @@ Why?
 
 How?
 
-- Use [CD-Hit](https://github.com/weizhongli/cdhit) with high sequence identify cutoff (e.g. 90%)
+- Use [CD-Hit](https://github.com/weizhongli/cdhit) with high sequence identify cutoff
 - Keep cluster representatives 
-- Proteins inside clusters will be excluded from the downstream processess
-- Find in which cluster a specific protein is in `results/outFolder/seqs/CD-HIT/*.clstr` file
-
+- Proteins inside clusters will be excluded from the downstream processes
+- Add important proteins to the representatives with **--favoriteSeqs**
+- Find in which cluster a specific protein is in `results/outFolder/seqs/CD-HIT/*.clstr`
+- Find excluded similar sequences in `results/outFolder/seqs/CD-HIT/removed_*_perc_similar.fasta`
 ### 1.3 Quality control for input sequences (--seqQC)
 Output: `results/outFolder/seqs/too_many_unknown_characters.fasta`
 
@@ -257,7 +263,7 @@ How?
 
 - Remove all sequences containing more than **--seqQC** % non-standard amino acids
 
-## 2. Match sequence with stucture information
+## 2. Match sequence with structure information
 ### 2.1 Identify missing models
 
 - Match sequence ID and structure model filenames 
@@ -275,11 +281,11 @@ Why?
 
 How?
 
-- Only possible if sequence ID is the Uniprot ID 
+- Only possible if sequence ID starts with the Uniprot ID `>UniprotID_more_information`
 
 Common Issues:
 
-- Entries in Uniprot that are not on the AlphaFold Database: generate model yourself (see tips in Structural input section )and add manually to `data/structures/` 
+- Entries in Uniprot that are not on the AlphaFold Database: [generate model yourself](#strucin) and add manually to `data/structures/` 
 
 ### 2.3 Identify missing models
 (same as step 2.1)
@@ -350,8 +356,8 @@ Common Issues:
     - Increase initial clustering threshold **--createSubsets**
     - Clusters get split randomly to attain evenly distributed clusters smaller then **--maxSubsetSize** 
 - More then 5% of the clusters are singletons:
-    - Threshold will automatically decrease until **--minSubsetIdentity** (20%) iteratively
-    - Set **--minSubsetIdentity "min"** to reduce overall number of subsets by collating small clusters until **--maxSubsetSize** reached
+    - Threshold will interactively decrease by 5% until **--minSubsetIdentity** 
+    - Set **--minSubsetIdentity "min"** to reduce overall number of subsets by collating small clusters and singletons until **--maxSubsetSize** reached
     
 ## 4. Run T-Coffee (--tcoffeeParams)
 Output: `results/outFolder/msas/t-coffee/aligned_subset_*.aln `
@@ -374,7 +380,7 @@ t_coffee -in=subset_0.fasta  -method TMalign_pair
 -evaluate_mode=t_coffee_slow  -mode=3dcoffee  -pdb_min_cov=1  -thread 0 
 -outfile="output/t-coffee/subset_0_aligned.aln" 
 ``` 
-(note that sap_pair is used by default by the 3DCoffee mode of T-Coffee)
+- Mode 3DCoffee uses method sap_pair by default
 - Append any other T-Coffee flag with **--tcoffeeParams “-quiet”**
 
 
@@ -398,7 +404,7 @@ mafft --merge tableMAFFT.txt input > prefinalMSA.fasta
 
 
 ## 6. Run DSSP (--dssp)
-Output: `results/outFolder/dssp/model_name.dssp`
+Output: `results/data/dssp/model_name.dssp`
 
 - Translate structure models into 2D secondary structure nomenclature using the [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html)
 
@@ -406,13 +412,18 @@ Output: `results/outFolder/dssp/model_name.dssp`
 ### 7.1 Map DSSP to MSA
 Output: `results/outFolder/msas/dssp_merged_finalmsa_alignment.fasta`
 
-- Map [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html) on sequences of the MSA, conserving the gaps.
+- Map [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html) on sequences of the MSA, conserving the gaps
 
+<a id="mappingissues"></a>
 Common Issues:
-- Mapping fails if the sequence of the model and the sequence have the same length but are more than 5% different because of point mutations or have different lengths because of deletion/insertion mutations: these troublesome sequences can be find in the `results/outFolder/msas/unmappable.fasta` file and will be added to the mapped alignment without being converted to their DSSP codes
+- Sequence of the model and the sequence to align have:
+	- Same length but more than 5% different (point mutations)
+ 	- Different lengths (deletions/insertions) in the middle of one of the sequences (allowed at extremeties)
 - Your structure file contains more than one chain: extract a specific chain using [pdb-tools](http://www.bonvinlab.org/pdb-tools/) or use predicted models
+- Find these troublesome sequences in `results/outFolder/msas/unmappable_dssp.fasta` and unconverted in the mapped alignment
 
-### 7.2 Squeeze MSA towards conserved secondary structure elements (--squeeze)
+<a id="squeeze"></a>
+### 7.2 Squeeze MSA towards conserved secondary structure elements (--squeeze) 
 Output: `results/outFolder/msas/squeezed_dssp_merged_finalmsa_alignment.fasta`
 
 Why?
@@ -421,9 +432,10 @@ Why?
 
 How?
 
-- Identifying conserved secondary structure elements such as ɑ-helices and β-sheets with **--squeeze “H,E”**, and squeeze MSA towards these regions
+- Identify conserved secondary structure categories such as helices and β-sheets with **--squeeze “H,E”**, and squeeze MSA towards these regions
+- DSSP codes representing helices, i.e, H, G and I, are considered the same by SIMSApiper
 - Select threshold for region to be considered 'conserved' with **--squeezePerc**
-- Note: The DSSP codes representing helices, i.e, H, G and I, are considered the same by SIMSApiper.
+- Must have at least 3 consecutive conserved columns to be considered a conserved region
 
 ### 7.3 Map DSSP to squeezed MSA
 Output: `results/outFolder/msas/dssp_squeezed_dssp_merged_finalmsa_alignment.fasta`
@@ -431,8 +443,7 @@ Output: `results/outFolder/msas/dssp_squeezed_dssp_merged_finalmsa_alignment.fas
 - Map [DSSP codes](https://swift.cmbi.umcn.nl/gv/dssp/DSSP_2.html) on sequences of the squeezed MSA, conserving the gaps.
 
 Common Issues:
-- Mapping fails if the sequence of the model and the sequence have the same length but are more than 5% different because of point mutations or have different lengths because of deletion/insertion mutations: these troublesome sequences can be find in the `results/outFolder/msas/unmappable.fasta` file and will be added to the mapped alignment without being converted to their DSSP codes
--  Your structure file contains more than one chain: extract a specific chain using [pdb-tools](http://www.bonvinlab.org/pdb-tools/) or use predicted models
+see [above](#mappingissues)
 
 ## 8. Reorder MSA (--reorder)
 Output: `results/outFolder/reordered_*_merged_finalmsa_alignment.fasta`
@@ -458,23 +469,23 @@ Output: `results/outFolder/sequence_report.text`
 
 
 ### Resource log
-Output: `results/outFolder/nextflow_report_outName.html`
+Output: `results/outFolder/nextflow_report_outName.html`, `resources_outName.txt`
 
-- Log file created by nextflow pipeline
+- Log file created by Nextflow pipeline
 - Shows execution times and resource usage per job
 
 ### Execution log
 Output: `results/outFolder/run_id_time.nflog`
 
 - Created ONLY when using the launch file
-- Captures terminal output of nextflow pipeline for error tracing
+- Reports all **--flag** settings 
+- Captures terminal output of Nextflow pipeline for error tracing
 - Captures unique execution hash and flags for resuming the specific job
 
 # Tips, tricks and common issues
 
 - Sequence labels and the structure filenames must match exactly!  
 - Cancel a running Nextflow job: **Crtl + C**
-- At the top and the end of the `*.nflog` file all your flag settings are reported. 
 - Pipeline failed to complete:  
     - to rerun the last job: append **-resume** to the launch command 
     - to rerun a specific job: check the `*.nflog` files last line to get the unique hash 
@@ -484,7 +495,7 @@ Output: `results/outFolder/run_id_time.nflog`
     Attention: last state will be permanently overwritten 
 - All intermediate results are unique subdirectory of the directory `work` \
     Find directory hash for each step in `*.nflog` 
-- Run in the background: launch simsapiper in a [screen](https://gist.github.com/jctosta/af918e1618682638aa82) 
+- Run in the background: launch SIMSApiper in a [screen](https://gist.github.com/jctosta/af918e1618682638aa82) 
     ```bash
     screen -S nextflowalign bash -c ./magic_align.sh
     ```
@@ -496,18 +507,26 @@ Output: `results/outFolder/run_id_time.nflog`
         ```
         and rerun.
     - check for spaces behind `\` in the launch file, there can not be any.
-    - On MacOS, replace `|& tee` with `>>`  
+    - On MacOS, you may have to replace `|& tee` with `>>`  
 - Modeling with ESMFold has low yield: 
     - Sequences longer than 400 residues cannot be modeled: try [ColabFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/AlphaFold2_advanced.ipynb) to generate your own models
     - ESM Atlas was asked to model too many sequences at once, resume the job
--Random crash T-Coffee: 
-    - Go to the T-Coffee log file to better understand the problem: find the work directory of the T-Coffee step in `*.nflog`
-    - If the error contains "sap_pair error": it is very likely that one of the troublesome proteins mentioned in the T-Coffee log file has a ESMFold model in the data/structures folder. Sometimes, the ESMFold models can contain regions with very odd 3D structures (prediction error). The sap_pair algorithm of T-Coffee detects those and because of that, it makes the entire pipeline fail.
-  	Suggestions to circumvent this:
-    	- Retrieve the AF model of the protein from AFDB using the --retrieve parameter
-    	- If the protein is not available on AFDB:
-    		- Try [ColabFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/AlphaFold2_advanced.ipynb) to generate your own model
-     		- Remove the ESMFold model of the troublesome protein from the data/structures folder and set --model false; the protein will be added to the MSA purely based on sequence info
-      		- Remove the troublesome protein from the data/seqs/*.fasta file; the protein is removed from the dataset 
+- SIMSApiper crashes at CD-Hit stage:
+    - try:
+        ```bash
+        chmod +x bin/psi-cd-hit.pl
+        chmod +x bin/psi-cd-hit-local.pl
+        ```
+        and rerun.
+- SIMSApiper crashes at T-Coffee stage:
+	- Error contains "sap_pair error" and -model true: possibly ESMFold prediction error
+ 		- Remove the ESMFold model of protein in error message  from  `data/structures`
+  			- Set --model false to add protein to the MSA based on sequence
+			- **--retrieve**  AF model of the protein from AFDB
+			- Generate model with [ColabFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/AlphaFold2_advanced.ipynb) and add manually
+		- Remove protein from the data/seqs/*.fasta file to removed from the dataset entirely
+	- Error contains "proba_pair": T-Coffee could not find the structures and uses a sequence based alignemnt method
+		- Use complete path to data/structure directory
+		- Check protein model files 
 - Learn how to adapt this pipeline using Nextflow [here](https://www.nextflow.io/docs/latest/basic.html)
  

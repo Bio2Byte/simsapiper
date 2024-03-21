@@ -74,6 +74,7 @@ include {readSeqs as convertSeqs;
             writeFastaFromChannel as writeFastaFromFound ;
             writeFastaFromChannel as writeFastaFromSeqsInvalid ;
             writeFastaFromChannel as writeFastaFromSeqsValid ;
+            createSummary;
 } from "$projectDir/modules/utils"
 
 include {userSubsetting;
@@ -109,8 +110,11 @@ workflow {
     if (params.dropSimilar){
         cdHitCollapse(sequenceFastas, params.dropSimilar, params.favoriteSeqs)
         reducedSeqs = cdHitCollapse.out.seqs
+        reducedClusters=  cdHitCollapse.out.clusters
+
     } else {
         reducedSeqs = sequenceFastas
+        reducedClusters = Channel.empty()
     }
     
     //Quality control input sequences 
@@ -128,7 +132,9 @@ workflow {
     seqsFiltered.invalid.view { "INVALID >${it.header}" }
     seqsInvalidCount = seqsFiltered.invalid.count()
     writeFastaFromSeqsInvalid (seqsFiltered.invalid.map{record -> '>' + record.header + ',' + record.sequence}.collect(), "too_many_unknown_characters.fasta")
-    
+ 
+
+
     //compare sequence and structure labels
     seqIDs =seqsFiltered.valid.map{tuple(it.header , it.sequence)}
     allSequencesCount = seqIDs.count()
@@ -176,10 +182,12 @@ workflow {
             }.set{afjoined}
             //afjoined.modelFound.view{"Post AF Models matched:" + it[0]} 
             //afjoined.modelNotFound.view{"Missing after AF2DB search:" + it[0]}
+            afmodelCount=afjoined.modelFound.count()
         
     } else {
         getAFout = Channel.empty()
         protsFromAF= Channel.empty()
+        afmodelCount=Channel.empty()
     }
 
     
@@ -212,8 +220,10 @@ workflow {
             }.set{esmfjoined}
             //esmfjoined.modelFound.view{"Post ESMF Models matched:" + it[0]}      
             //esmfjoined.modelNotFound.view{"Missing after ESM Atlas search:" + it[0]}
+            esmmodelCount= esmfjoined.modelFound.count()
         }else{
             protsFromESM = Channel.empty()
+            esmmodelCount=Channel.of("none")
         }
 
     // assess which models could not be found in the folder, AFDB or ESM Atlas
@@ -273,8 +283,10 @@ workflow {
     }else if (params.createSubsets){
         cdHitSubsetting(foundSeqs, params.createSubsets, params.minSubsetID, params.maxSubsetSize)
         subsets =  cdHitSubsetting.out.seq.collect().flatten()
+        cdHitSubsettingClusters=cdHitSubsetting.out.clusters
     }else{
         subsets = foundSeqs 
+        cdHitSubsettingClusters=Channel.empty()
     }
 
     subsets.branch{
@@ -313,10 +325,10 @@ workflow {
                 matchedDssp: true
             }.set{dsspFilter}
          
-        
-        dsspFilter.missingDssp.count().view{"DSSP will be calculated for models:" + it}      
-        dsspFilter.missingModel.count().view{"DSSP file without matching model found, this is likely an error:" + it}
         dsspFilter.matchedDssp.count().view{"DSSP files matched to models:" + it}
+        dsspFilter.missingDssp.count().view{"DSSP will be calculated for models:" + it}      
+        //dsspFilter.missingModel.count().view{"DSSP file without matching model found, this is likely an error:" + it}
+        
 
         modsForDssp = dsspFilter.missingDssp.map{it -> it[1]}
 
@@ -349,14 +361,46 @@ workflow {
     //select output format for MSA
     if (params.convertMSA){
         convertFinalMsa(params.convertMSA, reorderedFinalMsa)
+        convertFinalMsaFile =convertFinalMsa.out.convertedSeqs
+    }else{convertFinalMsaFile=Channel.empty()}
 
-    }
+    createSummary(
+        Channel.empty().mix(finalMsa,convertFinalMsaFile,reorderedFinalMsa,squeezedMsa).collect(),
+        params.outFolder,
+        allSequences,
+        fullInputSeqsNum,
+        params.seqs,
+        params.dropSimilar,
+        allSequencesCount,
+        params.favoriteSeqs,
+        params.seqQC,
+        seqsInvalidCount ,
+        params.structures,
+        joined.modelFound.count(),
+        "${params.retrieve}",
+        afmodelCount.ifEmpty('0'),
+        params.model,
+        esmmodelCount.ifEmpty('0'),
+        structurelessCount,
+        params.createSubsets,
+        params.useSubsets,
+        params.tcoffeeParams,
+        params.mafftParams,
+        params.dssp,
+        params.dsspPath ,
+        params.squeeze ,
+        params.squeezePerc ,
+        params.reorder ,
+        params.convertMSA,
+        "$workflow.commandLine"
+        )
 
 }
 
 workflow.onComplete {
     println "Pipeline completed at               : $workflow.complete"
     println "Time to complete workflow execution : $workflow.duration"
+    println "Commands executed                   : $workflow.commandLine"
     println "Execution status                    : ${workflow.success ? 'Success' : 'Failed' }"
     println "Output folder                       : $params.outFolder"
 }
