@@ -156,6 +156,7 @@ process createSummary{
 
     val reorder
     val convert  // convertMSA
+    val commandline
 
     output:
     path "*.md"
@@ -170,6 +171,8 @@ process createSummary{
     echo "Find detailed explations for each step on [GitHub](https://github.com/Bio2Byte/simsapiper) "
 
     echo '\n All output files can be found here: ' $outdir
+
+    echo '\n The command executed was: ' $commandline
     
     echo "# Input sequences files "
     echo '* No. of sequences in inputfile(s): ' $foundSequencesCount
@@ -199,7 +202,7 @@ process createSummary{
     fi
 
     echo "## 1.3 Invalid sequences "
-    echo '* $seqsInvalidCount sequences removed because they contained more then $seqQC % non-standard or unresolved amino acids'
+    echo '* Sequences removed because they contained more then $seqQC % non-standard or unresolved amino acids: ' $seqsInvalidCount
     if (( $seqsInvalidCount != 0 ));then
         echo '* Find invalid sequences here:' $outdir/seqs/too_many_unknown_characters.fasta
     fi
@@ -269,7 +272,7 @@ process createSummary{
         echo '## 7.2 Squeeze MSA towards conserved secondary structure elements' 
         echo '* Categories selected for squeezing: ' $squeeze
         echo '* Threshold for region to be considered conserved: ' $squeezePerc
-        echo '* Squeezed alignemnt: '$outdir/msas/squeezed_merged*.fasta
+        echo '* Squeezed alignment: ' $outdir/msas/squeezed_merged*.fasta
 
         echo '## 7.3 Map DSSP to squeezed MSA'
         echo '* DSSP codes mapped to merged alignment:' $outdir/msas/dssp_squeezed_merged*.fasta
@@ -301,9 +304,13 @@ process createSummary{
         echo '# 9 Convert MSA'
         echo '* Converted MSA to ' $convert 'format' 
         echo '* Converted MSA: ' $outdir/msas/converted*.fasta
-    else
-        echo '# 9 Convert MSA: false'
     fi
+
+
+    for i in $outdir/resources*.txt ; do
+        echo '# Execution time'
+        python3 $projectDir/bin/count_realtime_job.py \$i
+    done
 
 
     cp .command.out \$outfile

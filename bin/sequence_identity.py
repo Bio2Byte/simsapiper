@@ -45,8 +45,8 @@ for elem in combis:
 av_id = round(100*sum(id_ratios)/len(id_ratios) ,2)
 #print (av_id)
 
-line = 'The final alignment contains ' +str(common_counter)+ ' conserved positions and ' +str(occupied)+ ' gapless positions of '+str(positions)+ ' total positions.'
-line2 = 'The average pairwise sequence identity in the final alignment is ' +str(av_id) + '%. Gaps were treated as missmatch.'
+line = '* The final alignment contains ' +str(common_counter)+ ' conserved positions and ' +str(occupied)+ ' gapless positions of '+str(positions)+ ' total positions.'
+line2 = '* The average pairwise sequence identity in the final alignment is ' +str(av_id) + '%. Gaps were treated as missmatch.'
 
 print(line)
 print(line2)

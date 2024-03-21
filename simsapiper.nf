@@ -391,7 +391,8 @@ workflow {
         params.squeeze ,
         params.squeezePerc ,
         params.reorder ,
-        params.convertMSA
+        params.convertMSA,
+        "$workflow.commandLine"
         )
 
 }

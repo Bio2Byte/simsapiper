@@ -25,5 +25,5 @@ realtime_columns,realtimes_tcoffee_columns = extract_realtime_column(file_path)
 total = sum(realtime_columns)/60000 #convert to minutes
 total_tcoffee = sum(realtimes_tcoffee_columns)/60000 #convert to minutes
 
-print(f"Total realtime: {round(total)} minutes")
-print(f"Total realtime {prop_of_interest} only: {round(total_tcoffee)} minutes")
+print(f"* Total runtime (without queue time): {round(total)} minutes")
+print(f"* Total runtime {prop_of_interest} only: {round(total_tcoffee)} minutes")
