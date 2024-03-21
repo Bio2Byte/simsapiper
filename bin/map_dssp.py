@@ -44,15 +44,15 @@ def handle_unmappable(df):
     # Iterate over rows where df.same == False
     for index, row in df[df['same'] == False].iterrows():
         if type(row['model']) == str :
-            print(row)
+            #print(row)
             fixed=False
             model_seq = row['model']
             unali_seq = row['unali']
             dssp = row['dssp']
 
-            print(unali_seq)
-            print(model_seq)
-            print(dssp)
+            #print(unali_seq)
+            #print(model_seq)
+            #print(dssp)
 
             if len(model_seq)==len(unali_seq): #unmatching is because of point mutations, we ignore point mutations
                 counter = 0
@@ -66,7 +66,7 @@ def handle_unmappable(df):
             else: #either the sequence of entry of the sequence of the 3D structure/model have different length
                 # align
                 alignments = pairwise2.align.globalms(model_seq, unali_seq,2, -1, -10, -0.1)
-                print(alignments)
+                #print(alignments)
                 aligned_model_seq = alignments[0][0]
                 aligned_unali_seq = alignments[0][1]
 
@@ -206,13 +206,6 @@ def write_fasta_from_df(df,outname):
                 lines.append(line)
                 line = df.iloc[i,0]+"_dssp" + "\n"+ str(df.iloc[i,3])
                 lines.append(line)
-
-                #line = df.iloc[i,0]+"_seq_inputted" + "\n"+ df.iloc[i,1]
-                #lines.append(line)
-                #line = df.iloc[i,0]+"_seq_model" + "\n"+ df.iloc[i,2]
-                #lines.append(line)
-                #line = df.iloc[i,0]+"_dssp" + "\n"+ df.iloc[i,3]
-                #lines.append(line)
 
         with open (out_name, 'w') as m:
                 for line in lines:

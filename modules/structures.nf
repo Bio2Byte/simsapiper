@@ -65,20 +65,11 @@ process runDssp{
     echo Gate is open $gate
     mkdssp -i $model -o ${model.baseName}.dssp   
     """
-    //INFO: secondary structure elements according to dssp  
-    //H = alpha-helix
-    //B = beta-bridge residue
-    //E = extended strand (in beta ladder)
-    //G = 3/10-helix
-    //I = 5-helix
-    //T = H-bonded turn
-    //S = beta-bend or beta-turn
 }
 
 
 process esmFolds{
     publishDir "$params.structures", mode: "copy"
-    //errorStrategy { task.attempt > 3 ? 'retry' : 'complete' }
     
     input:
     path structureless

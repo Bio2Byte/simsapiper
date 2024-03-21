@@ -250,11 +250,6 @@ workflow {
         seqs_to_model = writeFastaFromMissing.out.found
 
         esmFolds(seqs_to_model)
-        //if seqs_to_model is empty, the pipeline does not complete, but if it is not empty, strucQC needs to wait for esm?
-        //esmStructuresCounter= Channel.fromPath("$params.structures/*.pdb").count()
-        //this does not work as a gate
-
-
         foundSequencesCount = finalModelFound.mix(esmFolds.out.esmFoldsStructures).count()
         
         structureless_seqs=Channel.empty()

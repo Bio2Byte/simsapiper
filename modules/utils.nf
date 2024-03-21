@@ -43,10 +43,6 @@ process attendance{
 
     echo 'No. of sequences in final alignment: ' \$fin >> "sequence_report.txt"
 
-    av_conservation=`python3 $projectDir/bin/shannons_entropy.py $finalMsa`
-    echo 'Average sequence conservation (Shannons Entropy): ' \$av_conservation 
-
-
     if (( \$fin !=$collapsedSequencesCount + $structurelessCount ))
     then
         echo "ERROR: Not all valid sequences are found in the output file, please check $finalMsa in in the output directory!"
@@ -315,25 +311,5 @@ process createSummary{
 
     cp .command.out \$outfile
     
-    """    
-    
-    // add new dependency
-    //python3  $projectDir/bin/sequence_sim.py $finalMSA
-
-
-    //av_conservation=`python3 $projectDir/bin/shannons_entropy.py $finalMsa`
-   // echo 'Average sequence conservation (Shannons Entropy): ' \$av_conservation 
-
-    //md improvemends
-    //echo  \$(readlink -f $seqsInvalidFile)
-    //inputSeqFilePath=\$(readlink -f $inputSeqFiles )
-    //echo '[$inputSeqFiles]('\$inputSeqFilePath')'
-
-    //[link](file:///Users/matb/Desktop/cat.gif) 
-    //echo '<a href="file://'\$inputSeqFilesPath'">link</a>'
-
-    //inputSeqFilesPath=\$(readlink -f $inputSeqFiles) 
-    //echo '\n SIMSApiper found these files: ![$inputSeqFiles](file://'\$inputSeqFilesPath')'
-    
-
+    """   
 }

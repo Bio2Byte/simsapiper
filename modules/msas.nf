@@ -167,8 +167,6 @@ process squeeze{
     """
     python3 $projectDir/bin/squeeze_msa.py $msa $dssp "$squeeze" $squeezePerc squeezed_${msa.baseName} 
     """
-    //INFO: 
-    //choose conserved secondary structure elements according to dssp across your dataset as it is does elements that TCOFFEE will use to align your proteins
 }
 
 process reorder{
