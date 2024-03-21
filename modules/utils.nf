@@ -281,7 +281,14 @@ process createSummary{
         echo '* The inital merged alignment has ' \$count_file1 ' gaps.'
         echo '* The the squeezed alignment has ' \$count_file2 ' gaps.'
         echo '* The squeezing step removed ' \$difference ' gaps from the alignment.'
+
+        echo '## Estimated sequence identity'
+        python3 $projectDir/bin/sequence_identity.py $outdir/msas/squeezed_merged*.fasta 
+    else
+        echo '# Estimated sequence identity'
+        python3 $projectDir/bin/sequence_identity.py $outdir/msas/merged*.fasta 
     fi
+
 
     echo '# 8 Reorder MSA ' 
     if [ "$reorder" != "false" ] ; then
