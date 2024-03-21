@@ -1,5 +1,6 @@
 #!/bin/bash
 #screen -S nextflowalign bash -c ./magic_hydra.sh
+
 data=toy_example
 
 module load Nextflow/23.04.2
@@ -9,7 +10,8 @@ output_name=${data}_${now}_test
 output_folder=$house/results/$output_name
 mkdir -p $house/results
 mkdir -p $output_folder
-nextflow run simsapiper.nf -resume \
+
+nextflow run simsapiper.nf \
     -profile hydra \
     --data $house/$data/data \
     --magic \

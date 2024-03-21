@@ -101,7 +101,7 @@ CD-Hit clusters
 | --dssp	| Map DSSP code to alignment 	 | false | 	 | 
 | --squeeze	| Squeeze alignment towards conserved 2nd structure categories | false	 | "H,E" |
 | --squeezePerc	| Set minimal occurence % of anchor element in MSA 	 | 80	 |  |  
-| --reorder	| Order final MSA by input file order 	| false	 | "gamma.fasta,delta.fasta” <br>  “true” for alphabetical order  | 
+| --reorder	| Order final MSA by input file order 	| false	 |  | 
 | --convertMSA	| Covert final MSA file from fasta to selected file format	| 	false |  "clustal" | 
 | --magic	| Launch a run with recommended settings for all parameters	 | false	 |  | 
 
@@ -448,7 +448,7 @@ see [above](#mappingissues)
 ## 8. Reorder MSA (--reorder)
 Output: `results/outFolder/reordered_*_merged_finalmsa_alignment.fasta`
 
-- Order MSA according to the order of sequences in the input files in alphabetical order or by user defined order **--reorder "gamma.fasta,delta.fasta”**
+- Order MSA according to the order of sequences in the input files. If more then one sequence input file is provided, order MSQ based on the order given in the files organized alphabetically. Instead of alphabetically, can also select explicitly how to organize the files with **--reorder "gamma.fasta,delta.fasta”**
 
 ## 9. Convert MSA 
 Output: `results/outFolder/seqs/converted_*_merged_finalmsa_alignment.fasta`
