@@ -197,6 +197,7 @@ Input: `data/seqs/`
     If not FASTA formatted, provide file format with **--seqFormat** according to biopython nomenclature 
 - Sequence IDs: 
     If **--retrieve**: use Uniprot ID as sequence ID to enable retrieval from [AlphaFold Database](https://alphafold.ebi.ac.uk)
+
 Notes:No spaces in the filename(s), use '_' for example instead
 
 ### Structural input (--structures)
