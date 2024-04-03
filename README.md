@@ -198,7 +198,7 @@ Input: `data/seqs/`
 - Sequence IDs: 
     If **--retrieve**: use Uniprot ID as sequence ID to enable retrieval from [AlphaFold Database](https://alphafold.ebi.ac.uk)
 
-Notes:No spaces in the filename(s), use '_' for example instead
+Notes: No spaces in the filename(s) allowed, use '_' for example instead
 
 ### Structural input (--structures)
 
