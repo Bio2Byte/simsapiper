@@ -211,9 +211,10 @@ Input: `data/structures/`
 - Can be experimentally generated structures, from the PDB or modeled structures
 
 Good to know:
-- Step [squeeze](#squeeze) will fail if your structure file contains multiple chains. Extract a specific chain: [pdb-tools](http://www.bonvinlab.org/pdb-tools/)
-- Mutations in 3D structure will not impact MSA quality if mutations do not impact the overall organisation of the protein. 
-- Step [squeeze](#squeeze) will fail if more than 5% of your protein is mutated.
+- Multiple chains are not allowed by T-Coffee. Extract the chain of interest using: [pdb-tools](http://www.bonvinlab.org/pdb-tools/) (also make sure you extract your chain of interest in the SEQRES section)
+- Mutations in 3D structure will not impact MSA quality if mutations do not impact the overall organisation of the protein (pdb_min_sim parameter of T-Coffee set to 1 by default)
+- The sequence you want to align can be a section of your chain of interest (pdb_min_cov parameter of T-Coffee set to 1 by default) BUT if your section is not at the beginning or end of your chain of interest, the step [squeeze](#squeeze) will fail
+- Step [squeeze](#squeeze) will fail if more than 5% of your protein structure is mutated.
 <a id="strucin"></a>
 - Omit these issues by computing your own AlphaFold2 model using [ColabFold](https://colab.research.google.com/github/deepmind/alphafold/blob/main/notebooks/AlphaFold.ipynb) (very user friendly) or directly the [AlphaFold2](https://github.com/deepmind/alphafold) software instead of relying on [ESMFold](https://esmatlas.com/resources?action=fold) if:
     - Proteins are very different from proteins previously solved in the PDB
@@ -379,7 +380,7 @@ How?
 - T-Coffee parameters in this pipeline: 
 ```bash
 t_coffee -in=subset_0.fasta  -method TMalign_pair
--evaluate_mode=t_coffee_slow  -mode=3dcoffee  -pdb_min_cov=1  -thread 0 
+-evaluate_mode=t_coffee_slow  -mode=3dcoffee  -pdb_min_sim=1 -pdb_min_cov=1  -thread 0 
 -outfile="output/t-coffee/subset_0_aligned.aln" 
 ``` 
 - Mode 3DCoffee uses method sap_pair by default
