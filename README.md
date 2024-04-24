@@ -534,3 +534,14 @@ Output: `results/outFolder/run_id_time.nflog`
 		- Check protein model files 
 - Learn how to adapt this pipeline using Nextflow [here](https://www.nextflow.io/docs/latest/basic.html)
  
+## Citation
+
+@article{crauwels_large-scale_2024,
+	title = {Large-scale Structure-Informed multiple sequence alignment of proteins with {SIMSApiper}},
+	issn = {1367-4811},
+	doi = {10.1093/bioinformatics/btae276},
+	pages = {btae276},
+	journaltitle = {Bioinformatics},
+	author = {Crauwels, Charlotte and Heidig, Sophie-Luise and Díaz, Adrián and Vranken, Wim F},
+	date = {2024-04-22}
+}
