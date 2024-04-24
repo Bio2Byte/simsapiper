@@ -536,6 +536,7 @@ Output: `results/outFolder/run_id_time.nflog`
  
 ## Citation
 
+```bibtex
 @article{crauwels_large-scale_2024,
 	title = {Large-scale Structure-Informed multiple sequence alignment of proteins with {SIMSApiper}},
 	issn = {1367-4811},
@@ -545,3 +546,4 @@ Output: `results/outFolder/run_id_time.nflog`
 	author = {Crauwels, Charlotte and Heidig, Sophie-Luise and Díaz, Adrián and Vranken, Wim F},
 	date = {2024-04-22}
 }
+```
