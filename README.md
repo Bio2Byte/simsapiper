@@ -54,7 +54,7 @@ nextflow run simsapiper.nf
     -profile server,withsingularity 
     --seqFormat fasta
     --seqQC 5
-    --droplSimilar 90
+    --dropSimilar 90
     --outFolder "simsa_time_of_execution"
     --outName "magicMsa"
     --minSubsetID "min"
