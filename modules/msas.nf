@@ -2,7 +2,7 @@ process runTcoffee {
     publishDir "$params.outFolder/msas/t-coffee", mode: "copy" 
     tag "$seqsToAlign"
 
-    errorStrategy {task.attempt < 3 ? 'retry' : 'terminate' }
+    //errorStrategy {task.attempt < 3 ? 'retry' : 'terminate' }
 
     input:
     path seqsToAlign

@@ -23,11 +23,12 @@ process attendance{
     publishDir "$params.outFolder", mode: "copy"
 
     input:
-    val collapsedSequencesCount
-    val seqsInvalidCount
-    val structurelessCount
+
     path finalMsa
     val foundSequencesCount
+    val seqsInvalidCount
+    val structurelessCount
+    val collapsedSequencesCount
 
 
     script:

@@ -1,8 +1,11 @@
 params.targetSequences  = "$params.seqs/*.$params.seqFormat"
 targetSequencesFile     = file(params.targetSequences)
 allSequences            = Channel.fromPath(params.targetSequences)
-userStructures          = Channel.fromPath("$params.structures/*.pdb")
+//allSequences            = Channel.fromPath(params.seqs).filter(*params.seqFormat)
 
+userStructures          = Channel.fromPath(params.structures).filter(/\.pdb$/)
+//userStructures          = Channel.fromPath("$params.structures/*.pdb")
+//can not make parameters to strings! then path needs to be $pwd
 
 log.info """\
 
@@ -240,7 +243,6 @@ workflow {
     
     structurelessCount=finalMissingModels.count()
     structurelessCount.view{"Missing models: " + it}
-    foundSequencesCount = finalModelFound.count()
     
     
 
@@ -251,15 +253,21 @@ workflow {
 
         esmFolds(seqs_to_model)
         foundSequencesCount = finalModelFound.mix(esmFolds.out.esmFoldsStructures).count()
+
+        //finalModelFound.view()
+        //esmFolds.out.esmFoldsStructures.view()
+        //finalModelFound.mix(esmFolds.out.esmFoldsStructures).view()
         
         structureless_seqs=Channel.empty()
-        structurelessCount==structureless_seqs.count()
+        structurelessCount=structureless_seqs.count()
 
         writeFastaFromSeqsValid (seqIDs.map{record -> ">"+ record[0]+ ',' + record[1]}.collect(),'seqs_to_align.fasta')
         foundSeqs = writeFastaFromSeqsValid.out.found
 
 
     }else{
+
+        foundSequencesCount = finalModelFound.count()
         writeFastaFromMissing(finalMissingModels.map{record -> ">"+ record[0] + ',' + record[2]}.collect(), 'structureless_seqs.fasta')
         structureless_seqs = writeFastaFromMissing.out.found
 
@@ -304,13 +312,13 @@ workflow {
 
 
     //check if all sequences been aligned 
-    attendance(foundSequencesCount,seqsInvalidCount,structurelessCount,finalMsa,fullInputSeqsNum)
+    //attendance(finalMsa,fullInputSeqsNum,seqsInvalidCount,structurelessCount,foundSequencesCount)
 
 
     //map to dssp
     if (params.dssp){
         foundModels = userStructures.mix(protsFromAF,protsFromESM ).map{mod -> tuple(mod.baseName, mod)}
-        foundDssps=Channel.fromPath("$params.dsspPath/*.dssp").map{dssp -> tuple(dssp.baseName, dssp)}
+        foundDssps=Channel.fromPath(params.dsspPath).map{dssp -> tuple(dssp.baseName, dssp)}
         
 
         foundModels.join(foundDssps, remainder:true)
@@ -331,7 +339,7 @@ workflow {
         dssps = runDssp.out.dsspout.collect()
 
         //relies on dssp being finished WAY before tcoffee alignment. 
-        mapDsspRough("$params.dsspPath", finalMsa)
+        mapDsspRough(params.dsspPath, finalMsa)
         mappedFinalMsa = mapDsspRough.out.mmsa
     }
 
@@ -341,7 +349,7 @@ workflow {
         squeezedMsa = squeeze.out.msa
 
         //map dssp to final msa
-        mapDsspSqueeze("$params.dsspPath", squeezedMsa)
+        mapDsspSqueeze(params.dsspPath, squeezedMsa)
         mappedFinalMsaSqueeze = mapDsspSqueeze.out.mmsa
     }else{squeezedMsa=finalMsa}
 

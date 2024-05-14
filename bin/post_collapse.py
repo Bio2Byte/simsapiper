@@ -18,7 +18,7 @@ def write_fasta_from_df(df,labelcol,seqcol,outname):
             m.write( '>'+row + '\n')
 
 def read_fasta_to_df(seq_file):
-    df = pd.read_csv(seq_file, header=None)
+    df = pd.read_csv(seq_file, header=None, sep=' ')
     seq_df = pd.DataFrame({'label':df[0].iloc[::2].values, 'seq':df[0].iloc[1::2].values})
 
     seq_df.label= seq_df.label.str.lstrip(' ')
