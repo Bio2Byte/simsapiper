@@ -60,5 +60,5 @@ Thumbs.db
 *.synctex.gz
 
 results/*
-
+data_manuscript/GroEL/*
 
