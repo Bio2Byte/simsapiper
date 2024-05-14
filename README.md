@@ -1,10 +1,13 @@
 # SIMSApiper
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10854343.svg)](https://doi.org/10.5281/zenodo.10854343)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10854343.svg)](https://doi.org/10.5281/zenodo.10854343) 
 
 SIMSApiper is a Nextflow pipeline that enables users to create structure informed multiple sequence alignments simply from a set of protein sequences.
 Structural information may be provided by the user or directly retrieved by the pipeline (AlphaFold Database or ESMFold). 
 The process is significantly sped up by using sequence identity-based subsets and aligning them in parallel. 
 Conserved secondary structure elements are used to reduce gaps for a high-quality final alignment.
+
+Read more here or [read our publication!](10.1093/bioinformatics/btae276)
+
 
 # QuickStart
 
