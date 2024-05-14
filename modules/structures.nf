@@ -83,6 +83,8 @@ process esmFolds{
     script:
     """
     export TORCH_HOME=\$VSC_SCRATCH_VO/ESMFold
+
+    echo $structureless
     
     if [ -z "$structureless" ] ; then
         echo "There is no proteins to fold here"
