@@ -3,8 +3,8 @@ targetSequencesFile     = file(params.targetSequences)
 allSequences            = Channel.fromPath(params.targetSequences)
 //allSequences            = Channel.fromPath(params.seqs).filter(*params.seqFormat)
 
-userStructures          = Channel.fromPath(params.structures).filter(/\.pdb$/)
-//userStructures          = Channel.fromPath("$params.structures/*.pdb")
+//userStructures          = Channel.fromPath(params.structures).filter(/\.pdb$/)
+userStructures          = Channel.fromPath("$params.structures/*.pdb")
 //can not make parameters to strings! then path needs to be $pwd
 
 log.info """\
