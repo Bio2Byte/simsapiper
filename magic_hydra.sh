@@ -1,5 +1,5 @@
 #!/bin/bash
-#screen -S nextflowalign bash -c ./magic_hydra.sh
+#To run in background: screen -S nextflowalign bash -c ./magic_hydra.sh
 
 data=toy_example
 
