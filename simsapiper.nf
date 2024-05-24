@@ -300,6 +300,8 @@ workflow {
     seqsToAlign = subSeqs.subsets
 
     //submit to tcoffee
+
+    if (params.align){
     runTcoffee(seqsToAlign, params.structures, params.tcoffeeParams, missingQC.out.gate)
     strucMsa =runTcoffee.out.msa.flatten()
 
@@ -309,7 +311,9 @@ workflow {
     //create final alignment
     mergeMafft(convertedMsa, params.mafftParams, params.outName)
     finalMsa = mergeMafft.out.finalMsa
+    }else{finalMsa=Channel.fromPath(params.alignment)
 
+    }
 
     //check if all sequences been aligned 
     //attendance(finalMsa,fullInputSeqsNum,seqsInvalidCount,structurelessCount,foundSequencesCount)
@@ -339,7 +343,7 @@ workflow {
         dssps = runDssp.out.dsspout.collect()
 
         //relies on dssp being finished WAY before tcoffee alignment. 
-        mapDsspRough(params.dsspPath, finalMsa)
+        mapDsspRough(params.dsspPath, finalMsa, runDssp.out.gate)
         mappedFinalMsa = mapDsspRough.out.mmsa
     }
 
@@ -349,7 +353,7 @@ workflow {
         squeezedMsa = squeeze.out.msa
 
         //map dssp to final msa
-        mapDsspSqueeze(params.dsspPath, squeezedMsa)
+        mapDsspSqueeze(params.dsspPath, squeezedMsa, runDssp.out.gate)
         mappedFinalMsaSqueeze = mapDsspSqueeze.out.mmsa
     }else{squeezedMsa=finalMsa}
 
@@ -368,7 +372,7 @@ workflow {
     }else{convertFinalMsaFile=Channel.empty()}
 
     createSummary(
-        Channel.empty().mix(finalMsa,convertFinalMsaFile,reorderedFinalMsa,squeezedMsa).collect(),
+        Channel.empty().mix(finalMsa,convertFinalMsaFile,reorderedFinalMsa,squeezedMsa,mappedFinalMsaSqueeze).collect(),
         params.outFolder,
         allSequences,
         fullInputSeqsNum,

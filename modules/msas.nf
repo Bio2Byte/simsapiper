@@ -139,6 +139,7 @@ process mapDssp{
     input:
     path dssps
     path msa
+    val gate
 
     output:
     path "dssp_${msa.baseName}.fasta" , emit: mmsa
@@ -146,6 +147,7 @@ process mapDssp{
 
     script:
     """
+    echo Gate is open $gate
     python3 $projectDir/bin/map_dssp.py $msa dssp_${msa.baseName} dssp
     """
 }

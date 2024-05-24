@@ -59,6 +59,7 @@ process runDssp{
 
     output:
     path "*.dssp" , emit:dsspout
+    val true, emit: gate
 
     script:
     """
@@ -79,6 +80,7 @@ process esmFolds{
     val true, emit: gate
     path "esm_fold_statistics.csv" 
     path "*.pae"
+    
 
     script:
     """
