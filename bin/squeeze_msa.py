@@ -118,27 +118,49 @@ if len(structure_elements) > 0:
         loop_len.append(0)
 
     # Squeeze the alignment
-    with open(output_file, "w+") as outfile:
-        fasta_sequences = SeqIO.parse(open(input_file), 'fasta')
-        for fasta in fasta_sequences:
-            name, sequence = fasta.id, str(fasta.seq)
-            print(sequence)
-            outfile.write(">" + name + "\n")
-            new_align = str()
-            for region, length in zip(all_regions, loop_len):
-                print("length",length)
-                if region[0].startswith("loop"):
-                    nogaps_seq = sequence[region[1][0]:region[1][1]].replace("-", "")
-                    if region[0] == "loop0":
-                        new_align += "-"*(length - len(nogaps_seq)) + nogaps_seq
-                    elif region[0] == "loop_final":
-                        new_align += nogaps_seq + "-"*(length - len(nogaps_seq))
-                    else:
-                        new_align += nogaps_seq[0:len(nogaps_seq)//2] + "-"*(length - len(nogaps_seq)) + nogaps_seq[len(nogaps_seq)//2:]
+    #with open(output_file, "w+") as outfile:
+    fasta_sequences = SeqIO.parse(open(input_file), 'fasta')
+    longestseq=0
+    outfile_list=[]
+    for fasta in fasta_sequences:
+        name, sequence = fasta.id, str(fasta.seq)
+        print(name)
+        #outfile.write(">" + name + "\n")
+        new_align = str()
+        for region, length in zip(all_regions, loop_len):
+            #print("length",length)
+            if region[0].startswith("loop"):
+                nogaps_seq = sequence[region[1][0]:region[1][1]].replace("-", "")
+                if region[0] == "loop0":
+                    new_align += "-"*(length - len(nogaps_seq)) + nogaps_seq
+                elif region[0] == "loop_final":
+                    new_align += nogaps_seq + "-"*(length - len(nogaps_seq))
                 else:
-                    new_align += sequence[region[1][0]:region[1][1]]
-                print(new_align)
-            outfile.write(new_align + "\n")
+                    new_align += nogaps_seq[0:len(nogaps_seq)//2] + "-"*(length - len(nogaps_seq)) + nogaps_seq[len(nogaps_seq)//2:]
+            else:
+                new_align += sequence[region[1][0]:region[1][1]]
+            #print(new_align)
+
+        outfile_list.append((name,new_align))
+        if len(new_align) >longestseq:
+            longestseq=len(new_align)
+            print ('longest seq is',  longestseq)
+            #outfile.write(new_align + "\n")
+
+
+
+    #write outfile:
+    with open(output_file, "w+") as outfile:
+        for name,outseq in outfile_list:
+            outfile.write(">" + name + "\n")
+
+            if len(outseq)<longestseq:
+                trailinggaps=longestseq-len(outseq)
+                print("add trailing gaps to ", name)
+                for trail in range(0,trailinggaps):
+                    outseq=outseq+'-'
+                print(outseq)
+            outfile.write(outseq + "\n")
 
 else:
     print("You have asked to squeeze towards the conserved columns containing {} but no such column was found. Therefore, this pipeline fails. We suggest, either squeezing towards other dssp codes or to omit the squeezing of your MSA.")

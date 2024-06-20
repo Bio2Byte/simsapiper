@@ -130,8 +130,9 @@ workflow {
 
     seqsQC = seqsRelabeled
         .branch{
-            valid: it.sequence.count('X')*100 / it.sequence.size()  <= params.seqQC 
+            //valid: it.sequence.count('X')*100 / it.sequence.size()  <= params.seqQC 
             invalid: it.sequence.count('X') *100/ it.sequence.size() > params.seqQC
+            valid: true
         }.set { seqsFiltered}
 
     seqsFiltered.invalid.view { "INVALID >${it.header}" }
