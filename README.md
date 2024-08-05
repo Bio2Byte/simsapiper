@@ -491,7 +491,9 @@ Output: `results/outFolder/run_id_time.nflog`
 
 # Tips, tricks and common issues
 
-- Sequence labels and the structure filenames must match exactly!  
+- Sequence labels and the structure filenames must match exactly!
+- T-Coffee only accepts sequence labels that are less than 20 characters long. Make sure to respect this or T-Coffee will fail.
+- When running the pipeline with **experimentally resolved structures**: T-Coffee can handle partially resolved structures BUT, the SEQRES and ATOMS records must be only of the chain of interest (i.e. the sequence you want to align). You can use tools such as pdb-tools to fix your pdb files.
 - Cancel a running Nextflow job: **Crtl + C**
 - Pipeline failed to complete:  
     - to rerun the last job: append **-resume** to the launch command 
