@@ -1,4 +1,6 @@
-params.targetSequences  = "$params.seqs/*.$params.seqFormat"
+params.targetSequences  = "${params.seqs}*.${params.seqFormat}"
+//prev
+//params.targetSequences  = "${params.seqs}/*.${params.seqFormat}"
 targetSequencesFile     = file(params.targetSequences)
 allSequences            = Channel.fromPath(params.targetSequences)
 
@@ -85,6 +87,7 @@ include {readSeqs as convertSeqs;
 include {userSubsetting;
             cdHitSubsetting;
             cdHitCollapse;
+            cdHitFilter;
 } from "$projectDir/modules/subsetting"
 
 include {
@@ -109,7 +112,14 @@ workflow {
 
     allSequences.view{'Sequence file found:' + it}
     convertSeqs(params.seqFormat, allSequences)
-    sequenceFastas =  convertSeqs.out.convertedSeqs
+    convertedFastas =  convertSeqs.out.convertedSeqs
+
+
+    //do not run if file only contains identical sequences
+    if (params.stopHyperconserved){
+        cdHitFilter(convertedFastas)
+        sequenceFastas = cdHitFilter.out.seqsValid
+    }else{sequenceFastas=convertedFastas}
 
     //data reduction with cdhit
     if (params.dropSimilar){
@@ -131,7 +141,8 @@ workflow {
     seqsQC = seqsRelabeled
         .branch{
             //valid: it.sequence.count('X')*100 / it.sequence.size()  <= params.seqQC 
-            invalid: it.sequence.count('X') *100/ it.sequence.size() > params.seqQC
+            //invalid: it.sequence.count('X')*100/ it.sequence.size() > params.seqQC
+            invalid: it.sequence.count('X')> params.seqQC
             valid: true
         }.set { seqsFiltered}
 
@@ -256,6 +267,7 @@ workflow {
 
         esmFolds(seqs_to_model)
         foundSequencesCount = finalModelFound.mix(esmFolds.out.esmFoldsStructures).count()
+        protsFromESMfold=esmFolds.out.esmFoldsStructures
 
         //finalModelFound.view()
         //esmFolds.out.esmFoldsStructures.view()
@@ -320,9 +332,16 @@ workflow {
 
     //map to dssp
     if (params.dssp){
-        foundModels = userStructures.mix(protsFromAF,protsFromESM ).map{mod -> tuple(mod.baseName, mod)}
-        foundDssps=Channel.fromPath(params.dsspPath).map{dssp -> tuple(dssp.baseName, dssp)}
-        
+
+        foundModel = userStructures
+            .mix(protsFromAF,protsFromESM,protsFromESMfold) 
+            .collect()
+
+        foundModels=foundModel
+            .flatten()
+            .map{mod -> tuple(mod.baseName, mod)}
+
+        foundDssps=Channel.fromPath(params.dsspPath).map{dssp -> tuple(dssp.baseName, dssp)}.collect().flatten()
 
         foundModels.join(foundDssps, remainder:true)
             .branch {
@@ -331,6 +350,7 @@ workflow {
                 matchedDssp: true
             }.set{dsspFilter}
          
+        dsspFilter.matchedDssp.view()
         dsspFilter.matchedDssp.count().view{"DSSP files matched to models:" + it}
         dsspFilter.missingDssp.count().view{"DSSP will be calculated for models:" + it}      
         //dsspFilter.missingModel.count().view{"DSSP file without matching model found, this is likely an error:" + it}
@@ -406,7 +426,6 @@ workflow {
 workflow.onComplete {
     println "Pipeline completed at               : $workflow.complete"
     println "Time to complete workflow execution : $workflow.duration"
-    println "Commands executed                   : $workflow.commandLine"
     println "Execution status                    : ${workflow.success ? 'Success' : 'Failed' }"
     println "Output folder                       : $params.outFolder"
 }

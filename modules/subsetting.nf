@@ -1,7 +1,27 @@
+process cdHitFilter{
+    tag "${sequencesValid.name}"
+    publishDir "$params.outFolder/seqs/", mode: "copy"
+
+    input:
+    path sequencesValid
+
+    output:
+    path "*.fasta", emit: seqsValid
+
+    script:
+    """
+    cd-hit -i ${sequencesValid} -o ${sequencesValid.baseName}_cdfil  -c 1 -n 5 -d 200 
+    cp ${sequencesValid} ${sequencesValid.baseName}_filtered.fasta 
+    grep -q "^>Cluster 1" ${sequencesValid.baseName}_cdfil.clstr || rm ${sequencesValid.baseName}*
+
+    """
+
+}
+
 
 process cdHitCollapse{
     tag "${sequencesValid.name}"
-    publishDir "$params.outFolder/seqs/CD-HIT", mode: "copy"
+    publishDir "$params.outFolder/seqs/CD-HIT_collapse", mode: "copy"
 
     input:
     path sequencesValid
@@ -37,6 +57,8 @@ process cdHitCollapse{
     """
 
 }
+
+
 
 process cdHitSubsetting{
     tag "${sequencesValid.name}"

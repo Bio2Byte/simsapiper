@@ -11,7 +11,7 @@ from Bio import pairwise2, SeqIO
 msa_file = sys.argv[1] #input file - finalMSA.fasta?
 annotated_dssp_msa = sys.argv[2] #output file that will be written- finalMSA_dssp.fasta?
 
-dssp_files = glob.glob("dssp/*.dssp")
+dssp_files = glob.glob("*/*.dssp")
 
 def dssp_parse(dssp_file):
         dssp_tup = make_dssp_dict(dssp_file)
