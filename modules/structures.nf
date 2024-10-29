@@ -51,7 +51,7 @@ process getAFmodels {
 
 process runDssp{
     
-    publishDir "$params.data/dssp", mode: "copy"
+    publishDir "$params.dsspPath", mode: "copy"
 
     input:
     path model
@@ -82,17 +82,17 @@ process esmFolds{
 
     script:
     """
-    export TORCH_HOME=\$VSC_SCRATCH_VO/ESMFold
-
+    export TORCH_HOME=/databases/bio/ESM-2-2.0.0/torch
     echo $structureless
     
     if [ -z "$structureless" ] ; then
         echo "There is no proteins to fold here"
     else
         head $structureless
-        python3 $projectDir/bin/esmfold_inference.py --chunk-size 32 -i $structureless -o .
+        python3 $projectDir/bin/esmfold_inference.py --chunk-size 32  --max-tokens-per-batch 0 -i $structureless -o .
         python3 $projectDir/bin/extract_plddt.py . esm_fold_statistics.csv .
     fi
     """
-    
+    //export TORCH_HOME=\$VSC_SCRATCH_VO/ESMFold
+    //--max-tokens-per-batch 1024 is standard --max-tokens-per-batch 0 to turn off  short-seq-grouping --max-tokens-per-batch 512
 }

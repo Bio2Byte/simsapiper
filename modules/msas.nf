@@ -91,7 +91,7 @@ process mergeMafft {
     val outName
 
     output:
-    path "merged_${outName}_alignment.fasta" , emit: finalMsa
+    path "merged_${outName}.fasta" , emit: finalMsa
     
     script:
     """
@@ -108,7 +108,7 @@ process mergeMafft {
         cp $seqs prefinalMSA.fasta
     fi
 
-    python3 $projectDir/bin/convert_to_fasta.py prefinalMSA.fasta fasta merged_${outName}_alignment
+    python3 $projectDir/bin/convert_to_fasta.py prefinalMSA.fasta fasta merged_${outName}
     """
     //INFO: mafftParams = "" This is a recommended option, MAFFT merge changes everything otherwise
     //--inputorder enables to keep sequence order of inputted files (recommended)
@@ -146,7 +146,7 @@ process mapDssp{
 
     script:
     """
-    python3 $projectDir/bin/map_dssp.py $msa dssp_${msa.baseName} dssp
+    python3 $projectDir/bin/map_dssp.py $msa dssp_${msa.baseName}
     """
 }
 
@@ -170,7 +170,9 @@ process squeeze{
 }
 
 process reorder{
-    publishDir "$params.outFolder", mode: "copy"
+
+    publishDir "$params.data/simsa", mode: "copy"
+    publishDir "$params.outFolder/msas", mode: "copy" 
 
     input:
     path finalMsa
@@ -178,8 +180,8 @@ process reorder{
     val reorder
 
     output:
-    path "reordered_${finalMsa.baseName}.fasta", emit: msaOrga
-    
+    //path "reordered_${finalMsa.baseName}.fasta", emit: msaOrga
+    path "*.simsa", emit: msaOrga
     script:
     """
     for file in *; do
@@ -191,6 +193,10 @@ process reorder{
     done
 
     python3 $projectDir/bin/reorganize_output.py "$inputSeqs" "$reorder" $finalMsa reordered_${finalMsa.baseName} 
+    cp reordered_${finalMsa.baseName}.fasta ${params.outName}.simsa
+
+    echo $params.data/simsa
+    echo ${params.outName}.simsa
     """
 
 }
