@@ -1,4 +1,5 @@
 params.targetSequences  = "${params.seqs}*.${params.seqFormat}"
+println(params.targetSequences)
 //prev
 //params.targetSequences  = "${params.seqs}/*.${params.seqFormat}"
 targetSequencesFile     = file(params.targetSequences)
@@ -81,6 +82,7 @@ include {readSeqs as convertSeqs;
             writeFastaFromChannel as writeFastaFromFound ;
             writeFastaFromChannel as writeFastaFromSeqsInvalid ;
             writeFastaFromChannel as writeFastaFromSeqsValid ;
+            writeFastaFromChannel as writeFastaFromSeqsShort;
             createSummary;
 } from "$projectDir/modules/utils"
 
@@ -138,7 +140,16 @@ workflow {
         .map { record -> [header: record.header.replaceAll("[^a-zA-Z0-9]", "_"),
                 sequence: record.sequence.replaceAll("\n","").replaceAll("[^ARNDCQEGHILKMFPOSUTWYVarndcqeghilkmfposutwvy]", "X")] }
 
-    seqsQC = seqsRelabeled
+
+    seqsRelabeled
+    .branch{
+        invalid: it.sequence.size() < 100
+        valid: true
+    }.set { seqsQClen}
+    writeFastaFromSeqsShort (seqsQClen.invalid.map{record -> '>' + record.header + ',' + record.sequence}.collect(), "too_short_seqs.fasta")
+ 
+
+    seqsQClen.valid
         .branch{
             //valid: it.sequence.count('X')*100 / it.sequence.size()  <= params.seqQC 
             //invalid: it.sequence.count('X')*100/ it.sequence.size() > params.seqQC
@@ -281,7 +292,7 @@ workflow {
 
 
     }else{
-
+        protsFromESMfold=Channel.empty()
         foundSequencesCount = finalModelFound.count()
         writeFastaFromMissing(finalMissingModels.map{record -> ">"+ record[0] + ',' + record[2]}.collect(), 'structureless_seqs.fasta')
         structureless_seqs = writeFastaFromMissing.out.found
@@ -333,16 +344,20 @@ workflow {
     //map to dssp
     if (params.dssp){
 
+        //this mapping still does not work
         foundModel = userStructures
             .mix(protsFromAF,protsFromESM,protsFromESMfold) 
             .collect()
-
-        foundModels=foundModel
             .flatten()
+        
+        foundModels=foundModel
             .map{mod -> tuple(mod.baseName, mod)}
 
-        foundDssps=Channel.fromPath(params.dsspPath).map{dssp -> tuple(dssp.baseName, dssp)}.collect().flatten()
-
+        foundDssps=Channel.fromPath("$params.dsspPath/*")
+            .map{dssp -> tuple(dssp.baseName, dssp)}
+        //    .collect()
+        //    .flatten()
+        
         foundModels.join(foundDssps, remainder:true)
             .branch {
                 missingDssp: it[2] == null
@@ -350,7 +365,6 @@ workflow {
                 matchedDssp: true
             }.set{dsspFilter}
          
-        dsspFilter.matchedDssp.view()
         dsspFilter.matchedDssp.count().view{"DSSP files matched to models:" + it}
         dsspFilter.missingDssp.count().view{"DSSP will be calculated for models:" + it}      
         //dsspFilter.missingModel.count().view{"DSSP file without matching model found, this is likely an error:" + it}
