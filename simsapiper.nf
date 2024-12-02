@@ -83,6 +83,7 @@ include {readSeqs as convertSeqs;
             writeFastaFromChannel as writeFastaFromSeqsInvalid ;
             writeFastaFromChannel as writeFastaFromSeqsValid ;
             writeFastaFromChannel as writeFastaFromSeqsShort;
+            phyloTree;
             createSummary;
 } from "$projectDir/modules/utils"
 
@@ -137,7 +138,7 @@ workflow {
     //Quality control input sequences 
     seqsRelabeled = reducedSeqs
         .splitFasta( record: [header: true,  sequence: true ])
-        .map { record -> [header: record.header.replaceAll("[^a-zA-Z0-9]", "_"),
+        .map { record -> [header: record.header,//.replaceAll("[^a-zA-Z0-9]", "_"),
                 sequence: record.sequence.replaceAll("\n","").replaceAll("[^ARNDCQEGHILKMFPOSUTWYVarndcqeghilkmfposutwvy]", "X")] }
 
 
@@ -164,7 +165,7 @@ workflow {
 
 
     //compare sequence and structure labels
-    seqIDs =seqsFiltered.valid.map{tuple(it.header , it.sequence)}
+    seqIDs =seqsFiltered.valid.map {tuple (it.header , it.sequence)}
     allSequencesCount = seqIDs.count()
     allSequencesCount.view{"Sequences to be aligned:" + it}
 
@@ -328,9 +329,10 @@ workflow {
     //submit to tcoffee
     runTcoffee(seqsToAlign, params.structures, params.tcoffeeParams, missingQC.out.gate)
     strucMsa =runTcoffee.out.msa.flatten()
+    tcoffeeErrors=runTcoffee.out.unTcoffeeable.flatten()
 
     convertTCMsa('clustal', strucMsa)
-    convertedMsa =  convertTCMsa.out.convertedSeqs.mix(structureless_seqs,subSeqs.orphans).collect()
+    convertedMsa =  convertTCMsa.out.convertedSeqs.mix(structureless_seqs,subSeqs.orphans,tcoffeeErrors).collect()
 
     //create final alignment
     mergeMafft(convertedMsa, params.mafftParams, params.outName)
@@ -403,6 +405,11 @@ workflow {
         convertFinalMsa(params.convertMSA, reorderedFinalMsa)
         convertFinalMsaFile =convertFinalMsa.out.convertedSeqs
     }else{convertFinalMsaFile=Channel.empty()}
+
+
+    if (params.tree){
+        phyloTree(squeezedMsa)
+    }
 
     createSummary(
         Channel.empty().mix(finalMsa,convertFinalMsaFile,reorderedFinalMsa,squeezedMsa).collect(),

@@ -115,6 +115,22 @@ process readSeqs {
 }
 
 
+process phyloTree{
+    publishDir "$params.outFolder/tree", mode:"copy"
+    errorStrategy { task.attempt > 4 ? 'retry' : 'finish' }
+
+    input:
+    path alignment
+
+    output:
+    path "${alignment.baseName}*" 
+
+    script:
+    """
+    iqtree2 -s ${alignment} -nt AUTO -B 10000
+    """
+}
+
 process createSummary{
     publishDir "$params.outFolder", mode:"copy"
 

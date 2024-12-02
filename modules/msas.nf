@@ -1,8 +1,8 @@
 process runTcoffee {
     publishDir "$params.outFolder/msas/t-coffee", mode: "copy" 
     tag "$seqsToAlign"
-    errorStrategy "finish"
-    //errorStrategy {task.attempt < 3 ? 'retry' : 'terminate' }
+    //errorStrategy "finish"
+    errorStrategy {task.attempt < 4 ? 'retry' : 'finish' }
 
     input:
     path seqsToAlign
@@ -12,12 +12,45 @@ process runTcoffee {
 
     output:
     path "*.aln", emit : msa
+    path "fil_*" , optional: true
+    path "removed_*", emit : unTcoffeeable , optional: true
 
     script:
     """
+
+    if (( ${task.attempt} > 1 )) ; then
+        echo "remove problematic seqs"
+        foi=${params.outFolder}/resources_*.txt
+        wdir=\$(grep "runTcoffee" \$foi | grep "FAILED" | grep ${seqsToAlign} | awk '{print \$2}')
+        echo \$wdir
+        log_file=\$(find ../../"\$wdir"* -name ".command.log" -print -quit)
+        echo \$log_file    
+        grep "attempt 3" "\$log_file" | \
+        awk -F'\\[' '{print \$2}' | awk -F']' '{print \$1}' | \
+        tr ' ' '\n' | sort | uniq > entries_to_remove.txt
+        if (( ${task.attempt} > 2 )) ; then
+            infile=\$(find ../../"\$wdir"* -name "fil_${seqsToAlign}" -print -quit)
+            oldremoved=\$(find ../../"\$wdir"* -name "removed_${seqsToAlign}" -print -quit)
+            cp \$oldremoved removed_previously_${seqsToAlign}
+        else
+            infile=${seqsToAlign}
+        fi
+        filtered_file="fil_${seqsToAlign}"
+        removed_file="removed_${seqsToAlign}" 
+        awk 'BEGIN {while ((getline line < "entries_to_remove.txt") > 0) remove[line] = 1}
+            /^>/ {header = substr(\$0, 2); write = !(header in remove); write_removed = (header in remove)}
+            {if (write) print > "'"\$filtered_file"'"; if (write_removed) print > "'"\$removed_file"'"}' "\$infile"
+        SEQUENCE=\$filtered_file
+    else
+        echo "trial 1"
+        SEQUENCE=${seqsToAlign}
+    fi
+
+    echo \$SEQUENCE
+
     # Default values
     WORKING_DIRECTORY_4_TCOFFEE=\$PWD
-    SEQUENCE=$seqsToAlign
+    #SEQUENCE=$seqsToAlign
     PDB_DIR=$strucsToAlign
     CACHE_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/cache"
     TMP_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/tmp"
