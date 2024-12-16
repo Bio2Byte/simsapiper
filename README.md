@@ -54,7 +54,8 @@ The complete list can be found below.
 
 ```
 nextflow run simsapiper.nf 
-    -profile server,withsingularity 
+    -profile server,withsingularity
+    --data $PWD/toy_example/data
     --seqFormat fasta
     --seqQC 5
     --dropSimilar 90
