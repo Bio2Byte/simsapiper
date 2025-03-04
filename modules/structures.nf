@@ -68,7 +68,7 @@ process runDssp{
 }
 
 
-process esmFolds{
+process esmFoldsO{
     publishDir "$params.structures", mode: "copy"
     
     input:
@@ -96,3 +96,29 @@ process esmFolds{
     //export TORCH_HOME=\$VSC_SCRATCH_VO/ESMFold
     //--max-tokens-per-batch 1024 is standard --max-tokens-per-batch 0 to turn off  short-seq-grouping --max-tokens-per-batch 512
 }
+
+process esmFolds{
+    publishDir "$params.structures", mode: "copy"
+    
+    input:
+    path structureless
+
+    output:
+    path "*.pdb", emit: esmFoldsStructures 
+    val true, emit: gate
+    //path "esm_fold_statistics.csv" 
+    path "*.pae"
+
+    script:
+    """
+    export TORCH_HOME=$projectDir/torchesm
+    echo $structureless
+    
+    if [ -z "$structureless" ] ; then
+        echo "There is no proteins to fold here"
+    else
+        head $structureless
+        python3 $projectDir/bin/esmfold_inference.py --chunk-size 32  --max-tokens-per-batch 0 -i $structureless -o . 
+    fi
+    """
+} //python /opt/biosoftware/esm/scripts/fold.py 

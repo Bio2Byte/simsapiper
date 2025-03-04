@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
 import numpy as np  
-import matplotlib.pyplot as plt 
+#import matplotlib.pyplot as plt 
 
 msa_file = sys.argv[1]
 output_csv = "pairwise_identity_matrix.csv" 
@@ -60,7 +60,7 @@ line2 = f"* The average pairwise sequence identity in the final alignment is {av
 print(line1)
 print(line2)
 
-
+"""
 # Generate histogram plot for pairwise sequence identities
 pairwise_identities = identity_matrix[np.triu_indices(n, 1)]  # Extract upper triangle values only
 plt.hist(pairwise_identities, bins=range(0, 105, 5), edgecolor='black')  # Bins in 5% increments
@@ -77,3 +77,4 @@ plt.ylabel("Frequency")
 plt.title("Distribution of Average Pairwise Sequence Identities")
 plt.savefig(histogram_plot_av)
 plt.close()
+"""

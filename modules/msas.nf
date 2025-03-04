@@ -58,6 +58,7 @@ process runTcoffee {
     TCOFFEE_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/"
     OUTPUT_DIRECTORY=\$PWD
     OUTPUT_PATH="\$OUTPUT_DIRECTORY"
+    HOME_4_TCOFFEE=\$PWD
 
     # Check if all mandatory parameters are provided
     if [[ -z "\$WORKING_DIRECTORY_4_TCOFFEE" || -z "\$SEQUENCE" || -z "\$PDB_DIR" || -z "\$OUTPUT_DIRECTORY" ]]; then
@@ -80,6 +81,7 @@ process runTcoffee {
     export DIR_4_TCOFFEE=\$TCOFFEE_DIRECTORY
     export TMP_4_TCOFFEE=\$TMP_DIRECTORY
     export CACHE_4_TCOFFEE=\$CACHE_DIRECTORY
+    export HOME_4_TCOFFEE=\$HOME_4_TCOFFEE
 
     echo "Working directory: \$WORKING_DIRECTORY_4_TCOFFEE"
     echo "Cache directory: \$CACHE_DIRECTORY"

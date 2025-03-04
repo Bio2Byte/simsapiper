@@ -174,7 +174,7 @@ process createSummary{
     output:
     path "*.md"
     path "*.csv"
-    path "*.png"
+    //path "*.png"
 
     script:
 
