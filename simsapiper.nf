@@ -390,7 +390,9 @@ workflow {
         //map dssp to final msa
         mapDsspSqueeze(params.dsspPath, squeezedMsa)
         mappedFinalMsaSqueeze = mapDsspSqueeze.out.mmsa
-    }else{squeezedMsa=finalMsa}
+    }else{
+        squeezedMsa=finalMsa
+        mappedFinalMsaSqueeze=Channel.empty()}
 
 
     //reorder final MSA
