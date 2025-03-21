@@ -135,8 +135,8 @@ workflow {
     //Quality control input sequences 
     seqsRelabeled = reducedSeqs
         .splitFasta( record: [header: true,  sequence: true ])
-        .map { record -> [header: record.header.replaceAll(".","_"),//.replaceAll("[^a-zA-Z0-9]", "_"),
-                sequence: record.sequence.replaceAll("\n","").replaceAll("+","").replaceAll("*","").replaceAll("[^ARNDCQEGHILKMFPOSUTWYVarndcqeghilkmfposutwvy]", "X")] }
+        .map { record -> [header: record.header.replaceAll("\\.","_"),//.replaceAll("[^a-zA-Z0-9]", "_"),
+                sequence: record.sequence.replaceAll("\n","").replaceAll("\\+","").replaceAll("\\*","").replaceAll("[^ARNDCQEGHILKMFPOSUTWYVarndcqeghilkmfposutwvy]", "X")] }
 
 
     seqsRelabeled
@@ -173,7 +173,6 @@ workflow {
     }
     
     strucIDs = userStructures.map{strucL -> tuple(strucL.baseName, strucL.name)}
-
     strucIDs
         .join(seqIDs, remainder: true)
         .branch {
