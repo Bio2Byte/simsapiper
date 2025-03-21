@@ -1,3 +1,8 @@
+################################################################################
+######### script from esm repository https://github.com/facebookresearch/esm/blob/main/scripts/fold.py
+################################################################################
+
+
 from pathlib import Path
 import sys,os
 import argparse
