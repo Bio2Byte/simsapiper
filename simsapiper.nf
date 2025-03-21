@@ -135,13 +135,13 @@ workflow {
     //Quality control input sequences 
     seqsRelabeled = reducedSeqs
         .splitFasta( record: [header: true,  sequence: true ])
-        .map { record -> [header: record.header,//.replaceAll("[^a-zA-Z0-9]", "_"),
-                sequence: record.sequence.replaceAll("\n","").replaceAll("[^ARNDCQEGHILKMFPOSUTWYVarndcqeghilkmfposutwvy]", "X")] }
+        .map { record -> [header: record.header.replaceAll(".","_"),//.replaceAll("[^a-zA-Z0-9]", "_"),
+                sequence: record.sequence.replaceAll("\n","").replaceAll("+","").replaceAll("*","").replaceAll("[^ARNDCQEGHILKMFPOSUTWYVarndcqeghilkmfposutwvy]", "X")] }
 
 
     seqsRelabeled
     .branch{
-        invalid: it.sequence.size() < 100
+        invalid: it.sequence.size() < 50
         valid: true
     }.set { seqsQClen}
     writeFastaFromSeqsShort (seqsQClen.invalid.map{record -> '>' + record.header + ',' + record.sequence}.collect(), "too_short_seqs.fasta")
