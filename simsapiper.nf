@@ -1,7 +1,4 @@
-params.targetSequences  = "${params.seqs}*.${params.seqFormat}"
-println(params.targetSequences)
-//prev
-//params.targetSequences  = "${params.seqs}/*.${params.seqFormat}"
+params.targetSequences  = "${params.seqs}/*.${params.seqFormat}"
 targetSequencesFile     = file(params.targetSequences)
 allSequences            = Channel.fromPath(params.targetSequences)
 
