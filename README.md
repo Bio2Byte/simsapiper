@@ -66,7 +66,15 @@ nextflow run simsapiper.nf
     --squeeze "H,E"
     --squeezePerc 80
     --reorder
+    --data $PWD/toy_example/data
 ```
+
+#### Other presets:
+
+**--minimagic** to align small datasets (<50 sequences)
+
+**--localmagic** to align datasets with predicting 3D structures locally using ESMfold
+
 
 # Available flags
 
@@ -79,14 +87,17 @@ nextflow run simsapiper.nf
 | -profile withdocker	| Dependencies via docker container		 |  |  | 
 | -profile withsingularity	| Dependencies via apptainer images		 |  |  |  | 
 | -profile withconda	| Dependencies via conda (except T-Coffee)	 |  |  | 	
-| --condaEnvPath	| Path to conda environment  (if –profile withconda) |   false | create  with .yml file for <br>ARM-Apple (-profile standard)/<br> Linux (-profile server) automatically |  
-| --data	| Path to data directory 	 | data	 |    | 
+| --condaEnvPath	| Full path to conda environment  (if –profile withconda) |   false | create  with .yml file for <br>ARM-Apple (-profile standard)/<br> Linux (-profile server) automatically |  
+| --apptainerPath	| Full path to apptainer/singularity cache directory 	 | "$(pwd)"	 |    | 
+| --data	| Full path to data directory 	 | $(pwd)/data	 |    | 
 | --structures	| Path to structure files directory  | **--data**/structures	 | | 
+| --dsspPath	| Path to dssp files directory  | **--data**/dssp	 | | 
 | --seqs	| Path to sequence files directory  | **--data**/seqs	 |  | 
 | --seqFormat	| Input sequence format according to biopython [formats](https://biopython.org/wiki/SeqIO) | 	fasta	 |  | 
 | --seqQC	| Ignore sequences with % non-standard amino acids	 | 5	 | | 
 | --dropSimilar 	| Collapse sequences with % sequence identity	| false	 | 90 | 
-|--favoriteSeqs | Select sequence labels that need to stay in the alignment | false | "SeqLabel1,SeqLabel2" |
+| --favoriteSeqs | Select sequence labels that need to stay in the alignment | false | "SeqLabel1,SeqLabel2" |
+| --stopHyperconserved 	| Skip input file if it contains only identical sequences	| false	 |  | 
 | --outFolder	| Set directory name for output files	 | results/simsa_time_of_execution	 |  | 
 | --outName 	| Set final MSA file name	| 	finalmsa |   | 
 | --createSubsets	| Creates subsets of maximally % sequence identity	 | false	 | 30 | 
@@ -96,15 +107,19 @@ CD-Hit clusters
 | --useSubsets	| User provides multiple sequence files corresponding to subsets <br> Provide sequences not fitting any subset in a file containing 'orphan' in filename  | false	 | | 
 | --retrieve	| Retrieve protein structure models from AFDB  | 	false | 	 | 
 | --model	| Predict protein structure models with ESM Atlas  | 	false | 	 | 
+| --localModel	| Predict protein structure models with local ESMFold for n hours  <br> increase n+1 for every 100 seqs to model  | 	false | 1	 | 
 | --strucQC	| Maximal % of sequences not matched to a 3D structure | 	5	 |  | 
 | --tcoffeeParams	| Additional parameters for Tcoffee 	 | false | "--help" | 
 | --mafftParams	| Additional parameters for MAFFT 	 | false	 | "--localpair --maxiterate 100" | 
 | --dssp	| Map DSSP code to alignment 	 | false | 	 | 
 | --squeeze	| Squeeze alignment towards conserved 2nd structure categories | false	 | "H,E" |
 | --squeezePerc	| Set minimal occurence % of anchor element in MSA 	 | 80	 |  |  
+| --tree	| Calculate phylogenetic tree from SIMSA with IQ-TREE2 	 | false	 |  |  
 | --reorder	| Order final MSA by input file order 	| false	 |  | 
 | --convertMSA	| Covert final MSA file from fasta to selected file format	| 	false |  "clustal" | 
 | --magic	| Launch a run with recommended settings for all parameters	 | false	 |  | 
+| --localmagic	| Launch a run with recommended settings for small datasets (<50 sequences)	 | false	 |  | 
+| --minimagic	| Launch a run with recommended settings for local structure prediction	 | false	 |  | 
 
 # Documentation 
 ![Extensive representation of pipeline workflow!](schemes/detailedScheme.png "Extensive representation of SIMSApiper workflow")
@@ -199,7 +214,7 @@ Input: `data/seqs/`
 - Sequence IDs: 
     If **--retrieve**: use Uniprot ID as sequence ID to enable retrieval from [AlphaFold Database](https://alphafold.ebi.ac.uk)
 
-Notes: No spaces in the filename(s) allowed, use '_' for example instead
+Notes: No spaces in the filename(s) allowed, use '_' instead
 
 ### Structural input (--structures)
 
@@ -311,6 +326,26 @@ Common Issues:
 - Sequences are longer then 400 residues
 - Sequence contains any characters not representing an amino acid
 - API rate limit causes jobs to randomly fail: rerun SIMSApiper a few times to ensure maximal amount of models retrieved
+
+
+### 2.4 Alternative: Model Sequences with ESMFold (--localModel 1)
+
+Why?
+
+- Very fast prediction of novel protein structure models from sequence 
+- No need to know the Uniprot ID
+
+How?
+
+- Run structure predictions locally ESMfold 
+
+Common Issues:
+
+- Model calculation time increases exponentially with sequence length
+- Requires graphics card with at least 16GB GPU memory (! not CPU memory)
+    - for proteins with >900 AA we needed even more GPU memory
+    - 8GB GPU memory is enough to predict proteins <250 AA
+
 
 ### 2.5 Identify missing models
 (same as step 2.1)
@@ -459,6 +494,11 @@ Output: `results/outFolder/seqs/converted_*_merged_finalmsa_alignment.fasta`
 
 - Convert MSA using [biopython](https://biopython.org/wiki/SeqIO) from fasta-2-line format 
 
+## 10. Calculate phylogenetic tree 
+Output: `results/outFolder/tree/*.nw`
+
+- Calculate phylogenetic tree using [IQ-TREE2](http://www.iqtree.org) automatic model finder and ultrafast bootstrap 
+
 ## Log files
 
 ### Sequence report
@@ -522,6 +562,7 @@ Output: `results/outFolder/run_id_time.nflog`
         chmod +x bin/psi-cd-hit-local.pl
         ```
         and rerun.
+    - Shorten the sequence IDs to <= 30 characters
 - SIMSApiper crashes at T-Coffee stage:
 	- Error contains "sap_pair error" and -model true: possibly ESMFold prediction error
  		- Remove the ESMFold model of protein in error message  from  `data/structures`
@@ -532,6 +573,13 @@ Output: `results/outFolder/run_id_time.nflog`
 	- Error contains "proba_pair": T-Coffee could not find the structures and uses a sequence based alignemnt method
 		- Use complete path to data/structure directory
 		- Check protein model files 
+- Install SIMSApiper in a shared location / HPC
+    - ensure that Nextflow and Apptainer are available and loaded
+    - we observed that simsapiper and the data directory need to share a common root folder eg.:
+        -  ```nextflow run /opt/software/simsapiper/simsapiper.nf -profile server,withsingularity --data /home/user/simsatest/toy_example/data --magic``` does not work
+        -  ```nextflow run /home/user/simsapiper/simsapiper.nf -profile server,withsingularity --data /home/user/simsatest/toy_example/data --magic``` works
+    - provide a shared Apptainer cache location (**--apptainerPath**) to avoid keeping many copies of the GB-sized apptainer images
+
 - Learn how to adapt this pipeline using Nextflow [here](https://www.nextflow.io/docs/latest/basic.html)
  
 ## Citation

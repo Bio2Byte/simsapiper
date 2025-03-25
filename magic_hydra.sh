@@ -1,5 +1,10 @@
 #!/bin/bash
-#screen -S nextflowalign bash -c ./magic_hydra.sh
+#SBATCH --job-name=simsa
+#SBATCH --time=2:00:00
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=20
+#SBATCH --mem-per-cpu=2G
+
 
 data=toy_example
 
@@ -15,7 +20,4 @@ nextflow run simsapiper.nf \
     -profile hydra \
     --data $house/$data/data \
     --magic \
-    --outFolder $output_folder \
-    |& tee  $output_folder/run_report_$output_name.nflog
-sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $output_folder/run_report_$output_name.nflog)
-nextflow log | grep $sessionName >> $output_folder/run_report_$output_name.nflog
+    --outFolder $output_folder
