@@ -7,6 +7,8 @@ dssp_filter= ['H','B','E','G','I','T','S','-','X']
 input_file = sys.argv[1] #final_MSA.fasta
 dssp_file = sys.argv[2] #final_MSA_dssp.fasta = MSA with dssp code instead of residues
 squeeze = sys.argv[3]
+if squeeze == "true": #user hasn't specified towards what should be squeezed
+    squeeze = "H,E"
 conserved_2structure_dssp = squeeze.split(',') # ["H","E"]
 
 #Replace "G" and "I" by "H" as they are equivalent. When couting the frequencies for "H" we will also look for "G" and "I"
@@ -23,10 +25,8 @@ anchor_point = int(sys.argv[4]) / 100
 if anchor_point > 0: 
     print ('Conservation of secondary structure element per position is %', anchor_point*100 )
 else:
-    raise ValueError('Conservation of secondary structure element per position must be larger then 0%! Try adding --squeezePerc 80 to your command line ')
+    raise ValueError('[Warning] Conservation of secondary structure element per position must be larger then 0%! Try adding --squeezePerc 80 to your command line ')
     
-#anchor_point = 0.8 #if 80% of your proteins have a conserved secondary structure dssp code in a particular column of your MSA, then the column will be considered as part of the anchor region
-
 output_file = sys.argv[5]+'.fasta' #MSA with residues (not dssp code) but that has been squeezed towards anchor points
 
 
@@ -65,7 +65,7 @@ for conserved in conserved_2structure_dssp:
             positions.append(position) #positions part of the anchor region
     print(positions)
     if positions == []:
-        print('The secondary structure element',conserved,'doesn"t seem to be a conserved element in your dataset. It will be ignored for the squeezing.')
+        print('[Warning] The secondary structure element',conserved,'doesn"t seem to be a conserved element in your dataset. It will be ignored for the squeezing.')
         continue
     else:
     #find start and end anchor points
@@ -86,7 +86,6 @@ for conserved in conserved_2structure_dssp:
             last_structured = positions[-1]
 
 structure_elements = sorted(structure_elements, key=lambda x: x[1][0]) #sort it in ascending order
-print(structure_elements)
 
 if len(structure_elements) > 0:
     #add the unstructured regions
