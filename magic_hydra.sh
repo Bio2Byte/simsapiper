@@ -17,7 +17,7 @@ mkdir -p $house/results
 mkdir -p $output_folder
 
 nextflow run simsapiper.nf \
-    -profile hydra \
+    -profile server \
     --data $house/$data/data \
     --magic \
     --outFolder $output_folder

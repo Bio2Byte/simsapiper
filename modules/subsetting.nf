@@ -53,7 +53,7 @@ process cdHitCollapse{
     num=\$(grep "total seq:" .command.log | awk '{print \$NF}')
 
 
-    python3 $projectDir/bin/post_collapse.py $sequencesValid  ${sequencesValid.baseName}_${clustering}_collapsed "$favs" removed_${sequencesValid.baseName}_${clustering}_perc_similar
+    python $projectDir/bin/post_collapse.py $sequencesValid  ${sequencesValid.baseName}_${clustering}_collapsed "$favs" removed_${sequencesValid.baseName}_${clustering}_perc_similar
     """
 
 }

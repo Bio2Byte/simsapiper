@@ -82,7 +82,7 @@ process esmFolds{
 
     script:
     """
-    export TORCH_HOME=/databases/bio/ESM-2-2.0.0/torch
+    #export TORCH_HOME=/databases/bio/ESM-2-2.0.0/torch
     echo $structureless
     
     if [ -z "$structureless" ] ; then
