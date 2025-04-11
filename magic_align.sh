@@ -2,6 +2,7 @@
 #Copy your_data_folder in simsapiper folder and edit this line to let magic happen!
 data=toy_example
 
+module load Nextflow/23.10.0
 house=$(pwd)
 now=`date +"%Y_%m_%d_%H_%M_%S"`
 output_name=${data}_${now}_test
@@ -12,7 +13,7 @@ mkdir -p $output_folder
 echo 'Starting nextflow'
 
 nextflow run simsapiper.nf \
-    -profile server,withsingularity \
+    -profile server,withapptainer \
     --data $house/$data/data \
     --localModel 0.5 \
     --outFolder $output_folder \
