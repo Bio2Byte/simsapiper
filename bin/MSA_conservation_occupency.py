@@ -101,7 +101,6 @@ def plot_conservation(conservation_scores, occupancy, output_file):
     # Style major and minor ticks separately
     ax.tick_params(axis='x', which='major', length=4, color='gray', labelsize=6)
     ax.tick_params(axis='x', which='minor', length=2, color='lightgray')
-
     # Add vertical grid at label positions
     #for xpos in range(1, length + 1):
     #    if xpos % label_interval == 0 or xpos == 1:

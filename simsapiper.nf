@@ -388,7 +388,7 @@ workflow {
         mappedFinalMsaSqueeze = mapDsspSqueeze.out.mmsa
     }else{
         squeezedMsa=finalMsa
-        mappedFinalMsaSqueeze=Channel.empty()}
+        mappedFinalMsaSqueeze=Channel.empty() } //acts as gate:open
 
 
     //reorder final MSA
@@ -410,7 +410,7 @@ workflow {
     }
 
     createSummary(
-        Channel.empty().mix(finalMsa,convertFinalMsaFile,reorderedFinalMsa,squeezedMsa).collect(),
+        Channel.empty().mix(finalMsa,convertFinalMsaFile,reorderedFinalMsa,squeezedMsa,mappedFinalMsaSqueeze).collect(), //this isjust the gate
         params.outFolder,
         allSequences,
         fullInputSeqsNum,

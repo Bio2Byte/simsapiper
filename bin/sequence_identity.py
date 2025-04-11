@@ -4,8 +4,9 @@ import numpy as np
 import matplotlib.pyplot as plt 
 
 msa_file = sys.argv[1]
-output_csv = "pairwise_identity_matrix.csv" 
-output_csv_avg = "average_identity_per_sequence.csv"
+output_folder=sys.argv[2]
+output_csv = output_folder+"/pairwise_identity_matrix.csv" 
+output_csv_avg = output_folder+"/average_identity_per_sequence.csv"
 histogram_plot = "identity_histogram.png"
 histogram_plot_av = "average_identity_histogram.png"
 

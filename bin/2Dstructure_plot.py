@@ -112,7 +112,7 @@ if __name__ == "__main__":
     anchor_point=0.5 #to show consensus secondary structure
     secstruct_str = limits_secondary_structure(dssp_file,conserved_2structure_dssp, anchor_point)
     plot_secondary_structure(secstruct_str)
-
+    
     # Save to CSV
     import csv
     with open("SecondaryStructure_rawdata.csv", "w", newline="") as csvfile:

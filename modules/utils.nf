@@ -114,7 +114,6 @@ process readSeqs {
     """
 }
 
-
 process phyloTree{
     publishDir "$params.outFolder/tree", mode:"copy"
     errorStrategy { task.attempt > 4 ? 'retry' : 'finish' }
@@ -173,8 +172,8 @@ process createSummary{
 
     output:
     path "*.md"
-    path "*.csv"
-    path "*.png"
+    path "*.png" , optional: true
+    path "*.pdf" , optional: true
 
     script:
 
@@ -273,7 +272,9 @@ process createSummary{
     echo '# 5 Align subset alignments with MAFFT'
     echo '* Alignment of subset alignments, structureless and orphan sequences ' $outdir/msas/merged*.fasta
     echo '* Additional MAFFT parameters: ' $mafftparams
-        
+    
+    statsod=$outdir/stats
+    mkdir \$statsod
     echo '# 6 Run DSSP:' $dssp
     if [ "$dssp" != "false" ] ; then
         echo '* DSSP file can be found in' $dsspfiles
@@ -281,6 +282,15 @@ process createSummary{
         echo '# 7 Improve MSA '
         echo '## 7.1 Map DSSP to MSA' 
         echo '* DSSP codes mapped to merged alignment:' $outdir/msas/dssp_merged*.fasta
+
+
+        if [ "$squeeze" != "false" ] ; then
+            python3 $projectDir/bin/2Dstructure_plot.py $outdir/msas/dssp_merged*.fasta $squeeze
+            #python3 $projectDir/bin/MSA_conservation_occupency.py $outdir/msas/dssp_merged*.fasta "ShannonEntropyConservation_occupency_SecStructure.pdf" \$statsod
+        else
+            python3 $projectDir/bin/2Dstructure_plot.py $outdir/msas/dssp_squeezed_merged*.fasta $squeeze
+            #python3 $projectDir/bin/MSA_conservation_occupency.py $outdir/msas/dssp_squeezed_merged*.fasta "ShannonEntropyConservation_occupency_SecStructure.pdf" \$statsod
+        fi
     fi
 
     if [ "$squeeze" != "false" ] ; then
@@ -301,10 +311,12 @@ process createSummary{
         echo '* The squeezing step removed ' \$difference ' gaps from the alignment.'
 
         echo '## Estimated sequence identity'
-        python3 $projectDir/bin/sequence_identity.py $outdir/msas/squeezed_merged*.fasta 
+        python3 $projectDir/bin/sequence_identity.py $outdir/msas/squeezed_merged*.fasta \$statsod
+        python3 $projectDir/bin/MSA_conservation_occupency.py $outdir/msas/squeezed_merged*.fasta "ShannonEntropyConservation_occupency.pdf" \$statsod
     else
         echo '# Estimated sequence identity'
-        python3 $projectDir/bin/sequence_identity.py $outdir/msas/merged*.fasta 
+        python3 $projectDir/bin/sequence_identity.py $outdir/msas/merged*.fasta \$statsod
+        python3 $projectDir/bin/MSA_conservation_occupency.py $outdir/msas/merged*.fasta "ShannonEntropyConservation_occupency.pdf" \$statsod
     fi
 
 

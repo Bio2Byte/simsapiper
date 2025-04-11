@@ -55,7 +55,7 @@ nextflow run simsapiper.nf
     --seqFormat fasta
     --seqQC 5
     --dropSimilar 90
-    --outFolder "simsa_time_of_execution"
+    --outFolder $PWD/simsa_time_of_execution
     --outName "magicMsa"
     --minSubsetID "min"
     --createSubsets 30
@@ -98,7 +98,7 @@ nextflow run simsapiper.nf
 | --dropSimilar 	| Collapse sequences with % sequence identity	| false	 | 90 | 
 | --favoriteSeqs | Select sequence labels that need to stay in the alignment | false | "SeqLabel1,SeqLabel2" |
 | --stopHyperconserved 	| Skip input file if it contains only identical sequences	| false	 |  | 
-| --outFolder	| Set directory name for output files	 | results/simsa_time_of_execution	 |  | 
+| --outFolder	| Set directory name and full path for output files	 | $(pwd)/results/simsa_time_of_execution	 |  | 
 | --outName 	| Set final MSA file name	| 	finalmsa |   | 
 | --createSubsets	| Creates subsets of maximally % sequence identity	 | false	 | 30 | 
 |--minSubsetID | Sets minimal % sequence identity for sequences to be in a subset | 20 | "min" to collate small
