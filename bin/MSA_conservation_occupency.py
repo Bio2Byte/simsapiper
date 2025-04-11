@@ -101,8 +101,6 @@ def plot_conservation(conservation_scores, occupancy, output_file):
     # Style major and minor ticks separately
     ax.tick_params(axis='x', which='major', length=4, color='gray', labelsize=6)
     ax.tick_params(axis='x', which='minor', length=2, color='lightgray')
-
-
     # Add vertical grid at label positions
     #for xpos in range(1, length + 1):
     #    if xpos % label_interval == 0 or xpos == 1:
@@ -127,3 +125,10 @@ conservation_scores = compute_conservation(alignment)
 occupancy_scores = compute_occupancy(alignment)
 
 plot_conservation(conservation_scores, occupancy_scores,output_plot)
+
+import csv
+with open("conservation_occupancy_scores.csv", "w", newline="") as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(["Position", "ConservationScore", "OccupancyScore"])
+    for i, (cons, occ) in enumerate(zip(conservation_scores, occupancy_scores), start=1):
+        writer.writerow([i, cons, occ])
