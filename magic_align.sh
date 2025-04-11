@@ -3,6 +3,10 @@
 data=toy_example
 
 module load Nextflow/23.10.0
+
+export APPTAINER_CACHEDIR=$VSC_SCRATCH_VO_USER/.apptainer
+
+
 house=$(pwd)
 now=`date +"%Y_%m_%d_%H_%M_%S"`
 output_name=${data}_${now}_test
@@ -17,7 +21,7 @@ nextflow run simsapiper.nf \
     --data $house/$data/data \
     --localModel 0.5 \
     --outFolder $output_folder \
-    --apptainerPath  "$VSC_SCRATCH_VO_USER/.apptainer" \
+    --apptainerPath  $VSC_SCRATCH_VO_USER/.apptainer \
     | tee  $output_folder/run_report_$output_name.nflog
 sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $output_folder/run_report_$output_name.nflog)
 nextflow log | grep $sessionName >> $output_folder/run_report_$output_name.nflog
