@@ -27,7 +27,7 @@ echo 'Starting nextflow'
 nextflow run simsapiper.nf \
     -profile server,withapptainer \
     --data $house/$data/data \
-    --localModel 0.5 \
+    --magic \
     --outFolder $output_folder \
     --apptainerPath  $VSC_SCRATCH_VO_USER/.apptainer \
     | tee  $output_folder/run_report_$output_name.nflog

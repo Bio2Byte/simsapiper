@@ -72,7 +72,7 @@ def plot_secondary_structure(secstruct_str, output_file="SecondaryStructure_alig
     x = np.arange(1, length + 1)
 
     fig_width = min(max(length / 25, 12), 80)
-    fig, ax = plt.subplots(figsize=(fig_width, 2.5))
+    fig, ax = plt.subplots(figsize=(fig_width, 1.5))
     ax.set_title("Secondary Structure Alignment")
     ax.margins(0)
 

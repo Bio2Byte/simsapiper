@@ -61,4 +61,6 @@ Thumbs.db
 
 results/*
 data_manuscript/GroEL/*
+slurm*
+toy_example/*
 

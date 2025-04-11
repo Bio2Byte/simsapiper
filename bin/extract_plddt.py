@@ -41,7 +41,7 @@ def compute_statistics(values):
     try:
         stats['plddt_mode'] = statistics.mode(values)
     except statistics.StatisticsError:
-        stats['plddt_mode'] = float('na')
+        stats['plddt_mode'] = float('nan')
 
     logging.info('Statistics computed.')
     return stats
