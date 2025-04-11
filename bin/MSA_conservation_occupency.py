@@ -67,7 +67,7 @@ def plot_conservation(conservation_scores, occupancy, output_file):
     length = len(conservation_scores)
     x = np.arange(1, length + 1)
 
-    fig_width = min(max(length / 25, 12), 80)
+    fig_width = min(max(length / 25, 12), 50)
     fig, ax = plt.subplots(figsize=(fig_width, 2.5))
     
     ax.set_title('Alignment Occupancy and Conservation')
