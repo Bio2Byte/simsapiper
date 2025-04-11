@@ -119,10 +119,11 @@ def plot_conservation(conservation_scores, occupancy, output_file):
     plt.close()
 
 msa_filename = sys.argv[1]
-output_file=sys.argv[2] #"ShannonEntropyConservation_occupency.pdf"
+output_plot=sys.argv[2] #"ShannonEntropyConservation_occupency.pdf"
+output_folder=sys.argv[3]
 
 alignment = AlignIO.read(msa_filename, "fasta")
 conservation_scores = compute_conservation(alignment)
 occupancy_scores = compute_occupancy(alignment)
 
-plot_conservation(conservation_scores, occupancy_scores,output_file)
+plot_conservation(conservation_scores, occupancy_scores,output_plot)
