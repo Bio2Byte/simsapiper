@@ -281,6 +281,15 @@ process createSummary{
         echo '# 7 Improve MSA '
         echo '## 7.1 Map DSSP to MSA' 
         echo '* DSSP codes mapped to merged alignment:' $outdir/msas/dssp_merged*.fasta
+
+
+        if [ "$squeeze" != "false" ] ; then
+            python3 $projectDir/bin/2Dstructure_plot.py $outdir/msas/dssp_merged*.fasta $squeeze
+            python3 $projectDir/bin/MSA_conservation_occupency.py $outdir/msas/dssp_merged*.fasta "ShannonEntropyConservation_occupency_SecStructure.pdf"
+        else
+            python3 $projectDir/bin/2Dstructure_plot.py $outdir/msas/dssp_squeezed_merged*.fasta $squeeze
+            python3 $projectDir/bin/MSA_conservation_occupency.py $outdir/msas/dssp_squeezed_merged*.fasta "ShannonEntropyConservation_occupency_SecStructure.pdf"
+        fi
     fi
 
     if [ "$squeeze" != "false" ] ; then
@@ -301,10 +310,12 @@ process createSummary{
         echo '* The squeezing step removed ' \$difference ' gaps from the alignment.'
 
         echo '## Estimated sequence identity'
-        python3 $projectDir/bin/sequence_identity.py $outdir/msas/squeezed_merged*.fasta 
+        python3 $projectDir/bin/sequence_identity.py $outdir/msas/squeezed_merged*.fasta
+        python3 $projectDir/bin/MSA_conservation_occupency.py $outdir/msas/squeezed_merged*.fasta "ShannonEntropyConservation_occupency.pdf"
     else
         echo '# Estimated sequence identity'
         python3 $projectDir/bin/sequence_identity.py $outdir/msas/merged*.fasta 
+        python3 $projectDir/bin/MSA_conservation_occupency.py $outdir/msas/merged*.fasta "ShannonEntropyConservation_occupency.pdf"
     fi
 
 
