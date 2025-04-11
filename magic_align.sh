@@ -1,5 +1,13 @@
 #!/bin/bash
 #Copy your_data_folder in simsapiper folder and edit this line to let magic happen!
+#!/bin/bash
+#SBATCH --job-name=simsa
+#SBATCH --time=2:00:00
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=20
+#SBATCH --mem-per-cpu=3G
+
+
 data=toy_example
 
 module load Nextflow/23.10.0
