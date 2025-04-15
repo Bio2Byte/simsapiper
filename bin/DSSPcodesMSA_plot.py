@@ -54,7 +54,7 @@ def plot_dssp_frequencies(tot_freq_SS, output_file="dssp_freq_plot.pdf"):
     ax.set_xlabel("Column position")
     ax.set_ylabel("Frequency")
     ax.set_title("Secondary Structure Frequencies of Aligned Proteins")
-    ax.legend()
+    ax.legend(loc='center left', bbox_to_anchor=(1.01, 0.5))
 
     plt.tight_layout()
     plt.savefig(output_file, dpi=300)

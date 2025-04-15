@@ -5,6 +5,7 @@
 #SBATCH --cpus-per-task=20
 #SBATCH --mem-per-cpu=2G
 
+#use this if you want to align many ortholog proteins containing on average less then 100 proteins per set
 
 
 house=$VSC_SCRATCH_VO_USER/proteome
@@ -39,10 +40,12 @@ while IFS= read -r line; do
     cd $sdir
 
     nextflow run $VSC_SCRATCH_VO_USER/simsapiper/simsapiper.nf -resume\
-        -profile hydra \
+        -profile minihydra \
         --data $sdir \
         --outName $ogn \
-        --magic \
+        --minimagic \
+        --stopHyperconserved \
+        --localModel 1 --retrieve false --model false \
         --outFolder $sdir 
     cd $house
 done < $ogfile
