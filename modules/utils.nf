@@ -273,7 +273,7 @@ process createSummary{
     echo '* Alignment of subset alignments, structureless and orphan sequences ' $outdir/msas/merged*.fasta
     echo '* Additional MAFFT parameters: ' $mafftparams
     
-    statsod=$outdir/stats
+    statsod=$outdir/msa_stats
     mkdir \$statsod
     echo '# 6 Run DSSP:' $dssp
     if [ "$dssp" != "false" ] ; then

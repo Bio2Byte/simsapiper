@@ -206,7 +206,7 @@ process squeeze{
 
 process reorder{
 
-    publishDir "$params.data/simsa", mode: "copy"
+    publishDir "$params.outFolder", mode: "copy"
     publishDir "$params.outFolder/msas", mode: "copy" 
 
     input:
@@ -230,7 +230,6 @@ process reorder{
     python3 $projectDir/bin/reorganize_output.py "$inputSeqs" "$reorder" $finalMsa reordered_${finalMsa.baseName} 
     cp reordered_${finalMsa.baseName}.fasta ${params.outName}.simsa
 
-    echo $params.data/simsa
     echo ${params.outName}.simsa
     """
 
