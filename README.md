@@ -6,7 +6,7 @@ Structural information may be provided by the user or directly retrieved by the 
 The process is significantly sped up by using sequence identity-based subsets and aligning them in parallel. 
 Conserved secondary structure elements are used to reduce gaps for a high-quality final alignment.
 
-Read more here in our Wiki or [in our publication!](https://doi.org/10.1093/bioinformatics/btae276)
+Read more here in our [wiki](https://github.com/Bio2Byte/simsapiper/wiki) or [in our publication!](https://doi.org/10.1093/bioinformatics/btae276)
 
 # QuickStart
 
