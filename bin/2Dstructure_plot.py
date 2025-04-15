@@ -64,7 +64,7 @@ def limits_secondary_structure(dssp_file, conserved_2structure_dssp, anchor_poin
     return secstruct_str
 
 
-def plot_secondary_structure(secstruct_str, output_file="SecondaryStructure_alignment.pdf"):
+def plot_secondary_structure(secstruct_str, output_file="ConsensusSecondaryStructure_alignment.pdf"):
     import matplotlib.pyplot as plt
     from mpl_toolkits.axes_grid1 import make_axes_locatable
 
