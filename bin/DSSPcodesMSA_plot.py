@@ -11,7 +11,7 @@ def freq_DSSP_codes(dssp_file):
     dsspMSA_array = np.array([list(rec.seq) for rec in read_dsspMSA])
     transposed = np.transpose(dsspMSA_array)
 
-    codes_interest = {"Helix":["H","I","E"], "Sheet":["E","B"], "Loop":["X","T","S"]}
+    codes_interest = {"Helix":["H","I","G"], "Sheet":["E","B"], "Loop":["X","T","S"]}
 
     tot_freq_SS = {}
     for SS,codes in codes_interest.items():
