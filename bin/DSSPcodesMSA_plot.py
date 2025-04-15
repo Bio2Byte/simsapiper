@@ -25,36 +25,41 @@ def freq_DSSP_codes(dssp_file):
     return tot_freq_SS
 
 
+
 def plot_dssp_frequencies(tot_freq_SS, output_file="dssp_freq_plot.pdf"):
     length = len(next(iter(tot_freq_SS.values())))  # Number of alignment columns
     x = np.arange(1, length + 1)
 
     fig_width = min(max(length / 25, 12), 50)
-    fig, ax = plt.subplots(figsize=(fig_width, 2.5))
-    
-    for ss_type, freq in tot_freq_SS.items():
-            ax.plot(x, freq, label=ss_type, linewidth=1)
-    
-    ax.set_xlim(0.5, length + 0.5)
+    fig, axes = plt.subplots(3, 1, figsize=(fig_width, 6))
 
+    ss_types = list(tot_freq_SS.keys())
     label_interval = 10
 
-    # Define major tick positions (for labels)
-    major_tick_positions = [i for i in range(1, length + 1) if i % label_interval == 0 or i == 1]
-    ax.set_xticks(major_tick_positions)
-    ax.set_xticklabels([str(i) for i in major_tick_positions], fontsize=6)
+    colors = ["green","blue","orange"]
+    for i, (ss_type,col) in enumerate(zip(ss_types,colors)):
+        ax = axes[i]
+        freq = tot_freq_SS[ss_type]
+        ax.plot(x, freq, label=ss_type, linewidth=1,color=col)
 
-    # Set minor ticks at every position (for alignment)
-    ax.set_xticks(np.arange(1, length + 1), minor=True)
+        ax.set_xlim(0.5, length + 0.5)
+        ax.set_ylim(-0.1,1.1)
+        ax.set_ylabel("Frequency", fontsize=8)
 
-    # Style major and minor ticks separately
-    ax.tick_params(axis='x', which='major', length=4, color='gray', labelsize=6)
-    ax.tick_params(axis='x', which='minor', length=2, color='lightgray')
+        # Major ticks
+        major_tick_positions = [i for i in range(1, length + 1) if i % label_interval == 0 or i == 1]
+        ax.set_xticks(major_tick_positions)
+        ax.set_xticklabels([str(i) for i in major_tick_positions], fontsize=6)
 
-    ax.set_xlabel("Column position")
-    ax.set_ylabel("Frequency")
-    ax.set_title("Secondary Structure Frequencies of Aligned Proteins")
-    ax.legend(loc='center left', bbox_to_anchor=(1.01, 0.5))
+        # Minor ticks
+        ax.set_xticks(np.arange(1, length + 1), minor=True)
+        ax.tick_params(axis='x', which='major', length=4, color='gray', labelsize=6)
+        ax.tick_params(axis='x', which='minor', length=2, color='lightgray')
+
+        # ax.legend(loc='upper right', fontsize=8)
+        ax.set_title(f"Secondary Structure: {ss_type}", fontsize=10)
+
+    axes[-1].set_xlabel("Column position", fontsize=9)
 
     plt.tight_layout()
     plt.savefig(output_file, dpi=300)
