@@ -47,7 +47,7 @@ Use absolute files paths (`/Users/me/workspace/simsapiper/toy_example/data`).
 By default most flags are set to False. 
 Adding a flag to the command line will set it to True and activate it. 
 Some flags can carry additional information, such as percentages or filenames.
-The complete list can be found below.
+The complete list can be found in the [here](https://github.com/Bio2Byte/simsapiper/wiki/3-Available-flags).
 
 **--magic** flag is equivalent to
 
