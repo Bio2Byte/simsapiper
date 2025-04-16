@@ -1,0 +1,7 @@
+FROM continuumio/miniconda3
+
+RUN pip install pandas matplotlib seaborn biopython secstructartist numpy
+RUN conda install -c conda-forge mafft curl
+
+LABEL maintainer="Sophie Heidig <sophie-luise.heidig@vub.be>"
+LABEL description='Software dependencies for SIMSApiper containing pandas matplotlib seaborn biopython secstructartist numpy curl and mafft'

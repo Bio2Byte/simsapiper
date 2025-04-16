@@ -1,0 +1,17 @@
+FROM continuumio/miniconda3
+
+
+LABEL maintainer="Sophie Heidig <sophie-luise.heidig@vub.be>"
+LABEL description='Software dependencies for SIMSApiper: cdhit'
+
+#### get necessary packages
+RUN apt-get -y update && apt-get install -y wget build-essential zlib1g zlib1g-dev 
+
+
+RUN conda install -c conda-forge biopython pandas libgcc libstdcxx libzlib
+RUN conda install -c bioconda cd-hit
+
+
+#### get NCBI BLAST+ 2.8.1s
+RUN apt-get -y install ncbi-blast+
+
