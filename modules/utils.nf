@@ -285,10 +285,10 @@ process createSummary{
 
 
         if [ "$squeeze" != "false" ] ; then
-            python3 $projectDir/bin/2Dstructure_plot.py $outdir/msas/dssp_merged*.fasta $squeeze
+            python3 $projectDir/bin/2Dstructure_plot.py $outdir/msas/dssp_merged*.fasta $squeeze \$statsod
             python3 $projectDir/bin/DSSPcodesMSA_plot.py $outdir/msas/dssp_merged*.fasta \$statsod
         else
-            python3 $projectDir/bin/2Dstructure_plot.py $outdir/msas/dssp_squeezed_merged*.fasta $squeeze
+            python3 $projectDir/bin/2Dstructure_plot.py $outdir/msas/dssp_squeezed_merged*.fasta $squeeze \$statsod
             python3 $projectDir/bin/DSSPcodesMSA_plot.py $outdir/msas/dssp_squeezed_merged*.fasta \$statsod
         fi
     fi
@@ -312,11 +312,11 @@ process createSummary{
 
         echo '## Estimated sequence identity'
         python3 $projectDir/bin/sequence_identity.py $outdir/msas/squeezed_merged*.fasta \$statsod
-        python3 $projectDir/bin/MSA_conservation_occupency.py $outdir/msas/squeezed_merged*.fasta "ShannonEntropyConservation_occupency.pdf" \$statsod
+        python3 $projectDir/bin/MSA_conservation_occupency.py $outdir/msas/squeezed_merged*.fasta \$statsod
     else
         echo '# Estimated sequence identity'
         python3 $projectDir/bin/sequence_identity.py $outdir/msas/merged*.fasta \$statsod
-        python3 $projectDir/bin/MSA_conservation_occupency.py $outdir/msas/merged*.fasta "ShannonEntropyConservation_occupency.pdf" \$statsod
+        python3 $projectDir/bin/MSA_conservation_occupency.py $outdir/msas/merged*.fasta \$statsod
     fi
 
 
