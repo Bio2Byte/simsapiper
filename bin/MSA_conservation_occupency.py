@@ -72,7 +72,7 @@ def plot_conservation(conservation_scores, occupancy, output_file):
     
     ax.set_title('Alignment Occupancy and Conservation')
     ax.plot(x, occupancy, label="Occupancy", color="black", linewidth=0.75)
-    ax.set_ylabel("Sequence\occupancy")
+    ax.set_ylabel("Sequence occupancy")
     ax.set_xlabel("Column position")
 
     extent = [0.5, length + 0.5, 0, 1.05]
@@ -117,17 +117,16 @@ def plot_conservation(conservation_scores, occupancy, output_file):
     plt.close()
 
 msa_filename = sys.argv[1]
-output_plot=sys.argv[2] #"ShannonEntropyConservation_occupency.pdf"
-output_folder=sys.argv[3]
+output_folder=sys.argv[2]
 
 alignment = AlignIO.read(msa_filename, "fasta")
 conservation_scores = compute_conservation(alignment)
 occupancy_scores = compute_occupancy(alignment)
 
-plot_conservation(conservation_scores, occupancy_scores,output_plot)
+plot_conservation(conservation_scores, occupancy_scores,"ShannonEntropyConservation_occupency.pdf")
 
 import csv
-with open("conservation_occupancy_scores.csv", "w", newline="") as csvfile:
+with open(output_folder+"/conservation_occupancy_scores.csv", "w", newline="") as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(["Position", "ConservationScore", "OccupancyScore"])
     for i, (cons, occ) in enumerate(zip(conservation_scores, occupancy_scores), start=1):

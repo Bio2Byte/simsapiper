@@ -67,7 +67,7 @@ def plot_dssp_frequencies(tot_freq_SS, output_file="dssp_freq_plot.pdf"):
 
 
 dssp_file = sys.argv[1]
-output_folder=sys.argv[2] #"DSSPcodes_aligned.pdf"
+output_folder=sys.argv[2]
 total_frequencies_SS = freq_DSSP_codes(dssp_file)
 plot_dssp_frequencies(total_frequencies_SS, 'DSSPcodes_aligned.pdf')
 

@@ -39,10 +39,9 @@ def limits_secondary_structure(dssp_file, conserved_2structure_dssp, anchor_poin
 
     structure_elements = sorted(structure_elements, key=lambda x: x[1][0])
 
-    dssp_code_plotss = {"E": "S", "H": "H", "G": "H"}
+    dssp_code_plotss = {"E": "S", "H": "H", "G": "H", "I": "H" }
     secstruct_str = ""
     first = True
-
     for ss in structure_elements:
         ss_name = ss[0][0]
         start, end = ss[1]
@@ -58,7 +57,6 @@ def limits_secondary_structure(dssp_file, conserved_2structure_dssp, anchor_poin
 
         secstruct_str += plot_symbol * length
         stop_previous = end
-
     secstruct_str += "L" * (alignment_length - stop_previous - 1)
 
     return secstruct_str
@@ -107,15 +105,18 @@ def plot_secondary_structure(secstruct_str, output_file="ConsensusSecondaryStruc
 
 if __name__ == "__main__":
     dssp_file = sys.argv[1]
-    conserved_2structure_dssp=sys.argv[2].split(',')
-    print(conserved_2structure_dssp)
+    squeeze =sys.argv[2]
+    if squeeze == "true": #user hasn't specified towards what should be squeezed
+        squeeze = "H,E"
+    conserved_2structure_dssp = squeeze.split(',') # ["H","E"]
+    output_folder = sys.argv[3]
     anchor_point=0.5 #to show consensus secondary structure
     secstruct_str = limits_secondary_structure(dssp_file,conserved_2structure_dssp, anchor_point)
     plot_secondary_structure(secstruct_str)
     
     # Save to CSV
     import csv
-    with open("SecondaryStructure_rawdata.csv", "w", newline="") as csvfile:
+    with open(output_folder+"/SecondaryStructure_rawdata.csv", "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["Position", "consensus_SecondaryStructure"])
         for idx, ss in enumerate(secstruct_str, start=1):
