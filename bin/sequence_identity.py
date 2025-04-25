@@ -66,7 +66,7 @@ print(line2)
 pairwise_identities = identity_matrix[np.triu_indices(n, 1)]  # Extract upper triangle values only
 plt.hist(pairwise_identities, bins=range(0, 105, 5), edgecolor='black')  # Bins in 5% increments
 plt.xlabel("Pairwise Sequence Identity (%)")
-plt.ylabel("Frequency")
+plt.ylabel("Occurrence")
 plt.title("Distribution of Pairwise Sequence Identities")
 plt.savefig(histogram_plot)
 plt.close()
@@ -74,7 +74,7 @@ plt.close()
 # Generate histogram plot for average pairwise sequence identities
 plt.hist(average_identities_df["Average_Identity (%)"], bins=range(0, 101, 1), edgecolor='black')  # Bins in 1% increments
 plt.xlabel("Average Pairwise Sequence Identity (%)")
-plt.ylabel("Frequency")
+plt.ylabel("Occurrence")
 plt.title("Distribution of Average Pairwise Sequence Identities")
 plt.savefig(histogram_plot_av)
 plt.close()
