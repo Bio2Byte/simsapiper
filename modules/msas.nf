@@ -1,7 +1,6 @@
 process runTcoffee {
     publishDir "$params.outFolder/msas/t-coffee", mode: "copy" 
     tag "$seqsToAlign"
-    //errorStrategy "finish"
     errorStrategy {task.attempt < 4 ? 'retry' : 'finish' }
 
     input:
@@ -17,32 +16,12 @@ process runTcoffee {
 
     script:
     """
-
-    if (( ${task.attempt} > 1 )) ; then
-        echo "remove problematic seqs"
-        foi=${params.outFolder}/resources_*.txt
-        wdir=\$(grep "runTcoffee" \$foi | grep "FAILED" | grep ${seqsToAlign} | awk '{print \$2}')
-        echo \$wdir
-        log_file=\$(find ../../"\$wdir"* -name ".command.log" -print -quit)
-        echo \$log_file    
-        grep "attempt 3" "\$log_file" | \
-        awk -F'\\[' '{print \$2}' | awk -F']' '{print \$1}' | \
-        tr ' ' '\n' | sort | uniq > entries_to_remove.txt
-        if (( ${task.attempt} > 2 )) ; then
-            infile=\$(find ../../"\$wdir"* -name "fil_${seqsToAlign}" -print -quit)
-            oldremoved=\$(find ../../"\$wdir"* -name "removed_${seqsToAlign}" -print -quit)
-            cp \$oldremoved removed_previously_${seqsToAlign}
-        else
-            infile=${seqsToAlign}
-        fi
-        filtered_file="fil_${seqsToAlign}"
-        removed_file="removed_${seqsToAlign}" 
-        awk 'BEGIN {while ((getline line < "entries_to_remove.txt") > 0) remove[line] = 1}
-            /^>/ {header = substr(\$0, 2); write = !(header in remove); write_removed = (header in remove)}
-            {if (write) print > "'"\$filtered_file"'"; if (write_removed) print > "'"\$removed_file"'"}' "\$infile"
-        SEQUENCE=\$filtered_file
+    if (( ${task.attempt} > 1 )); then
+        chmod +x $projectDir/bin/filter_problematic_seqs.sh
+        $projectDir/bin/filter_problematic_seqs.sh ${seqsToAlign} ${params.outFolder}
+        SEQUENCE=fil_${seqsToAlign}
     else
-        echo "trial 1"
+        echo "First attempt — using original sequence file"
         SEQUENCE=${seqsToAlign}
     fi
 
@@ -50,7 +29,6 @@ process runTcoffee {
 
     # Default values
     WORKING_DIRECTORY_4_TCOFFEE=\$PWD
-    #SEQUENCE=$seqsToAlign
     PDB_DIR=$strucsToAlign
     CACHE_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/cache"
     TMP_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/tmp"
@@ -216,7 +194,7 @@ process reorder{
 
     output:
     //path "reordered_${finalMsa.baseName}.fasta", emit: msaOrga
-    path "*.simsa", emit: msaOrga
+    path "*.fasta", emit: msaOrga
     script:
     """
     for file in *; do
@@ -228,9 +206,9 @@ process reorder{
     done
 
     python3 $projectDir/bin/reorganize_output.py "$inputSeqs" "$reorder" $finalMsa reordered_${finalMsa.baseName} 
-    cp reordered_${finalMsa.baseName}.fasta ${params.outName}.simsa
+    cp reordered_${finalMsa.baseName}.fasta ${params.outName}_simsa.fasta
 
-    echo ${params.outName}.simsa
+    echo ${params.outName}_simsa.fasta
     """
 
 }
