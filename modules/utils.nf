@@ -203,13 +203,13 @@ process createSummary{
         echo '* Included selected sequences to respresenting sequence file: ' $favoriteSeqs
         echo '* No. of sequences after collapsing: ' $collapsedSequencesCount
         echo '* Find collapsed sequences here: '
-        collapsed=$outdir/seqs/CD-HIT/removed*.fasta
+        collapsed=$outdir/seqs/CD-HIT_collapse/removed*.fasta
         for i in \$collapsed; do
             echo '    * '\$i
         done
 
         echo '* Find representing and represented sequences here: '
-        similarClstr=$outdir/seqs/CD-HIT/*.clstr
+        similarClstr=$outdir/seqs/CD-HIT_collapse/*.clstr
         for i in \$similarClstr; do
             echo '    * '\$i
         done
@@ -323,7 +323,7 @@ process createSummary{
     echo '# 8 Reorder MSA ' 
     if [ "$reorder" != "false" ] ; then
         echo '* Alignment reorded by: ' $reorder
-        echo '* Reordered alignment: ' $outdir/reordered*.fasta
+        echo '* Reordered alignment: ' $outdir/msas/reordered*.fasta
     fi
 
     
@@ -333,6 +333,9 @@ process createSummary{
         echo '* Converted MSA: ' $outdir/msas/converted*.fasta
     fi
 
+    echo '# Final MSA file'
+    echo '$outdir/${params.outName}_simsa.fasta'
+    echo 
 
     for i in $outdir/resources*.txt ; do
         echo '# Execution time'
