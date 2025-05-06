@@ -190,9 +190,9 @@ process createSummary{
     
     echo "# Input sequences files "
     echo '* No. of sequences in inputfile(s): ' $foundSequencesCount
-    echo '* Input files can be found in $seqsdir'
+    echo '* Input files can be found in ' $seqsdir
 
-    echo '* SIMSApiper found these files: '$inputSeqFiles
+    echo '* SIMSApiper found these files: ' $inputSeqFiles
     
 
     echo '# 1 Data preparation'

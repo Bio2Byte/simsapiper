@@ -29,14 +29,19 @@ Execution time  : $params.executionTimestamp
 Input file folder (--data): $params.data
 Input sequence format (--seqFormat fasta): $params.seqFormat
     !Find all possible formats at https://biopython.org/wiki/SeqIO
-Ignore sequences with % unknown characters (--seqQC 5): $params.seqQC    
+Ignore sequences with % unknown characters (--seqQC 5): $params.seqQC  
+Ignore sequences shorter then characters (--seqLen 50): $params.seqQC      
 Collapse sequences with % sequence identity (--dropSimilar 90): $params.dropSimilar
 Sequences that a required to be in the alignment (--favoriteSeqs "fav1,fav2"): $params.favoriteSeqs
+Ignore datasets with complete sequence conservation (--stopHyperconserved) $params.stopHyperconserved
 ================================================================================
                                 OUTPUT FILES
 
 Output folder: $params.outFolder
 Final MSA file name (--outName mymsa): $params.outName
+
+Order MSA by input files (--reorder "cluster3.fasta,cluster4.fasta"): $params.reorder
+Convert final MSA output from fasta (--convertMSA clustal): $params.convertMSA
 ================================================================================
                                 SUBSETTING
 
@@ -52,8 +57,8 @@ User provides fasta files with subsets (--useSubsets): $params.useSubsets
 
 Retrieve protein structure models from AFDB (--retrieve): $params.retrieve
 Predict protein structure models with ESM Atlas (--model): $params.model
-Predict protein structure models with Local ESMfold (--localModel X): $params.localModel
-    !Add factor X for each 100 sequences you expect to model
+Predict protein structure models with Local ESMfold (--localModel 1): $params.localModel
+    !Add 1 for each 100 sequences you expect to model
 Maximal % of sequences not matched to a model (--strucQC 5): $params.strucQC
 ================================================================================
                                 ALINGMENT PARAMETERS
@@ -65,8 +70,6 @@ Save DSSP files (--dsspPath): $params.dsspPath
 Squeeze alignment towards anchors (--squeeze "H,E"): $params.squeeze
     !Select secondary structure elements for anchor points according to DSSP annotation
 Set minimal occurence % of anchor element in MSA: (--squeezePerc 80): $params.squeezePerc
-Order MSA by input files (--reorder "cluster3.fasta,cluster4.fasta"): $params.reorder
-Convert final MSA output from fasta (--convertMSA clustal): $params.convertMSA
 ================================================================================
 """
 
@@ -141,7 +144,7 @@ workflow {
 
     seqsRelabeled
     .branch{
-        invalid: it.sequence.size() < 50
+        invalid: it.sequence.size() < params.seqLen
         valid: true
     }.set { seqsQClen}
     writeFastaFromSeqsShort (seqsQClen.invalid.map{record -> '>' + record.header + ',' + record.sequence}.collect(), "too_short_seqs.fasta")
