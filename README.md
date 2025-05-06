@@ -38,6 +38,7 @@ nextflow run simsapiper.nf -profile server,withsingularity --data $PWD/toy_examp
 ```
 or use 
 ```
+chmoad +x magic_align.sh
 ./magic_align.sh
 ```
 This file can also be double-clicked to run the toy_example dataset.
