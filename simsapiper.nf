@@ -30,7 +30,7 @@ Input file folder (--data): $params.data
 Input sequence format (--seqFormat fasta): $params.seqFormat
     !Find all possible formats at https://biopython.org/wiki/SeqIO
 Ignore sequences with % unknown characters (--seqQC 5): $params.seqQC  
-Ignore sequences shorter then characters (--seqLen 50): $params.seqQC      
+Ignore sequences shorter then n characters (--seqLen 50): $params.seqQC      
 Collapse sequences with % sequence identity (--dropSimilar 90): $params.dropSimilar
 Sequences that a required to be in the alignment (--favoriteSeqs "fav1,fav2"): $params.favoriteSeqs
 Ignore datasets with complete sequence conservation (--stopHyperconserved) $params.stopHyperconserved
@@ -430,6 +430,7 @@ workflow {
         params.model,
         esmmodelCount.ifEmpty('0'),
         structurelessCount,
+        params.localModel,
         params.createSubsets,
         params.useSubsets,
         params.tcoffeeParams,

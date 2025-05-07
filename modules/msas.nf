@@ -17,8 +17,8 @@ process runTcoffee {
     script:
     """
     if (( ${task.attempt} > 1 )); then
-        chmod +x $projectDir/bin/filter_problematic_seqs.sh
-        $projectDir/bin/filter_problematic_seqs.sh ${seqsToAlign} ${params.outFolder}
+        chmod +x $projectDir/bin/filter_problematic_structures.sh
+        $projectDir/bin/filter_problematic_structures.sh ${seqsToAlign} ${params.outFolder}
         SEQUENCE=fil_${seqsToAlign}
     else
         echo "First attempt — using original sequence file"

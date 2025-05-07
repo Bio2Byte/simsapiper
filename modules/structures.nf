@@ -77,7 +77,7 @@ process esmFolds{
     output:
     path "*.pdb", emit: esmFoldsStructures 
     val true, emit: gate
-    path "esm_fold_statistics.csv" 
+    path "esm_fold_statistics.csv"  , emit: structurestats
     path "*.pae"
 
     script:
