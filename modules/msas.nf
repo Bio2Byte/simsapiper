@@ -16,9 +16,11 @@ process runTcoffee {
     path "removed_*", emit : unTcoffeeable , optional: true
 
     script:
+    //$projectDir/bin/filter_problematic_structures.sh ${seqsToAlign} ${params.outFolder} #this causes failure to resume if outfolder has a timestamp!
+       
     """
     if (( ${task.attempt} > 1 )); then
-        $projectDir/bin/filter_problematic_structures.sh ${seqsToAlign} ${params.outFolder}
+        $projectDir/bin/filter_problematic_structures.sh ${seqsToAlign} $workflow.launchDir
         SEQUENCE=fil_${seqsToAlign}
     else
         echo "First attempt — using original sequence file"

@@ -6,10 +6,11 @@ echo 'Starting filtering problematic seqs'
 
 # Inputs
 seqsToAlign="$1"
-outFolder="$2"
+logfile="$2"/.nextflow.log
+#echo "$logfile"/resources_*.txt
 
 echo $seqsToAlign
-echo $outFolder
+echo $logfile
 # Derived filenames
 original="original_${seqsToAlign}"
 filtered="fil_${seqsToAlign}"
@@ -22,12 +23,13 @@ cp "$seqsToAlign" "$original"
 # Step 2: Collect problematic sequence identifiers
 > "$entries"
 
-echo "$outFolder"/resources_*.txt
-
 while IFS= read -r line; do
-    if [[ "$line" == *"runTcoffee"* && "$line" == *"FAILED"* && "$line" == *"$seqsToAlign"* ]]; then
-        wdir=$(echo "$line" | awk '{print $2}')
-        log_file=$(find ../../"${wdir}"* -name ".command.log" -print -quit)
+    #if [[ "$line" == *"runTcoffee"* && "$line" == *"FAILED"* && "$line" == *"$seqsToAlign"* ]]; then
+        #wdir=$(echo "$line" | awk '{print $2}')
+        #log_file=$(find ../../"${wdir}"* -name ".command.log" -print -quit)
+    if [[ "$line" == *"runTcoffee"* && "$line" == *"exit: 1"* && "$line" == *"$seqsToAlign"* ]]; then
+        wdir=$(echo "$line" | sed -n 's/.*workDir: \([^ ]*\).*/\1/p')
+        log_file=$(find "${wdir}"* -name ".command.log" -print -quit)
         echo "Processing $log_file"
 
         
@@ -57,7 +59,7 @@ while IFS= read -r line; do
             echo "No known error pattern found in $log_file"
         fi
     fi
-done < "$outFolder"/resources_*.txt
+done < $logfile
 
 
 echo "problematic seqs found:"

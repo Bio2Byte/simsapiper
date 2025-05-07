@@ -282,7 +282,7 @@ process createSummary{
     echo '* Additional MAFFT parameters: ' $mafftparams
     
     statsod=$outdir/msa_stats
-    mkdir \$statsod
+    mkdir -p \$statsod
     echo '# 6 Run DSSP:' $dssp
     if [ "$dssp" != "false" ] ; then
         echo '* DSSP file can be found in' $dsspfiles
