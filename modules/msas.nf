@@ -1,7 +1,8 @@
 process runTcoffee {
     publishDir "$params.outFolder/msas/t-coffee", mode: "copy" 
     tag "$seqsToAlign"
-    errorStrategy {task.attempt < 4 ? 'retry' : 'finish' }
+    errorStrategy 'retry'
+    maxRetries 3
 
     input:
     path seqsToAlign
@@ -17,7 +18,6 @@ process runTcoffee {
     script:
     """
     if (( ${task.attempt} > 1 )); then
-        chmod +x $projectDir/bin/filter_problematic_structures.sh
         $projectDir/bin/filter_problematic_structures.sh ${seqsToAlign} ${params.outFolder}
         SEQUENCE=fil_${seqsToAlign}
     else

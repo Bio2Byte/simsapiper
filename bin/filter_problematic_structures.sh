@@ -2,10 +2,14 @@
 
 set -euo pipefail
 
+echo 'Starting filtering problematic seqs'
+
 # Inputs
 seqsToAlign="$1"
 outFolder="$2"
 
+echo $seqsToAlign
+echo $outFolder
 # Derived filenames
 original="original_${seqsToAlign}"
 filtered="fil_${seqsToAlign}"
@@ -18,16 +22,24 @@ cp "$seqsToAlign" "$original"
 # Step 2: Collect problematic sequence identifiers
 > "$entries"
 
-for resource in "$outFolder"/resources_*.txt; do
-    grep "runTcoffee" "$resource" | grep "FAILED" | grep "$seqsToAlign" | awk '{print $2}' | while read -r wdir; do
+echo "$outFolder"/resources_*.txt
+
+while IFS= read -r line; do
+    if [[ "$line" == *"runTcoffee"* && "$line" == *"FAILED"* && "$line" == *"$seqsToAlign"* ]]; then
+        wdir=$(echo "$line" | awk '{print $2}')
         log_file=$(find ../../"${wdir}"* -name ".command.log" -print -quit)
-        if [[ -f "$log_file" ]]; then
-            echo "Processing $log_file"
+        echo "Processing $log_file"
 
-            # Attempt 3 failures
-            grep "attempt 3" "$log_file" | awk -F'\\[' '{print $2}' | awk -F']' '{print $1}' | tr ' ' '\n' >> "$entries"
-
-            # UNSPECIFIED structure errors (embedded awk)
+        
+        if grep -q "attempt 3" "$log_file"; then
+            echo "Detected structure pair error"
+            grep "attempt 3" "$log_file" | \
+                    awk -F'\\[' '{print $2}' | awk -F']' '{print $1}' | \
+                    tr ' ' '\n' | sort | uniq | \
+                    sed 's/\.pdb$//' >> "$entries" 
+    
+        elif grep -q "^[0-9]\+ -- ERROR: UNSPECIFIED UNSPECIFIED" "$log_file"; then
+            echo "Detected structure error"
             awk '
                 /-- ERROR: UNSPECIFIED UNSPECIFIED/ { in_block = 1; next }
                 /\*{5,}/ { in_block = 0 }
@@ -35,18 +47,26 @@ for resource in "$outFolder"/resources_*.txt; do
                     for (i = 1; i <= NF; i++) {
                         if ($i ~ /structures\/[^ ]+\.pdb/) {
                             split($i, a, "/")
+                            gsub(".pdb$", "", a[length(a)])
                             print a[length(a)]
                         }
                     }
                 }
             ' "$log_file" >> "$entries"
+        else
+            echo "No known error pattern found in $log_file"
         fi
-    done
-done
+    fi
+done < "$outFolder"/resources_*.txt
 
-# Remove duplicates
+
+echo "problematic seqs found:"
+cat "$entries"
+
+echo "Remove duplicates"
 sort -u "$entries" -o "$entries"
 
+cat "$entries"
 # Step 3: Filter FASTA file
 awk 'BEGIN {
     while ((getline line < "'"$entries"'") > 0) remove[line] = 1
