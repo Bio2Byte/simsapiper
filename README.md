@@ -1,5 +1,5 @@
 # SIMSApiper
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10854343.svg)](https://doi.org/10.5281/zenodo.10854343)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10854343.svg)](https://doi.org/10.5281/zenodo.10854343) 
 
 SIMSApiper is a Nextflow pipeline that enables users to create structure informed multiple sequence alignments simply from a set of protein sequences.
 Structural information may be provided by the user or directly retrieved by the pipeline (AlphaFold Database or ESMFold). 
@@ -54,7 +54,8 @@ The complete list can be found in the [here](https://github.com/Bio2Byte/simsapi
 
 ```
 nextflow run simsapiper.nf 
-    -profile server,withsingularity 
+    -profile server,withsingularity
+    --data $PWD/toy_example/data
     --seqFormat fasta
     --seqQC 5
     --dropSimilar 90

@@ -5,7 +5,6 @@
 #SBATCH --cpus-per-task=20
 #SBATCH --mem-per-cpu=2G
 
-
 #Copy your_data_folder in simsapiper folder and edit this line to let magic happen!
 data=toy_example
 

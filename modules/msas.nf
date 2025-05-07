@@ -154,6 +154,7 @@ process mapDssp{
     input:
     path dssps
     path msa
+    val gate
 
     output:
     path "dssp_${msa.baseName}.fasta" , emit: mmsa
