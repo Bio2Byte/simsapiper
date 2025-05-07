@@ -1,53 +1,80 @@
 import sys
-import pandas as pd 
-import itertools
-
+import pandas as pd
+import numpy as np  
+import matplotlib.pyplot as plt 
 
 msa_file = sys.argv[1]
+output_folder=sys.argv[2]
+output_csv = output_folder+"/pairwise_identity_matrix.csv" 
+output_csv_avg = output_folder+"/average_identity_per_sequence.csv"
+histogram_plot = "Sequence_identity_histogram.pdf"
+histogram_plot_av = "Average_sequence_identity_histogram.pdf"
 
-
+# Read file and split into labels and sequences
 found_df = pd.read_csv(msa_file, header=None)
-found_df = pd.DataFrame({'label':found_df[0].iloc[::2].values, 'seq':found_df[0].iloc[1::2].values})
+found_df = pd.DataFrame({'label': found_df[0].iloc[::2].values, 'seq': found_df[0].iloc[1::2].values})
 seq_df = pd.DataFrame(found_df.seq.apply(list).tolist())
 
-#fully conserved positions
+# Fully conserved positions
 a = seq_df.to_numpy()
-common = (a[0] == a).all(0)
-common_counter = (common==True).sum() 
+common = np.all(a == a[0], axis=0) 
+common_counter = np.sum(common)
 
-#fully occupied positions
-nseqs, positions = seq_df.shape
+# Fully occupied (gapless) positions
 gaps = (seq_df == '-').sum()
-occupied = 0
-for i in range (0,positions):
-    if gaps[i] == 0:
-        occupied+=1
+occupied = (gaps == 0).sum() 
+
+# General sequence identity calculation with matrix output
+labels = found_df['label'].values
+seqlist = found_df.seq.tolist()
+n = len(seqlist)
+identity_matrix = np.zeros((n, n))  
+
+for i, seq1 in enumerate(seqlist):
+    for j, seq2 in enumerate(seqlist):
+        if i < j: 
+            non_gap_positions = [(x != '-') and (y != '-') for x, y in zip(seq1, seq2)]
+            matches = sum(x == y for x, y in zip(seq1, seq2) if x != '-' and y != '-')
+            non_gap_count = sum(non_gap_positions)
+            identity = matches / non_gap_count if non_gap_count > 0 else 0
+            identity_matrix[i, j] = identity
+            identity_matrix[j, i] = identity 
+
+identity_matrix = np.round(identity_matrix * 100, 2) 
+
+# Create a DataFrame for the matrix and save as CSV
+identity_df = pd.DataFrame(identity_matrix, index=labels, columns=labels) 
+identity_df.to_csv(output_csv)
+
+# Calculate average sequence identity per sequence and save to CSV
+average_identities = identity_matrix.mean(axis=1)  # Average per row (sequence)
+average_identities_df = pd.DataFrame({"Label": labels, "Average_Identity (%)": average_identities})
+average_identities_df.to_csv(output_csv_avg, index=False)
 
 
-#general sequence id
-id_ratios=[]
-seqlist=found_df.seq.tolist()
-combis = itertools.combinations(seqlist, 2)
-for elem in combis:
-    seq1,seq2 = elem
-    lenNoCommonGap=0
-    matchCounter=0
-    for n in range(0,len(seq1)):
-        if seq1[n]==seq2[n]:
-            if seq1[n] != '-':
-                lenNoCommonGap +=1
-                matchCounter+=1
-        else:
-            lenNoCommonGap+=1
-    rat=matchCounter/lenNoCommonGap
-    id_ratios.append(rat)
+# Calculate and print summary information
+av_id = np.round(identity_matrix[np.triu_indices(n, 1)].mean(), 2) 
 
-av_id = round(100*sum(id_ratios)/len(id_ratios) ,2)
-#print (av_id)
+line1 = f"* The final alignment contains {common_counter} conserved positions and {occupied} gapless positions of {seq_df.shape[1]} total positions."
+line2 = f"* The average pairwise sequence identity in the final alignment is {av_id}%. Gaps were treated as mismatches."
 
-line = '* The final alignment contains ' +str(common_counter)+ ' conserved positions and ' +str(occupied)+ ' gapless positions of '+str(positions)+ ' total positions.'
-line2 = '* The average pairwise sequence identity in the final alignment is ' +str(av_id) + '%. Gaps were treated as missmatch.'
-
-print(line)
+print(line1)
 print(line2)
-    
+
+
+# Generate histogram plot for pairwise sequence identities
+pairwise_identities = identity_matrix[np.triu_indices(n, 1)]  # Extract upper triangle values only
+plt.hist(pairwise_identities, bins=range(0, 105, 5), edgecolor='black')  # Bins in 5% increments
+plt.xlabel("Pairwise Sequence Identity (%)")
+plt.ylabel("Occurrence")
+plt.title("Distribution of Pairwise Sequence Identities")
+plt.savefig(histogram_plot)
+plt.close()
+
+# Generate histogram plot for average pairwise sequence identities
+plt.hist(average_identities_df["Average_Identity (%)"], bins=range(0, 101, 1), edgecolor='black')  # Bins in 1% increments
+plt.xlabel("Average Pairwise Sequence Identity (%)")
+plt.ylabel("Occurrence")
+plt.title("Distribution of Average Pairwise Sequence Identities")
+plt.savefig(histogram_plot_av)
+plt.close()

@@ -1,8 +1,8 @@
 process runTcoffee {
     publishDir "$params.outFolder/msas/t-coffee", mode: "copy" 
     tag "$seqsToAlign"
-
-    //errorStrategy {task.attempt < 3 ? 'retry' : 'terminate' }
+    errorStrategy 'retry'
+    maxRetries 3
 
     input:
     path seqsToAlign
@@ -12,12 +12,25 @@ process runTcoffee {
 
     output:
     path "*.aln", emit : msa
+    path "fil_*" , optional: true
+    path "removed_*", emit : unTcoffeeable , optional: true
 
     script:
+    //$projectDir/bin/filter_problematic_structures.sh ${seqsToAlign} ${params.outFolder} #this causes failure to resume if outfolder has a timestamp!
+       
     """
+    if (( ${task.attempt} > 1 )); then
+        $projectDir/bin/filter_problematic_structures.sh ${seqsToAlign} $workflow.launchDir
+        SEQUENCE=fil_${seqsToAlign}
+    else
+        echo "First attempt — using original sequence file"
+        SEQUENCE=${seqsToAlign}
+    fi
+
+    echo \$SEQUENCE
+
     # Default values
     WORKING_DIRECTORY_4_TCOFFEE=\$PWD
-    SEQUENCE=$seqsToAlign
     PDB_DIR=$strucsToAlign
     CACHE_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/cache"
     TMP_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/tmp"
@@ -25,6 +38,7 @@ process runTcoffee {
     TCOFFEE_DIRECTORY="\$WORKING_DIRECTORY_4_TCOFFEE/"
     OUTPUT_DIRECTORY=\$PWD
     OUTPUT_PATH="\$OUTPUT_DIRECTORY"
+    HOME_4_TCOFFEE=\$PWD
 
     # Check if all mandatory parameters are provided
     if [[ -z "\$WORKING_DIRECTORY_4_TCOFFEE" || -z "\$SEQUENCE" || -z "\$PDB_DIR" || -z "\$OUTPUT_DIRECTORY" ]]; then
@@ -47,6 +61,7 @@ process runTcoffee {
     export DIR_4_TCOFFEE=\$TCOFFEE_DIRECTORY
     export TMP_4_TCOFFEE=\$TMP_DIRECTORY
     export CACHE_4_TCOFFEE=\$CACHE_DIRECTORY
+    export HOME_4_TCOFFEE=\$HOME_4_TCOFFEE
 
     echo "Working directory: \$WORKING_DIRECTORY_4_TCOFFEE"
     echo "Cache directory: \$CACHE_DIRECTORY"
@@ -91,7 +106,7 @@ process mergeMafft {
     val outName
 
     output:
-    path "merged_${outName}_alignment.fasta" , emit: finalMsa
+    path "merged_${outName}.fasta" , emit: finalMsa
     
     script:
     """
@@ -108,7 +123,7 @@ process mergeMafft {
         cp $seqs prefinalMSA.fasta
     fi
 
-    python3 $projectDir/bin/convert_to_fasta.py prefinalMSA.fasta fasta merged_${outName}_alignment
+    python3 $projectDir/bin/convert_to_fasta.py prefinalMSA.fasta fasta merged_${outName}
     """
     //INFO: mafftParams = "" This is a recommended option, MAFFT merge changes everything otherwise
     //--inputorder enables to keep sequence order of inputted files (recommended)
@@ -147,8 +162,7 @@ process mapDssp{
 
     script:
     """
-    echo Gate is open $gate
-    python3 $projectDir/bin/map_dssp.py $msa dssp_${msa.baseName} dssp
+    python3 $projectDir/bin/map_dssp.py $msa dssp_${msa.baseName}
     """
 }
 
@@ -172,7 +186,9 @@ process squeeze{
 }
 
 process reorder{
+
     publishDir "$params.outFolder", mode: "copy"
+    publishDir "$params.outFolder/msas", mode: "copy" 
 
     input:
     path finalMsa
@@ -180,8 +196,8 @@ process reorder{
     val reorder
 
     output:
-    path "reordered_${finalMsa.baseName}.fasta", emit: msaOrga
-    
+    //path "reordered_${finalMsa.baseName}.fasta", emit: msaOrga
+    path "*.fasta", emit: msaOrga
     script:
     """
     for file in *; do
@@ -193,6 +209,9 @@ process reorder{
     done
 
     python3 $projectDir/bin/reorganize_output.py "$inputSeqs" "$reorder" $finalMsa reordered_${finalMsa.baseName} 
+    cp reordered_${finalMsa.baseName}.fasta ${params.outName}_simsa.fasta
+
+    echo ${params.outName}_simsa.fasta
     """
 
 }

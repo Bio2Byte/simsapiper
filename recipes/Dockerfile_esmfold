@@ -1,0 +1,12 @@
+FROM pytorch/pytorch:1.12.1-cuda11.3-cudnn8-devel 
+
+
+RUN apt-get -y update && apt-get install -y git
+RUN pip install pip --upgrade
+RUN pip install fair-esm[esmfold]==2.0.0
+RUN pip install 'dllogger @ git+https://github.com/NVIDIA/dllogger.git'
+RUN pip install 'openfold @ git+https://github.com/aqlaboratory/openfold.git@4b41059694619831a7db195b7e0988fc4ff3a307'
+RUN pip install pandas biopython
+
+LABEL maintainer="Sophie Heidig <sophie-luise.heidig@vub.be>"
+LABEL description='Software dependencies for SIMSApiper containing esmfold pandas and biopython'

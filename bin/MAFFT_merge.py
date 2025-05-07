@@ -17,6 +17,8 @@ for elem in input_files_list:
         tail.append(elem)
     elif 'orphan'in elem:
         tail.append(elem)
+    elif 'removed'in elem:
+        tail.append(elem)
     else:
         subclasses.append(elem)
 

@@ -1,4 +1,6 @@
 #!/bin/bash
+
+
 #Copy your_data_folder in simsapiper folder and edit this line to let magic happen!
 data=toy_example
 
@@ -20,3 +22,5 @@ nextflow run simsapiper.nf \
 sessionName=$(sed -n '2s/.*\[\(.*\)\].*/\1/p' $output_folder/run_report_$output_name.nflog)
 nextflow log | grep $sessionName >> $output_folder/run_report_$output_name.nflog
 
+
+#To run in background: screen -S nextflowalign bash -c ./magic_hydra.sh

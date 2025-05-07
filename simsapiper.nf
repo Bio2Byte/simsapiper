@@ -1,11 +1,14 @@
-params.targetSequences  = "$params.seqs/*.$params.seqFormat"
+params.targetSequences  = "${params.seqs}/*.${params.seqFormat}"
 targetSequencesFile     = file(params.targetSequences)
 allSequences            = Channel.fromPath(params.targetSequences)
-//allSequences            = Channel.fromPath(params.seqs).filter(*params.seqFormat)
 
-//userStructures          = Channel.fromPath(params.structures).filter(/\.pdb$/)
 userStructures          = Channel.fromPath("$params.structures/*.pdb")
-//can not make parameters to strings! then path needs to be $pwd
+
+//can not make parameters to strings! then path needs to have $pwd
+//allSequences            = Channel.fromPath(params.seqs).filter(*params.seqFormat)[failed]
+//userStructures          = Channel.fromPath(params.structures).filter(/\.pdb$/) [failed]
+
+
 
 log.info """\
 
@@ -27,14 +30,19 @@ Execution time  : $params.executionTimestamp
 Input file folder (--data): $params.data
 Input sequence format (--seqFormat fasta): $params.seqFormat
     !Find all possible formats at https://biopython.org/wiki/SeqIO
-Ignore sequences with % unknown characters (--seqQC 5): $params.seqQC    
+Ignore sequences with % unknown characters (--seqQC 5): $params.seqQC  
+Ignore sequences shorter then n characters (--seqLen 50): $params.seqQC      
 Collapse sequences with % sequence identity (--dropSimilar 90): $params.dropSimilar
 Sequences that a required to be in the alignment (--favoriteSeqs "fav1,fav2"): $params.favoriteSeqs
+Ignore datasets with complete sequence conservation (--stopHyperconserved) $params.stopHyperconserved
 ================================================================================
                                 OUTPUT FILES
 
 Output folder: $params.outFolder
 Final MSA file name (--outName mymsa): $params.outName
+
+Order MSA by input files (--reorder "cluster3.fasta,cluster4.fasta"): $params.reorder
+Convert final MSA output from fasta (--convertMSA clustal): $params.convertMSA
 ================================================================================
                                 SUBSETTING
 
@@ -50,8 +58,8 @@ User provides fasta files with subsets (--useSubsets): $params.useSubsets
 
 Retrieve protein structure models from AFDB (--retrieve): $params.retrieve
 Predict protein structure models with ESM Atlas (--model): $params.model
-Predict protein structure models with Local ESMfold (--localModel X): $params.localModel
-    !Add factor X for each 100 sequences you expect to model
+Predict protein structure models with Local ESMfold (--localModel 1): $params.localModel
+    !Add 1 for each 100 sequences you expect to model
 Maximal % of sequences not matched to a model (--strucQC 5): $params.strucQC
 ================================================================================
                                 ALINGMENT PARAMETERS
@@ -63,8 +71,6 @@ Save DSSP files (--dsspPath): $params.dsspPath
 Squeeze alignment towards anchors (--squeeze "H,E"): $params.squeeze
     !Select secondary structure elements for anchor points according to DSSP annotation
 Set minimal occurence % of anchor element in MSA: (--squeezePerc 80): $params.squeezePerc
-Order MSA by input files (--reorder "cluster3.fasta,cluster4.fasta"): $params.reorder
-Convert final MSA output from fasta (--convertMSA clustal): $params.convertMSA
 ================================================================================
 """
 
@@ -77,12 +83,15 @@ include {readSeqs as convertSeqs;
             writeFastaFromChannel as writeFastaFromFound ;
             writeFastaFromChannel as writeFastaFromSeqsInvalid ;
             writeFastaFromChannel as writeFastaFromSeqsValid ;
+            writeFastaFromChannel as writeFastaFromSeqsShort;
+            phyloTree;
             createSummary;
 } from "$projectDir/modules/utils"
 
 include {userSubsetting;
             cdHitSubsetting;
             cdHitCollapse;
+            cdHitFilter;
 } from "$projectDir/modules/subsetting"
 
 include {
@@ -107,7 +116,14 @@ workflow {
 
     allSequences.view{'Sequence file found:' + it}
     convertSeqs(params.seqFormat, allSequences)
-    sequenceFastas =  convertSeqs.out.convertedSeqs
+    convertedFastas =  convertSeqs.out.convertedSeqs
+
+
+    //do not run if file only contains identical sequences
+    if (params.stopHyperconserved){
+        cdHitFilter(convertedFastas)
+        sequenceFastas = cdHitFilter.out.seqsValid
+    }else{sequenceFastas=convertedFastas}
 
     //data reduction with cdhit
     if (params.dropSimilar){
@@ -123,13 +139,24 @@ workflow {
     //Quality control input sequences 
     seqsRelabeled = reducedSeqs
         .splitFasta( record: [header: true,  sequence: true ])
-        .map { record -> [header: record.header.replaceAll("[^a-zA-Z0-9]", "_"),
-                sequence: record.sequence.replaceAll("\n","").replaceAll("[^ARNDCQEGHILKMFPOSUTWYVarndcqeghilkmfposutwvy]", "X")] }
+        .map { record -> [header: record.header.replaceAll("\\.","_"),//.replaceAll("[^a-zA-Z0-9]", "_"),
+                sequence: record.sequence.replaceAll("\n","").replaceAll("\\+","").replaceAll("\\*","").replaceAll("[^ARNDCQEGHILKMFPOSUTWYVarndcqeghilkmfposutwvy]", "X")] }
 
-    seqsQC = seqsRelabeled
+
+    seqsRelabeled
+    .branch{
+        invalid: it.sequence.size() < params.seqLen
+        valid: true
+    }.set { seqsQClen}
+    writeFastaFromSeqsShort (seqsQClen.invalid.map{record -> '>' + record.header + ',' + record.sequence}.collect(), "too_short_seqs.fasta")
+ 
+
+    seqsQClen.valid
         .branch{
-            valid: it.sequence.count('X')*100 / it.sequence.size()  <= params.seqQC 
-            invalid: it.sequence.count('X') *100/ it.sequence.size() > params.seqQC
+            //valid: it.sequence.count('X')*100 / it.sequence.size()  <= params.seqQC 
+            //invalid: it.sequence.count('X')*100/ it.sequence.size() > params.seqQC
+            invalid: it.sequence.count('X')> params.seqQC
+            valid: true
         }.set { seqsFiltered}
 
     seqsFiltered.invalid.view { "INVALID >${it.header}" }
@@ -139,7 +166,7 @@ workflow {
 
 
     //compare sequence and structure labels
-    seqIDs =seqsFiltered.valid.map{tuple(it.header , it.sequence)}
+    seqIDs =seqsFiltered.valid.map {tuple (it.header , it.sequence)}
     allSequencesCount = seqIDs.count()
     allSequencesCount.view{"Sequences to be aligned:" + it}
 
@@ -150,7 +177,6 @@ workflow {
     }
     
     strucIDs = userStructures.map{strucL -> tuple(strucL.baseName, strucL.name)}
-
     strucIDs
         .join(seqIDs, remainder: true)
         .branch {
@@ -253,6 +279,7 @@ workflow {
 
         esmFolds(seqs_to_model)
         foundSequencesCount = finalModelFound.mix(esmFolds.out.esmFoldsStructures).count()
+        protsFromESMfold=esmFolds.out.esmFoldsStructures
 
         //finalModelFound.view()
         //esmFolds.out.esmFoldsStructures.view()
@@ -266,7 +293,7 @@ workflow {
 
 
     }else{
-
+        protsFromESMfold=Channel.empty()
         foundSequencesCount = finalModelFound.count()
         writeFastaFromMissing(finalMissingModels.map{record -> ">"+ record[0] + ',' + record[2]}.collect(), 'structureless_seqs.fasta')
         structureless_seqs = writeFastaFromMissing.out.found
@@ -304,9 +331,10 @@ workflow {
     if (params.align){
     runTcoffee(seqsToAlign, params.structures, params.tcoffeeParams, missingQC.out.gate)
     strucMsa =runTcoffee.out.msa.flatten()
+    tcoffeeErrors=runTcoffee.out.unTcoffeeable.flatten()
 
     convertTCMsa('clustal', strucMsa)
-    convertedMsa =  convertTCMsa.out.convertedSeqs.mix(structureless_seqs,subSeqs.orphans).collect()
+    convertedMsa =  convertTCMsa.out.convertedSeqs.mix(structureless_seqs,subSeqs.orphans,tcoffeeErrors).collect()
 
     //create final alignment
     mergeMafft(convertedMsa, params.mafftParams, params.outName)
@@ -321,10 +349,21 @@ workflow {
 
     //map to dssp
     if (params.dssp){
-        foundModels = userStructures.mix(protsFromAF,protsFromESM ).map{mod -> tuple(mod.baseName, mod)}
-        foundDssps=Channel.fromPath(params.dsspPath).map{dssp -> tuple(dssp.baseName, dssp)}
-        
 
+        //this mapping still does not work
+        foundModel = userStructures
+            .mix(protsFromAF,protsFromESM,protsFromESMfold) 
+            .collect()
+            .flatten()
+        
+        foundModels=foundModel
+            .map{mod -> tuple(mod.baseName, mod)}
+
+        foundDssps=Channel.fromPath("$params.dsspPath/*")
+            .map{dssp -> tuple(dssp.baseName, dssp)}
+        //    .collect()
+        //    .flatten()
+        
         foundModels.join(foundDssps, remainder:true)
             .branch {
                 missingDssp: it[2] == null
@@ -355,7 +394,9 @@ workflow {
         //map dssp to final msa
         mapDsspSqueeze(params.dsspPath, squeezedMsa, runDssp.out.gate)
         mappedFinalMsaSqueeze = mapDsspSqueeze.out.mmsa
-    }else{squeezedMsa=finalMsa}
+    }else{
+        squeezedMsa=finalMsa
+        mappedFinalMsaSqueeze=Channel.empty() } //acts as gate:open
 
 
     //reorder final MSA
@@ -371,8 +412,13 @@ workflow {
         convertFinalMsaFile =convertFinalMsa.out.convertedSeqs
     }else{convertFinalMsaFile=Channel.empty()}
 
+
+    if (params.tree){
+        phyloTree(squeezedMsa)
+    }
+
     createSummary(
-        Channel.empty().mix(finalMsa,convertFinalMsaFile,reorderedFinalMsa,squeezedMsa,mappedFinalMsaSqueeze).collect(),
+        Channel.empty().mix(finalMsa,convertFinalMsaFile,reorderedFinalMsa,squeezedMsa,mappedFinalMsaSqueeze).collect(), //this isjust the gate
         params.outFolder,
         allSequences,
         fullInputSeqsNum,
@@ -389,6 +435,7 @@ workflow {
         params.model,
         esmmodelCount.ifEmpty('0'),
         structurelessCount,
+        params.localModel,
         params.createSubsets,
         params.useSubsets,
         params.tcoffeeParams,
@@ -407,7 +454,6 @@ workflow {
 workflow.onComplete {
     println "Pipeline completed at               : $workflow.complete"
     println "Time to complete workflow execution : $workflow.duration"
-    println "Commands executed                   : $workflow.commandLine"
     println "Execution status                    : ${workflow.success ? 'Success' : 'Failed' }"
     println "Output folder                       : $params.outFolder"
 }

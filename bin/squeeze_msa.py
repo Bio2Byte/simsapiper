@@ -7,6 +7,8 @@ dssp_filter= ['H','B','E','G','I','T','S','-','X']
 input_file = sys.argv[1] #final_MSA.fasta
 dssp_file = sys.argv[2] #final_MSA_dssp.fasta = MSA with dssp code instead of residues
 squeeze = sys.argv[3]
+if squeeze == "true": #user hasn't specified towards what should be squeezed
+    squeeze = "H,E"
 conserved_2structure_dssp = squeeze.split(',') # ["H","E"]
 
 #Replace "G" and "I" by "H" as they are equivalent. When couting the frequencies for "H" we will also look for "G" and "I"
@@ -23,10 +25,8 @@ anchor_point = int(sys.argv[4]) / 100
 if anchor_point > 0: 
     print ('Conservation of secondary structure element per position is %', anchor_point*100 )
 else:
-    raise ValueError('Conservation of secondary structure element per position must be larger then 0%! Try adding --squeezePerc 80 to your command line ')
+    raise ValueError('[Warning] Conservation of secondary structure element per position must be larger then 0%! Try adding --squeezePerc 80 to your command line ')
     
-#anchor_point = 0.8 #if 80% of your proteins have a conserved secondary structure dssp code in a particular column of your MSA, then the column will be considered as part of the anchor region
-
 output_file = sys.argv[5]+'.fasta' #MSA with residues (not dssp code) but that has been squeezed towards anchor points
 
 
@@ -65,7 +65,7 @@ for conserved in conserved_2structure_dssp:
             positions.append(position) #positions part of the anchor region
     print(positions)
     if positions == []:
-        print('The secondary structure element',conserved,'doesn"t seem to be a conserved element in your dataset. It will be ignored for the squeezing.')
+        print('[Warning] The secondary structure element',conserved,'doesn"t seem to be a conserved element in your dataset. It will be ignored for the squeezing.')
         continue
     else:
     #find start and end anchor points
@@ -86,7 +86,6 @@ for conserved in conserved_2structure_dssp:
             last_structured = positions[-1]
 
 structure_elements = sorted(structure_elements, key=lambda x: x[1][0]) #sort it in ascending order
-print(structure_elements)
 
 if len(structure_elements) > 0:
     #add the unstructured regions
@@ -118,27 +117,49 @@ if len(structure_elements) > 0:
         loop_len.append(0)
 
     # Squeeze the alignment
-    with open(output_file, "w+") as outfile:
-        fasta_sequences = SeqIO.parse(open(input_file), 'fasta')
-        for fasta in fasta_sequences:
-            name, sequence = fasta.id, str(fasta.seq)
-            print(sequence)
-            outfile.write(">" + name + "\n")
-            new_align = str()
-            for region, length in zip(all_regions, loop_len):
-                print("length",length)
-                if region[0].startswith("loop"):
-                    nogaps_seq = sequence[region[1][0]:region[1][1]].replace("-", "")
-                    if region[0] == "loop0":
-                        new_align += "-"*(length - len(nogaps_seq)) + nogaps_seq
-                    elif region[0] == "loop_final":
-                        new_align += nogaps_seq + "-"*(length - len(nogaps_seq))
-                    else:
-                        new_align += nogaps_seq[0:len(nogaps_seq)//2] + "-"*(length - len(nogaps_seq)) + nogaps_seq[len(nogaps_seq)//2:]
+    #with open(output_file, "w+") as outfile:
+    fasta_sequences = SeqIO.parse(open(input_file), 'fasta')
+    longestseq=0
+    outfile_list=[]
+    for fasta in fasta_sequences:
+        name, sequence = fasta.id, str(fasta.seq)
+        print(name)
+        #outfile.write(">" + name + "\n")
+        new_align = str()
+        for region, length in zip(all_regions, loop_len):
+            #print("length",length)
+            if region[0].startswith("loop"):
+                nogaps_seq = sequence[region[1][0]:region[1][1]].replace("-", "")
+                if region[0] == "loop0":
+                    new_align += "-"*(length - len(nogaps_seq)) + nogaps_seq
+                elif region[0] == "loop_final":
+                    new_align += nogaps_seq + "-"*(length - len(nogaps_seq))
                 else:
-                    new_align += sequence[region[1][0]:region[1][1]]
-                print(new_align)
-            outfile.write(new_align + "\n")
+                    new_align += nogaps_seq[0:len(nogaps_seq)//2] + "-"*(length - len(nogaps_seq)) + nogaps_seq[len(nogaps_seq)//2:]
+            else:
+                new_align += sequence[region[1][0]:region[1][1]]
+            #print(new_align)
+
+        outfile_list.append((name,new_align))
+        if len(new_align) >longestseq:
+            longestseq=len(new_align)
+            print ('longest seq is',  longestseq)
+            #outfile.write(new_align + "\n")
+
+
+
+    #write outfile:
+    with open(output_file, "w+") as outfile:
+        for name,outseq in outfile_list:
+            outfile.write(">" + name + "\n")
+
+            if len(outseq)<longestseq:
+                trailinggaps=longestseq-len(outseq)
+                print("add trailing gaps to ", name)
+                for trail in range(0,trailinggaps):
+                    outseq=outseq+'-'
+                print(outseq)
+            outfile.write(outseq + "\n")
 
 else:
     print("You have asked to squeeze towards the conserved columns containing {} but no such column was found. Therefore, this pipeline fails. We suggest, either squeezing towards other dssp codes or to omit the squeezing of your MSA.")
