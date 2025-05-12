@@ -1,8 +1,7 @@
 params.targetSequences  = "${params.seqs}/*.${params.seqFormat}"
-targetSequencesFile     = file(params.targetSequences)
+//targetSequencesFile     = file(params.targetSequences)
 allSequences            = Channel.fromPath(params.targetSequences)
-
-userStructures          = Channel.fromPath("$params.structures/*.pdb")
+userStructures          = Channel.fromPath("${params.structures}/*.pdb")
 
 //can not make parameters to strings! then path needs to have $pwd
 //allSequences            = Channel.fromPath(params.seqs).filter(*params.seqFormat)[failed]
@@ -277,7 +276,7 @@ workflow {
         writeFastaFromMissing(finalMissingModels.map{record -> ">"+ record[0] + ',' + record[2]}.collect(), 'seqs_to_model.fasta')
         seqs_to_model = writeFastaFromMissing.out.found
 
-        esmFolds(seqs_to_model)
+        esmFolds(seqs_to_model, params.apptainerPath)
         foundSequencesCount = finalModelFound.mix(esmFolds.out.esmFoldsStructures).count()
         protsFromESMfold=esmFolds.out.esmFoldsStructures
 
@@ -328,7 +327,6 @@ workflow {
 
     //submit to tcoffee
 
-    if (params.align){
     runTcoffee(seqsToAlign, params.structures, params.tcoffeeParams, missingQC.out.gate)
     strucMsa =runTcoffee.out.msa.flatten()
     tcoffeeErrors=runTcoffee.out.unTcoffeeable.flatten()
@@ -339,9 +337,6 @@ workflow {
     //create final alignment
     mergeMafft(convertedMsa, params.mafftParams, params.outName)
     finalMsa = mergeMafft.out.finalMsa
-    }else{finalMsa=Channel.fromPath(params.alignment)
-
-    }
 
     //check if all sequences been aligned 
     //attendance(finalMsa,fullInputSeqsNum,seqsInvalidCount,structurelessCount,foundSequencesCount)

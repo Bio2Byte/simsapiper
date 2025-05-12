@@ -74,6 +74,7 @@ process esmFolds{
     
     input:
     path structureless
+    val apptainerPath
 
     output:
     path "*.pdb", emit: esmFoldsStructures 
@@ -84,7 +85,7 @@ process esmFolds{
 
     script:
     """
-    export TORCH_HOME=$params.apptainerPath
+    export TORCH_HOME=$apptainerPath
     echo $structureless
     
     if [ -z "$structureless" ] ; then
