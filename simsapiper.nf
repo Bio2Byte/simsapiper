@@ -376,8 +376,11 @@ workflow {
         runDssp(modsForDssp, missingQC.out.gate)
         dssps = runDssp.out.dsspout.collect()
 
-        //relies on dssp being finished WAY before tcoffee alignment. 
-        mapDsspRough(params.dsspPath, finalMsa, runDssp.out.gate)
+        dsspgate=runDssp.out.gate
+        dsspgate=modsForDssp.ifEmpty(true)
+        
+
+        mapDsspRough(params.dsspPath, finalMsa, dsspgate)
         mappedFinalMsa = mapDsspRough.out.mmsa
     }
 
@@ -387,7 +390,8 @@ workflow {
         squeezedMsa = squeeze.out.msa
 
         //map dssp to final msa
-        mapDsspSqueeze(params.dsspPath, squeezedMsa, runDssp.out.gate)
+        mapDsspSqueeze(params.dsspPath, squeezedMsa, dsspgate)
+        //mapDsspSqueeze(params.dsspPath, squeezedMsa, runDssp.out.gate)
         mappedFinalMsaSqueeze = mapDsspSqueeze.out.mmsa
     }else{
         squeezedMsa=finalMsa
