@@ -375,9 +375,7 @@ workflow {
 
         runDssp(modsForDssp, missingQC.out.gate)
         dssps = runDssp.out.dsspout.collect()
-
-        dsspgate=runDssp.out.gate
-        dsspgate=modsForDssp.ifEmpty(true)
+        dsspgate=dssps.count()
         
 
         mapDsspRough(params.dsspPath, finalMsa, dsspgate)
@@ -391,7 +389,6 @@ workflow {
 
         //map dssp to final msa
         mapDsspSqueeze(params.dsspPath, squeezedMsa, dsspgate)
-        //mapDsspSqueeze(params.dsspPath, squeezedMsa, runDssp.out.gate)
         mappedFinalMsaSqueeze = mapDsspSqueeze.out.mmsa
     }else{
         squeezedMsa=finalMsa
@@ -413,13 +410,13 @@ workflow {
 
 
     if (params.tree){
-        phyloTree(squeezedMsa)
+        phyloTree(reorderedFinalMsa, params.tree)
     }
 
     createSummary(
         Channel.empty().mix(finalMsa,convertFinalMsaFile,reorderedFinalMsa,squeezedMsa,mappedFinalMsaSqueeze).collect(), //this isjust the gate
         params.outFolder,
-        allSequences,
+        allSequences.toList(),
         fullInputSeqsNum,
         params.seqs,
         params.dropSimilar,

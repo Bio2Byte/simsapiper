@@ -59,7 +59,6 @@ process runDssp{
 
     output:
     path "*.dssp" , emit:dsspout
-    val true, emit: gate
 
     script:
     """
