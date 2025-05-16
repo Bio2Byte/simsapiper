@@ -120,13 +120,21 @@ process phyloTree{
 
     input:
     path alignment
+    val treeCommands
 
     output:
     path "${alignment.baseName}*" 
 
     script:
     """
-    iqtree2 -s ${alignment} -nt AUTO -B 10000
+    if [ "${treeCommands}" == "true" ] ; then
+        echo "no bootstrapping"
+        iqtree2 -h
+        iqtree2 -s ${alignment} -nt AUTO
+    else
+        echo  iqtree2 -s ${alignment} -nt AUTO ${treeCommands}
+        iqtree2 -s ${alignment} -nt AUTO ${treeCommands}
+    fi
     """
 }
 

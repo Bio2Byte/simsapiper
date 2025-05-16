@@ -410,7 +410,7 @@ workflow {
 
 
     if (params.tree){
-        phyloTree(reorderedFinalMsa, params.tree)
+        phyloTree(squeezedMsa, params.tree)
     }
 
     createSummary(
