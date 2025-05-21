@@ -79,6 +79,13 @@ nextflow run simsapiper.nf
 
 **--localmagic** to align datasets with predicting 3D structures locally using ESMfold
 
+### Outputs
+SIMSApiper provides outputs of all intermediate steps and provides some information of sequence conservation and alignment occupation and entropy in pdf and csv formats.
+All outputs are described in our [wiki](https://github.com/Bio2Byte/simsapiper/wiki/4-Documentation).
+
+![Selection of SIMSApiper output plots!](schemes/simsapiperV2plots.png "Selection of SIMSApiper output plots")
+
+
 # Citation
 
 ```bibtex
