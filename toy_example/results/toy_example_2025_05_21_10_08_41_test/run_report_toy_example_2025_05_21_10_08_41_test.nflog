@@ -1,0 +1,1026 @@
+N E X T F L O W  ~  version 23.04.1
+Launching `simsapiper.nf` [scruffy_sammet] DSL2 - revision: f3c94fd698
+
+Usage:
+
+$ nextflow run simsapiper.nf -profile server,withsingularity --magic 
+
+================================================================================
+                                LIST OF PARAMETERS
+================================================================================
+                                GENERAL
+
+Launch dir      : /Users/sophie/workspace/simsapiper
+Project dir     : /Users/sophie/workspace/simsapiper
+Execution time  : 2025_05_21_10_08_43
+================================================================================
+                                INPUT FILES
+
+Input file folder (--data): /Users/sophie/workspace/simsapiper/toy_example/data
+Input sequence format (--seqFormat fasta): fasta
+    !Find all possible formats at https://biopython.org/wiki/SeqIO
+Ignore sequences with % unknown characters (--seqQC 5): 5  
+Ignore sequences shorter then n characters (--seqLen 50): 5      
+Collapse sequences with % sequence identity (--dropSimilar 90): 90
+Sequences that a required to be in the alignment (--favoriteSeqs "fav1,fav2"): false
+Ignore datasets with complete sequence conservation (--stopHyperconserved) false
+================================================================================
+                                OUTPUT FILES
+
+Output folder: /Users/sophie/workspace/simsapiper/toy_example/results/toy_example_2025_05_21_10_08_41_test
+Final MSA file name (--outName mymsa): magicMSA
+
+Order MSA by input files (--reorder "cluster3.fasta,cluster4.fasta"): true
+Convert final MSA output from fasta (--convertMSA clustal): false
+================================================================================
+                                SUBSETTING
+
+Creates subsets of % sequence identity (--createSubsets 30): 30 
+Set minimal % sequence identity in subsets (--minSubsetID 20): min
+    !Reduce the number of subsets by collating with --minSubsetID "min"
+Set maximal size of subset(--maxSubsetSize 100): true
+
+User provides fasta files with subsets (--useSubsets): false
+    !Provide sequences not fitting any subset in a file containing 'orphan' in filename
+================================================================================
+                                ADD STRUCTURAL INFORMATION
+
+Retrieve protein structure models from AFDB (--retrieve): true
+Predict protein structure models with ESM Atlas (--model): true
+Predict protein structure models with Local ESMfold (--localModel 1): false
+    !Add 1 for each 100 sequences you expect to model
+Maximal % of sequences not matched to a model (--strucQC 5): 5
+================================================================================
+                                ALINGMENT PARAMETERS
+
+Additional parameters for Tcoffee (--tcoffeeParams): false
+Additional parameters for MAFFT (--mafftParams "--localpair --maxiterate 1000"): false
+Map DSSP to alignment (--dssp): true
+Save DSSP files (--dsspPath): /Users/sophie/workspace/simsapiper/toy_example/data/dssp
+Squeeze alignment towards anchors (--squeeze "H,E"): H,E
+    !Select secondary structure elements for anchor points according to DSSP annotation
+Set minimal occurence % of anchor element in MSA: (--squeezePerc 80): 80
+================================================================================
+
+[-        ] process > convertSeqs   -[K
+[-        ] process > cdHitCollapse -[K
+[3A
+executor >  local (1)[K
+[f9/c22e5f] process > convertSeqs (1)           [  0%] 0 of 1[K
+[-        ] process > cdHitCollapse             -[K
+[-        ] process > writeFastaFromSeqsShort   -[K
+[-        ] process > writeFastaFromSeqsInvalid -[K
+[-        ] process > getAFmodels               -[K
+[-        ] process > fetchEsmAtlasStructure    -[K
+[-        ] process > writeFastaFromMissing     -[K
+[-        ] process > writeFastaFromSeqsValid   -[K
+[-        ] process > missingQC                 -[K
+[-        ] process > cdHitSubsetting           -[K
+[-        ] process > runTcoffee                -[K
+[-        ] process > convertTCMsa              -[K
+[-        ] process > mergeMafft                -[K
+[-        ] process > runDssp                   -[K
+[-        ] process > mapDsspRough              -[K
+[-        ] process > squeeze                   -[K
+[-        ] process > mapDsspSqueeze            -[K
+[-        ] process > reorder                   -[K
+[-        ] process > createSummary             -[K
+Sequence file found:/Users/sophie/workspace/simsapiper/toy_example/data/seqs/toy_example_seqs.fasta[K
+[22A
+executor >  local (2)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [  0%] 0 of 1[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[-        ] process > getAFmodels                                      -[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[-        ] process > writeFastaFromSeqsValid                          -[K
+[-        ] process > missingQC                                        -[K
+[-        ] process > cdHitSubsetting                                  -[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[-        ] process > runDssp                                          -[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Sequence file found:/Users/sophie/workspace/simsapiper/toy_example/data/seqs/toy_example_seqs.fasta[K
+[22A
+executor >  local (10)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[53/c66424] process > getAFmodels (A0QHY3)                             [  0%] 0 of 11[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[-        ] process > writeFastaFromSeqsValid                          -[K
+[-        ] process > missingQC                                        -[K
+[-        ] process > cdHitSubsetting                                  -[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[-        ] process > runDssp                                          -[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Sequence file found:/Users/sophie/workspace/simsapiper/toy_example/data/seqs/toy_example_seqs.fasta[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+[26A
+executor >  local (11)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[d4/cb9dd1] process > getAFmodels (Q97VM8)                             [  9%] 1 of 11[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[-        ] process > writeFastaFromSeqsValid                          -[K
+[-        ] process > missingQC                                        -[K
+[-        ] process > cdHitSubsetting                                  -[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[-        ] process > runDssp                                          -[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Sequence file found:/Users/sophie/workspace/simsapiper/toy_example/data/seqs/toy_example_seqs.fasta[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+[26A
+executor >  local (13)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [ 27%] 3 of 11[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[-        ] process > writeFastaFromSeqsValid                          -[K
+[-        ] process > missingQC                                        -[K
+[-        ] process > cdHitSubsetting                                  -[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[-        ] process > runDssp                                          -[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Sequence file found:/Users/sophie/workspace/simsapiper/toy_example/data/seqs/toy_example_seqs.fasta[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+[26A
+executor >  local (13)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[21/5e3a29] process > getAFmodels (A0R756)                             [ 72%] 8 of 11[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[-        ] process > writeFastaFromSeqsValid                          -[K
+[-        ] process > missingQC                                        -[K
+[-        ] process > cdHitSubsetting                                  -[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[-        ] process > runDssp                                          -[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Sequence file found:/Users/sophie/workspace/simsapiper/toy_example/data/seqs/toy_example_seqs.fasta[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+[26A
+executor >  local (13)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[d4/cb9dd1] process > getAFmodels (Q97VM8)                             [ 81%] 9 of 11[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[-        ] process > writeFastaFromSeqsValid                          -[K
+[-        ] process > missingQC                                        -[K
+[-        ] process > cdHitSubsetting                                  -[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[-        ] process > runDssp                                          -[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Sequence file found:/Users/sophie/workspace/simsapiper/toy_example/data/seqs/toy_example_seqs.fasta[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+[26A
+executor >  local (15)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [  0%] 0 of 1[K
+[a0/3f56e7] process > missingQC                                        [  0%] 0 of 1[K
+[-        ] process > cdHitSubsetting                                  -[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[-        ] process > runDssp                                          -[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Sequence file found:/Users/sophie/workspace/simsapiper/toy_example/data/seqs/toy_example_seqs.fasta[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[29A
+executor >  local (22)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [  0%] 0 of 1[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[-        ] process > cdHitSubsetting                                  -[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[90/60be8b] process > runDssp (8)                                      [  0%] 0 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Sequence file found:/Users/sophie/workspace/simsapiper/toy_example/data/seqs/toy_example_seqs.fasta[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[29A
+executor >  local (23)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[-        ] process > cdHitSubsetting                                  -[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[b1/140d59] process > runDssp (3)                                      [  0%] 0 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Sequence file found:/Users/sophie/workspace/simsapiper/toy_example/data/seqs/toy_example_seqs.fasta[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[29A
+executor >  local (23)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[-        ] process > cdHitSubsetting                                  [  0%] 0 of 1[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[b1/140d59] process > runDssp (3)                                      [  0%] 0 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Sequence file found:/Users/sophie/workspace/simsapiper/toy_example/data/seqs/toy_example_seqs.fasta[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[29A
+executor >  local (25)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[-        ] process > cdHitSubsetting                                  [  0%] 0 of 1[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[90/60be8b] process > runDssp (8)                                      [ 18%] 2 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[K
+[29A
+executor >  local (25)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[-        ] process > cdHitSubsetting                                  [  0%] 0 of 1[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[90/60be8b] process > runDssp (8)                                      [ 18%] 2 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[K
+[29A
+executor >  local (26)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[-        ] process > cdHitSubsetting                                  [  0%] 0 of 1[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[34/81df3a] process > runDssp (2)                                      [ 27%] 3 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[28A
+executor >  local (27)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [  0%] 0 of 1[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[8f/a05f14] process > runDssp (6)                                      [ 36%] 4 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[28A
+executor >  local (27)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [  0%] 0 of 1[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[8f/a05f14] process > runDssp (6)                                      [ 36%] 4 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[28A
+executor >  local (27)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [  0%] 0 of 1[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[cd/876b5b] process > runDssp (1)                                      [ 45%] 5 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[28A
+executor >  local (27)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [  0%] 0 of 1[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[b1/140d59] process > runDssp (3)                                      [ 54%] 6 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[28A
+executor >  local (27)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [  0%] 0 of 1[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[f3/47205b] process > runDssp (4)                                      [ 63%] 7 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[28A
+executor >  local (27)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [  0%] 0 of 1[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[99/10bb63] process > runDssp (7)                                      [ 72%] 8 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[28A
+executor >  local (27)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [  0%] 0 of 1[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[5c/7a4032] process > runDssp (9)                                      [ 81%] 9 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[28A
+executor >  local (27)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [  0%] 0 of 1[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[36/c73a22] process > runDssp (10)                                     [ 90%] 10 of 11[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[28A
+executor >  local (27)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [  0%] 0 of 1[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Number of sequences before collapsing:13[K
+Sequences to be aligned:11[K
+Provided model matched:0[K
+Model without matching sequence:0[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[28A
+executor >  local (27)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[-        ] process > runTcoffee                                       -[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[K
+[K
+[K
+[K
+[28A
+executor >  local (28)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[00/bd6a3b] process > runTcoffee (Subset0.fasta)                       [  0%] 0 of 1[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[K
+[K
+[K
+[K
+[28A
+executor >  local (28)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[00/bd6a3b] process > runTcoffee (Subset0.fasta)                       [  0%] 0 of 1[K
+[-        ] process > convertTCMsa                                     -[K
+[-        ] process > mergeMafft                                       -[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+Missing models: 0[K
+DSSP files matched to models:0[K
+DSSP will be calculated for models:11[K
+[24A
+executor >  local (29)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[00/bd6a3b] process > runTcoffee (Subset0.fasta)                       [100%] 1 of 1 ✔[K
+[10/844a97] process > convertTCMsa (1)                                 [  0%] 0 of 1[K
+[-        ] process > mergeMafft                                       -[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+[K
+[K
+[K
+[24A
+executor >  local (30)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[00/bd6a3b] process > runTcoffee (Subset0.fasta)                       [100%] 1 of 1 ✔[K
+[10/844a97] process > convertTCMsa (1)                                 [100%] 1 of 1 ✔[K
+[fc/12d281] process > mergeMafft                                       [  0%] 0 of 1[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+[K
+[K
+[K
+[24A
+executor >  local (30)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[00/bd6a3b] process > runTcoffee (Subset0.fasta)                       [100%] 1 of 1 ✔[K
+[10/844a97] process > convertTCMsa (1)                                 [100%] 1 of 1 ✔[K
+[fc/12d281] process > mergeMafft                                       [  0%] 0 of 1[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[-        ] process > mapDsspRough                                     -[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+[21A
+executor >  local (31)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[00/bd6a3b] process > runTcoffee (Subset0.fasta)                       [100%] 1 of 1 ✔[K
+[10/844a97] process > convertTCMsa (1)                                 [100%] 1 of 1 ✔[K
+[fc/12d281] process > mergeMafft                                       [100%] 1 of 1 ✔[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[38/f462d4] process > mapDsspRough                                     [  0%] 0 of 1[K
+[-        ] process > squeeze                                          -[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+[21A
+executor >  local (32)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[00/bd6a3b] process > runTcoffee (Subset0.fasta)                       [100%] 1 of 1 ✔[K
+[10/844a97] process > convertTCMsa (1)                                 [100%] 1 of 1 ✔[K
+[fc/12d281] process > mergeMafft                                       [100%] 1 of 1 ✔[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[38/f462d4] process > mapDsspRough                                     [100%] 1 of 1 ✔[K
+[3c/639338] process > squeeze                                          [  0%] 0 of 1[K
+[-        ] process > mapDsspSqueeze                                   -[K
+[-        ] process > reorder                                          -[K
+[-        ] process > createSummary                                    -[K
+[21A
+executor >  local (34)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[00/bd6a3b] process > runTcoffee (Subset0.fasta)                       [100%] 1 of 1 ✔[K
+[10/844a97] process > convertTCMsa (1)                                 [100%] 1 of 1 ✔[K
+[fc/12d281] process > mergeMafft                                       [100%] 1 of 1 ✔[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[38/f462d4] process > mapDsspRough                                     [100%] 1 of 1 ✔[K
+[3c/639338] process > squeeze                                          [100%] 1 of 1 ✔[K
+[52/0139f0] process > mapDsspSqueeze                                   [  0%] 0 of 1[K
+[ad/4acb12] process > reorder                                          [  0%] 0 of 1[K
+[-        ] process > createSummary                                    -[K
+[21A
+executor >  local (34)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[00/bd6a3b] process > runTcoffee (Subset0.fasta)                       [100%] 1 of 1 ✔[K
+[10/844a97] process > convertTCMsa (1)                                 [100%] 1 of 1 ✔[K
+[fc/12d281] process > mergeMafft                                       [100%] 1 of 1 ✔[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[38/f462d4] process > mapDsspRough                                     [100%] 1 of 1 ✔[K
+[3c/639338] process > squeeze                                          [100%] 1 of 1 ✔[K
+[52/0139f0] process > mapDsspSqueeze                                   [  0%] 0 of 1[K
+[ad/4acb12] process > reorder                                          [  0%] 0 of 1[K
+[-        ] process > createSummary                                    -[K
+[21A
+executor >  local (34)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[00/bd6a3b] process > runTcoffee (Subset0.fasta)                       [100%] 1 of 1 ✔[K
+[10/844a97] process > convertTCMsa (1)                                 [100%] 1 of 1 ✔[K
+[fc/12d281] process > mergeMafft                                       [100%] 1 of 1 ✔[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[38/f462d4] process > mapDsspRough                                     [100%] 1 of 1 ✔[K
+[3c/639338] process > squeeze                                          [100%] 1 of 1 ✔[K
+[52/0139f0] process > mapDsspSqueeze                                   [  0%] 0 of 1[K
+[ad/4acb12] process > reorder                                          [100%] 1 of 1 ✔[K
+[-        ] process > createSummary                                    -[K
+[21A
+executor >  local (35)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[00/bd6a3b] process > runTcoffee (Subset0.fasta)                       [100%] 1 of 1 ✔[K
+[10/844a97] process > convertTCMsa (1)                                 [100%] 1 of 1 ✔[K
+[fc/12d281] process > mergeMafft                                       [100%] 1 of 1 ✔[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[38/f462d4] process > mapDsspRough                                     [100%] 1 of 1 ✔[K
+[3c/639338] process > squeeze                                          [100%] 1 of 1 ✔[K
+[52/0139f0] process > mapDsspSqueeze                                   [100%] 1 of 1 ✔[K
+[ad/4acb12] process > reorder                                          [100%] 1 of 1 ✔[K
+[fd/4bc438] process > createSummary                                    [  0%] 0 of 1[K
+[21A
+executor >  local (35)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[00/bd6a3b] process > runTcoffee (Subset0.fasta)                       [100%] 1 of 1 ✔[K
+[10/844a97] process > convertTCMsa (1)                                 [100%] 1 of 1 ✔[K
+[fc/12d281] process > mergeMafft                                       [100%] 1 of 1 ✔[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[38/f462d4] process > mapDsspRough                                     [100%] 1 of 1 ✔[K
+[3c/639338] process > squeeze                                          [100%] 1 of 1 ✔[K
+[52/0139f0] process > mapDsspSqueeze                                   [100%] 1 of 1 ✔[K
+[ad/4acb12] process > reorder                                          [100%] 1 of 1 ✔[K
+[fd/4bc438] process > createSummary                                    [100%] 1 of 1 ✔[K
+Pipeline completed at               : 2025-05-21T10:12:10.624715+02:00[K
+Time to complete workflow execution : 3m 27s[K
+Execution status                    : Success[K
+Output folder                       : /Users/sophie/workspace/simsapiper/toy_example/results/toy_example_2025_05_21_10_08_41_test[K
+[25A
+executor >  local (35)[K
+[f9/c22e5f] process > convertSeqs (1)                                  [100%] 1 of 1 ✔[K
+[24/a024f0] process > cdHitCollapse (converted_toy_example_seqs.fasta) [100%] 1 of 1 ✔[K
+[-        ] process > writeFastaFromSeqsShort                          -[K
+[-        ] process > writeFastaFromSeqsInvalid                        -[K
+[f0/da5197] process > getAFmodels (Q4JCD8)                             [100%] 11 of 11 ✔[K
+[-        ] process > fetchEsmAtlasStructure                           -[K
+[-        ] process > writeFastaFromMissing                            -[K
+[ce/cb5086] process > writeFastaFromSeqsValid (seqs_to_align.fasta)    [100%] 1 of 1 ✔[K
+[a0/3f56e7] process > missingQC                                        [100%] 1 of 1 ✔[K
+[3a/7ae39a] process > cdHitSubsetting (seqs_to_align.fasta)            [100%] 1 of 1 ✔[K
+[00/bd6a3b] process > runTcoffee (Subset0.fasta)                       [100%] 1 of 1 ✔[K
+[10/844a97] process > convertTCMsa (1)                                 [100%] 1 of 1 ✔[K
+[fc/12d281] process > mergeMafft                                       [100%] 1 of 1 ✔[K
+[b0/474954] process > runDssp (11)                                     [100%] 11 of 11 ✔[K
+[38/f462d4] process > mapDsspRough                                     [100%] 1 of 1 ✔[K
+[3c/639338] process > squeeze                                          [100%] 1 of 1 ✔[K
+[52/0139f0] process > mapDsspSqueeze                                   [100%] 1 of 1 ✔[K
+[ad/4acb12] process > reorder                                          [100%] 1 of 1 ✔[K
+[fd/4bc438] process > createSummary                                    [100%] 1 of 1 ✔[K
+Pipeline completed at               : 2025-05-21T10:12:10.624715+02:00[K
+Time to complete workflow execution : 3m 27s[K
+Execution status                    : Success[K
+Output folder                       : /Users/sophie/workspace/simsapiper/toy_example/results/toy_example_2025_05_21_10_08_41_test[K
+[32;1mCompleted at: 21-May-2025 10:12:11
+Duration    : 3m 28s
+CPU hours   : 0.1
+Succeeded   : 35
+[22;39m[K
+
+2025-05-21 10:08:43	3m 29s  	scruffy_sammet      	OK    	f3c94fd698 	73c9951f-ce9d-4aaf-aa7b-298faaf554e9	nextflow run simsapiper.nf -profile standard,withdocker --data /Users/sophie/workspace/simsapiper/toy_example/data --magic --outFolder /Users/sophie/workspace/simsapiper/toy_example/results/toy_example_2025_05_21_10_08_41_test               
