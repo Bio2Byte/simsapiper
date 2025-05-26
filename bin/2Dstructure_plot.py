@@ -38,10 +38,12 @@ def limits_secondary_structure(dssp_file, conserved_2structure_dssp, anchor_poin
                 last_structured = positions[-1]
 
     structure_elements = sorted(structure_elements, key=lambda x: x[1][0])
-
+    print(structure_elements)
     dssp_code_plotss = {"E": "S", "H": "H", "G": "H", "I": "H" }
     secstruct_str = ""
     first = True
+    if structure_elements == []:
+        raise ValueError('No shared secondary structure elements could be identified')
     for ss in structure_elements:
         ss_name = ss[0][0]
         start, end = ss[1]
@@ -107,6 +109,8 @@ if __name__ == "__main__":
     dssp_file = sys.argv[1]
     squeeze =sys.argv[2]
     if squeeze == "true": #user hasn't specified towards what should be squeezed
+        squeeze = "H,E"    
+    if squeeze == "false": #squeeze is optional
         squeeze = "H,E"
     conserved_2structure_dssp = squeeze.split(',') # ["H","E"]
     output_folder = sys.argv[3]
