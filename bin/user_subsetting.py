@@ -1,6 +1,5 @@
 import sys
 import pandas as pd
-from Bio import SeqIO
 
 foundModels = sys.argv[1] #individual fasta files
 sequenceFastas = sys.argv[2] #one fasta file with all structure seqs
@@ -33,6 +32,8 @@ seq_df.label= seq_df.label.str.lstrip('>')
 seq_df.label = seq_df.label.str.replace('[^a-zA-Z0-9]', '_')
 
 match_df = seq_df.merge(found_df, on='label')
+print(match_df)
+match_df.drop_duplicates(inplace=True)
 
 print(match_df)
 write_fasta_from_df(match_df, 'label', 'seq_f', outfilename)

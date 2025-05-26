@@ -2,7 +2,8 @@ process fetchEsmAtlasStructure {
     tag "${header}"
     publishDir "$params.structures", mode: "copy"
     
-    errorStrategy { task.attempt > 3 ? 'retry' : 'ignore' }
+    errorStrategy 'retry'
+    maxRetries 3
 
     input:
     tuple val(header), val(sequence)
@@ -52,6 +53,8 @@ process getAFmodels {
 process runDssp{
     
     publishDir "$params.dsspPath", mode: "copy"
+    errorStrategy 'retry'
+    maxRetries 1
 
     input:
     path model
