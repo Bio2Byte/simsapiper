@@ -414,7 +414,7 @@ workflow {
     }
 
     createSummary(
-        Channel.empty().mix(finalMsa,convertFinalMsaFile,reorderedFinalMsa,squeezedMsa,mappedFinalMsaSqueeze).collect(), //this isjust the gate
+        Channel.empty().mix(finalMsa,convertFinalMsaFile,reorderedFinalMsa,squeezedMsa,mappedFinalMsa,mappedFinalMsaSqueeze).collect(), //this isjust the gate
         params.outFolder,
         allSequences.toList(),
         fullInputSeqsNum,
