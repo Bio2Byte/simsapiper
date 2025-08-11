@@ -30,6 +30,7 @@ now=`date +"%Y_%m_%d_%H_%M_%S"`
 output_name=${name}_${now}
 output_folder=$data/results/$output_name
 
+mkdir -p $data/results/
 mkdir -p $output_folder
 echo 'Starting nextflow'
 
