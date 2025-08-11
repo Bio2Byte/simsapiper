@@ -21,10 +21,10 @@ simsa_dir=/Users/someone/workspace/simsapiper
 name=toy_example
 
 #If nextflow/apptainer is not on per default, load it here
-module load Nextflow/23.10.0
+#module load Nextflow/23.10.0
 
 #set apptainer cache to one place with lots of storage avoid keeping multiple copies
-apptainercache=$VSC_SCRATCH_VO_USER/.apptainer
+apptainercache=~/.apptainer
 export APPTAINER_CACHEDIR=$apptainercache
 
 
@@ -41,8 +41,8 @@ mkdir -p $output_folder
 echo 'Starting nextflow'
 
 nextflow run simsapiper.nf \
-    -profile server \
-    --data $house/$data/data \
+    -profile hpc \
+    --data $data/data \
     --minimagic \
     --outFolder $output_folder \
     --apptainerPath  $apptainercache \
