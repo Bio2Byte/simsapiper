@@ -303,9 +303,13 @@ process createSummary{
         if [ "$squeeze" != "false" ] ; then
             python3 $projectDir/bin/2Dstructure_plot.py $outdir/msas/dssp_squeezed_merged*.fasta $squeeze \$statsod
             python3 $projectDir/bin/DSSPcodesMSA_plot.py $outdir/msas/dssp_squeezed_merged*.fasta \$statsod
+
+            python3 $projectDir/bin/dssp_seqview_plot.py $outdir/msas/dssp_squeezed_merged*.fasta
         else
             python3 $projectDir/bin/2Dstructure_plot.py $outdir/msas/dssp_merged*.fasta $squeeze \$statsod
             python3 $projectDir/bin/DSSPcodesMSA_plot.py $outdir/msas/dssp_merged*.fasta \$statsod
+
+            python3 $projectDir/bin/dssp_seqview_plot.py $outdir/msas/dssp_squeezed_merged*.fasta
         fi
     fi
 
