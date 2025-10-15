@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import secstructartist as ssa
 
-
 def limits_secondary_structure(dssp_file, conserved_2structure_dssp, anchor_point):
     read_dsspMSA = AlignIO.read(dssp_file, 'fasta')
     alignment_length = read_dsspMSA.get_alignment_length()
@@ -65,15 +64,14 @@ def limits_secondary_structure(dssp_file, conserved_2structure_dssp, anchor_poin
 
 
 def plot_secondary_structure(secstruct_str, output_file="ConsensusSecondaryStructure_alignment.pdf"):
-    import matplotlib.pyplot as plt
-    from mpl_toolkits.axes_grid1 import make_axes_locatable
+
 
     length = len(secstruct_str)
     x = np.arange(1, length + 1)
 
     fig_width = min(max(length / 25, 12), 80)
     fig, ax = plt.subplots(figsize=(fig_width, 1.5))
-    ax.set_title("Secondary Structure Alignment")
+    ax.set_title("Consensus Secondary Structure")
     ax.margins(0)
 
     # Draw secondary structure
