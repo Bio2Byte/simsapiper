@@ -94,6 +94,13 @@ def handle_unmappable(df):
         label = row['label']
         fixed = False
 
+
+        #Case 0: no structure matched
+        if pd.isna(row['model']):
+            print(f"[Warning] no structure was matched to {label} sequence Check './msas/unmappable.txt'.")
+            continue
+        
+            
         # Case 1: Allow small mutations (up to 5% difference)
         if len(model_seq) == len(unali_seq):
             mismatch_count = sum(1 for a, b in zip(model_seq, unali_seq) if a != b)

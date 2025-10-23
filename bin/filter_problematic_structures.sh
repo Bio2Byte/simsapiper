@@ -20,6 +20,9 @@ entries="entries_to_remove.txt"
 # Step 1: Backup original
 cp "$seqsToAlign" "$original"
 
+#this may be wrong
+cp "$seqsToAlign" "filtered"
+
 # Step 2: Collect problematic sequence identifiers
 > "$entries"
 
@@ -28,9 +31,10 @@ while IFS= read -r line; do
         #wdir=$(echo "$line" | awk '{print $2}')
         #log_file=$(find ../../"${wdir}"* -name ".command.log" -print -quit)
     if [[ "$line" == *"runTcoffee"* && "$line" == *"exit: 1"* && "$line" == *"$seqsToAlign"* ]]; then
-        wdir=$(echo "$line" | sed -n 's/.*workDir: \([^ ]*\).*/\1/p')
+        wdir=$(echo "$line" | sed -n 's/.*workDir:[[:space:]]*\([^];[:space:]]*\).*/\1/p')
         log_file=$(find "${wdir}"* -name ".command.log" -print -quit)
         echo "Processing $log_file"
+        #  wdir=$(echo "$line" | sed -n 's/.*workDir: \([^ ]*\).*/\1/p')
 
         
         if grep -q "attempt 3" "$log_file"; then
