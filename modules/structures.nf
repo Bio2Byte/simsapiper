@@ -44,11 +44,13 @@ process getAFmodels {
     result=\$(echo ${id} | cut -d '_' -f 1)
     echo \$result
 
-    curl https://alphafold.ebi.ac.uk/files/AF-\${result}-F1-model_v4.pdb -o ${id}.pdb
+    curl https://alphafold.ebi.ac.uk/files/AF-\${result}-F1-model_v6.pdb -o ${id}.pdb
 
     find . -type f -name "*.pdb" -size -2k -exec bash -c 'mv "\$1" "\${1%.pdb}".fail' - '{}' +
     """
 }
+// previously: curl https://alphafold.ebi.ac.uk/files/AF-\${result}-F1-model_v4.pdb -o ${id}.pdb
+
 
 process runDssp{
     
