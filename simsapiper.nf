@@ -380,6 +380,8 @@ workflow {
 
         mapDsspRough(params.dsspPath, finalMsa, dsspgate)
         mappedFinalMsa = mapDsspRough.out.mmsa
+    }else{
+        mappedFinalMsa=Channel.empty()
     }
 
     //squeeze MSA
