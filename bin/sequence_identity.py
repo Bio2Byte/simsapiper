@@ -7,8 +7,8 @@ msa_file = sys.argv[1]
 output_folder=sys.argv[2]
 output_csv = output_folder+"/pairwise_identity_matrix.csv" 
 output_csv_avg = output_folder+"/average_identity_per_sequence.csv"
-histogram_plot = "Sequence_identity_histogram.pdf"
-histogram_plot_av = "Average_sequence_identity_histogram.pdf"
+histogram_plot =  output_folder+"/Sequence_identity_histogram.pdf"
+histogram_plot_av =  output_folder+"/Average_sequence_identity_histogram.pdf"
 
 # Read file and split into labels and sequences
 found_df = pd.read_csv(msa_file, header=None)

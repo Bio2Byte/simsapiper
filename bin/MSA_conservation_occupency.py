@@ -118,15 +118,17 @@ def plot_conservation(conservation_scores, occupancy, output_file):
 
 msa_filename = sys.argv[1]
 output_folder=sys.argv[2]
+outname= output_folder + '/' + msa_filename.split('.')[0] +'_ShannonEntropyConservation_occupency'
+
 
 alignment = AlignIO.read(msa_filename, "fasta")
 conservation_scores = compute_conservation(alignment)
 occupancy_scores = compute_occupancy(alignment)
 
-plot_conservation(conservation_scores, occupancy_scores,"ShannonEntropyConservation_occupency.pdf")
+plot_conservation(conservation_scores, occupancy_scores,outname+".png")
 
 import csv
-with open(output_folder+"/conservation_occupancy_scores.csv", "w", newline="") as csvfile:
+with open(outname+".csv", "w", newline="") as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(["Position", "ConservationScore", "OccupancyScore"])
     for i, (cons, occ) in enumerate(zip(conservation_scores, occupancy_scores), start=1):

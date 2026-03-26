@@ -111,14 +111,17 @@ if __name__ == "__main__":
     if squeeze == "false": #squeeze is optional
         squeeze = "H,E"
     conserved_2structure_dssp = squeeze.split(',') # ["H","E"]
+
     output_folder = sys.argv[3]
+    outname= output_folder + '/' + dssp_file.split('.')[0] +'_consensus_SecondaryStructure'
+
     anchor_point=0.5 #to show consensus secondary structure
     secstruct_str = limits_secondary_structure(dssp_file,conserved_2structure_dssp, anchor_point)
-    plot_secondary_structure(secstruct_str)
+    plot_secondary_structure(secstruct_str,outname+'.png')
     
     # Save to CSV
     import csv
-    with open(output_folder+"/SecondaryStructure_rawdata.csv", "w", newline="") as csvfile:
+    with open(outname+".csv", "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["Position", "consensus_SecondaryStructure"])
         for idx, ss in enumerate(secstruct_str, start=1):

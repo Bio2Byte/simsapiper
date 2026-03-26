@@ -68,11 +68,14 @@ def plot_dssp_frequencies(tot_freq_SS, output_file="dssp_freq_plot.pdf"):
 
 dssp_file = sys.argv[1]
 output_folder=sys.argv[2]
+
+outname= output_folder + '/' + dssp_file.split('.')[0] +'_DSSP_frequencies'
+
 total_frequencies_SS = freq_DSSP_codes(dssp_file)
-plot_dssp_frequencies(total_frequencies_SS, 'DSSPcodes_aligned.pdf')
+plot_dssp_frequencies(total_frequencies_SS, outname+'.pdf')
 
 import csv
-with open(output_folder+"/DSSPcodes_frequencies.csv", "w", newline="") as csvfile:
+with open(outname+".csv", "w", newline="") as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(["Position", "Helix residues", "Sheet residues","Loop residues"])
     for i, (helix, sheet, loop) in enumerate(zip(total_frequencies_SS["Helix"], total_frequencies_SS["Sheet"],total_frequencies_SS["Loop"]), start=1):

@@ -4,7 +4,8 @@ from matplotlib.colors import ListedColormap
 import sys
 
 dsspfile=sys.argv[1]#'dssp_squeezed_merged_magicMSA.fasta'
-outname='DSSPcodes_sequenceView'
+ouf=sys.argv[2]
+outname=ouf+'_DSSPcodes_sequenceView'
 
 def read_fasta_to_csv(seq_file):
     df = pd.read_csv(seq_file, header=None)
@@ -44,7 +45,7 @@ def plot_dssp_ali(df,col,outname):
 
     # Y axis labels = sequence IDs
     ax.set_yticks(range(len(pdf)))
-    ax.set_yticklabels(pdf.index)
+    ax.set_yticklabels(pdf.index, fontsize =6)
 
     ax.set_xlabel("Column Position")
     label_interval = 10
