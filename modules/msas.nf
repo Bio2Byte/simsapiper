@@ -1,3 +1,38 @@
+process runMafft{
+    publishDir "$params.outFolder/msas/t-coffee", mode: "copy" 
+    tag "$seqsToAlign"
+
+    input:
+    path seqsToAlign
+    val gate
+
+    output:
+    path "*.fasta", emit : finalMsa
+
+    script:
+
+    mafft --reorder --auto $seqsToAlign > $seqsToAlign.baseName.mafft.fasta
+}
+
+process runFoldMason{
+    publishDir "$params.outFolder/msas/foldmason", mode: "copy"  
+
+    input:
+    path strucsToAlign
+    val gate
+
+    output:
+    path "*.fasta", emit : finalMsa
+
+    script:
+    """ 
+    foldmason easy-msa $strucsToAlign foldmason_${strucsToAlign.baseName} tmpFolder --report-mode 1
+    cp foldmason_${strucsToAlign.baseName}_aa.fa foldmason_${strucsToAlign.baseName}.fasta
+
+    """
+}
+
+
 process runTcoffee {
     publishDir "$params.outFolder/msas/t-coffee", mode: "copy" 
     tag "$seqsToAlign"

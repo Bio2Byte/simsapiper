@@ -61,7 +61,11 @@ Predict protein structure models with Local ESMfold (--localModel 1): $params.lo
     !Add 1 for each 100 sequences you expect to model
 Maximal % of sequences not matched to a model (--strucQC 5): $params.strucQC
 ================================================================================
-                                ALINGMENT PARAMETERS
+                                ALIGNMENT PARAMETERS
+
+Align with T-Coffee (--tcoffee): $params.tcoffee
+Align with MAFFT (--mafft): $params.mafft
+Align with FoldMason (--foldmason): $params.foldmason
 
 Additional parameters for Tcoffee (--tcoffeeParams): $params.tcoffeeParams
 Additional parameters for MAFFT (--mafftParams "--localpair --maxiterate 1000"): $params.mafftParams
@@ -102,6 +106,8 @@ include {
 
 include{
     runTcoffee ;
+    runFoldMason
+    runMafft ;
     mergeMafft ;
     reorder;
     mapDssp as mapDsspRough;
@@ -326,6 +332,7 @@ workflow {
     seqsToAlign = subSeqs.subsets
 
     //submit to tcoffee
+    if (params.tcoffee){
 
     runTcoffee(seqsToAlign, params.structures, params.tcoffeeParams, missingQC.out.gate)
     strucMsa =runTcoffee.out.msa.flatten()
@@ -334,14 +341,22 @@ workflow {
     convertTCMsa('clustal', strucMsa)
     convertedMsa =  convertTCMsa.out.convertedSeqs.mix(structureless_seqs,subSeqs.orphans,tcoffeeErrors).collect()
 
+}
+    if (params.mafft){
+        runMafft(seqsToAlign, missingQC.out.gate)
+        convertedMsa = runMafft.out.finalMsa
+    }
+    if (params.foldmason){
+        runFoldMason(params.structures, missingQC.out.gate)
+        convertedMsa = runFoldMason.out.finalMsa
+    }
     //create final alignment
     mergeMafft(convertedMsa, params.mafftParams, params.outName)
     finalMsa = mergeMafft.out.finalMsa
 
     //check if all sequences been aligned 
     //attendance(finalMsa,fullInputSeqsNum,seqsInvalidCount,structurelessCount,foundSequencesCount)
-
-
+    
     //map to dssp
     if (params.dssp){
 

@@ -1,0 +1,19 @@
+FROM debian:stable-slim
+ARG TARGETARCH
+
+RUN apt-get update && apt-get install -y wget tar procps \
+    && rm -rf /var/lib/apt/lists/* \
+    && if [ "$TARGETARCH" = "arm64" ]; then \
+         wget https://mmseqs.com/foldmason/foldmason-linux-arm64.tar.gz \
+           && tar xzf foldmason-linux-arm64.tar.gz \
+           && mv foldmason/bin/foldmason /usr/local/bin/ \
+           && rm -rf foldmason*; \
+       else \
+         wget https://mmseqs.com/foldmason/foldmason-linux-avx2.tar.gz \
+           && tar xzf foldmason-linux-avx2.tar.gz \
+           && mv foldmason/bin/foldmason /usr/local/bin/ \
+           && rm -rf foldmason*; \
+       fi
+
+LABEL maintainer="Sophie Heidig <sophie-luise.heidig@vub.be>"
+LABEL description='Software dependencies for SIMSApiper: foldmason'
