@@ -113,7 +113,8 @@ if __name__ == "__main__":
     conserved_2structure_dssp = squeeze.split(',') # ["H","E"]
 
     output_folder = sys.argv[3]
-    outname= output_folder + '/' + dssp_file.split('.')[0] +'_consensus_SecondaryStructure'
+    stem = dssp_file.split('/')[-1].split('.')[0]
+    outname = output_folder + '/' + stem + '_consensus_SecondaryStructure'
 
     anchor_point=0.5 #to show consensus secondary structure
     secstruct_str = limits_secondary_structure(dssp_file,conserved_2structure_dssp, anchor_point)

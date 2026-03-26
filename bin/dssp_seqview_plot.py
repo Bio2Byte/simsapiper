@@ -4,8 +4,9 @@ from matplotlib.colors import ListedColormap
 import sys
 
 dsspfile=sys.argv[1]#'dssp_squeezed_merged_magicMSA.fasta'
-ouf=sys.argv[2]
-outname=ouf+'_DSSPcodes_sequenceView'
+output_folder=sys.argv[2]
+stem = dsspfile.split('/')[-1].split('.')[0]
+outname = output_folder + '/' + stem + '_DSSPcodes_sequenceView'
 
 def read_fasta_to_csv(seq_file):
     df = pd.read_csv(seq_file, header=None)
