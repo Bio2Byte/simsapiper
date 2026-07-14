@@ -63,5 +63,6 @@ results/*
 data_manuscript/GroEL/*
 slurm*
 toy_example/*
+.depcache/*
 
 *.pptx

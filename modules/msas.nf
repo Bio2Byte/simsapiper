@@ -26,7 +26,7 @@ process runFoldMason{
 
     script:
     """ 
-    foldmason easy-msa $strucsToAlign foldmason_${strucsToAlign.baseName} tmpFolder --report-mode 1
+    foldmason easy-msa $strucsToAlign foldmason_${strucsToAlign.baseName} tmpFolder --report-mode 1 --threads ${task.cpus} 
     cp foldmason_${strucsToAlign.baseName}_aa.fa foldmason_${strucsToAlign.baseName}.fasta
 
     """

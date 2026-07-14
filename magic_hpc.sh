@@ -21,7 +21,7 @@ simsa_dir=/Users/someone/workspace/simsapiper
 name=toy_example
 
 #If nextflow/apptainer is not on per default, load it here
-#module load Nextflow/23.10.0
+#module load Nextflow
 
 #set apptainer cache to one place with lots of storage avoid keeping multiple copies
 apptainercache=~/.apptainer

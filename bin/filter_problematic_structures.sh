@@ -59,6 +59,15 @@ while IFS= read -r line; do
                     }
                 }
             ' "$log_file" >> "$entries"
+        
+        elif grep -q "proba_pair will be used instead" "$log_file"; then
+            echo "Detected proba_pair error - this feature is untested please tell me if it does not work"
+            # Extract all identifiers from lines with "proba_pair will be used instead"
+            grep "proba_pair will be used instead" "$log_file" | \
+                awk -F'[[]|,| ]' '{for (i=1; i<=NF; i++) if ($i ~ /^[A-Z0-9_]+$/) print $i}' | \
+                sort | uniq -c | \
+                awk '$1 > 20 {print $2}' >> "$entries"
+
         else
             echo "No known error pattern found in $log_file"
         fi
